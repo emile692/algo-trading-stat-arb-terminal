@@ -1,0 +1,11 @@
+[project]
+name = "algo-trading-stat-arb-terminal"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "plotly>=6.5.0",
+    "statsmodels>=0.14.5",
+    "streamlit>=1.51.0",
+]
