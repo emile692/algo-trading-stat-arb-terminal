@@ -19,6 +19,7 @@ from utils.metrics import (
     compute_zscore,
     compute_half_life,
 )
+from utils.synthetic import generate_synthetic_paths
 
 PROJECT_PATH = Path(__file__).resolve().parents[0]
 DATA_PATH = PROJECT_PATH / "data" / "raw"
@@ -88,7 +89,10 @@ with st.sidebar:
 # ============================================================
 # TABS
 # ============================================================
-tab_monitor, tab_scanner, tab_backtest = st.tabs(["Pair Monitor", "Scanner", "Backtest Pair"])
+tab_monitor, tab_scanner, tab_backtest, tab_synth = st.tabs([
+    "Pair Monitor", "Scanner", "Backtest Pair", "Synthetic Paths"
+])
+
 
 # Force auto-navigation vers Pair Monitor après un "Load"
 if st.session_state["go_to_monitor"]:
@@ -742,6 +746,81 @@ with tab_backtest:
             st.plotly_chart(fig_heat, use_container_width=True)
 
 
+# ============================================================
+# TAB 4 : SYNTHETIC TRAJECTORIES
+# ============================================================
+
+with tab_synth:
+    st.subheader("Visualiser les trajectoires synthétiques")
+
+    st.markdown("## Paramètres de génération")
+
+    c1, c2, c3, c4 = st.columns(4)
+    n_paths = c1.slider("Nombre de trajectoires", 5, 200, 20, 5)
+    n_steps = c2.slider("Nombre de pas", 50, 2000, 500, 50)
+    mu = c3.number_input("Drift μ", value=0.0002, format="%.6f")
+    sigma = c4.number_input("Volatilité σ", value=0.01, format="%.6f")
+
+    s0 = st.number_input("Prix initial S₀", value=100.0)
+
+    run_syn = st.button("Générer")
+
+    if run_syn:
+        with st.spinner("Génération des trajectoires..."):
+
+            paths = generate_synthetic_paths(
+                n_paths=n_paths,
+                n_steps=n_steps,
+                mu=mu,
+                sigma=sigma,
+                s0=s0,
+            )
+
+            st.markdown("### Trajectoires simulées")
+
+            fig_paths = go.Figure()
+            for i in range(min(n_paths, 20)):   # limiter l’affichage
+                fig_paths.add_scatter(
+                    x=np.arange(n_steps),
+                    y=paths[i],
+                    mode="lines",
+                    line=dict(width=1)
+                )
+
+            fig_paths.update_layout(
+                height=400,
+                template="plotly_dark",
+                margin=dict(l=20, r=20, t=40, b=20),
+                plot_bgcolor="rgba(0,0,0,0)",
+                paper_bgcolor="rgba(0,0,0,0)",
+            )
+            st.plotly_chart(fig_paths, use_container_width=True)
+
+            # Distribution des moyennes
+            st.markdown("### Distribution des moyennes")
+
+            means = np.mean(paths, axis=1)
+
+            fig_mean = px.histogram(
+                means, nbins=20,
+                title="Distribution des moyennes",
+                template="plotly_dark"
+            )
+            fig_mean.update_layout(height=300)
+            st.plotly_chart(fig_mean, use_container_width=True)
+
+            # Distribution des variances
+            st.markdown("### Distribution des variances")
+
+            variances = np.var(paths, axis=1)
+
+            fig_var = px.histogram(
+                variances, nbins=20,
+                title="Distribution des variances",
+                template="plotly_dark"
+            )
+            fig_var.update_layout(height=300)
+            st.plotly_chart(fig_var, use_container_width=True)
 
 
 
