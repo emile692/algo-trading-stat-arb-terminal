@@ -19,7 +19,14 @@ from utils.metrics import (
     compute_zscore,
     compute_half_life,
 )
-from utils.synthetic import generate_synthetic_paths
+from utils.optimization import run_full_optimization
+from utils.synthetic import (
+    generate_synthetic_paths,
+    generate_ou_paths,
+    calibrate_params_from_pair,
+    simulate_cointegrated_assets,
+)
+
 
 PROJECT_PATH = Path(__file__).resolve().parents[0]
 DATA_PATH = PROJECT_PATH / "data" / "raw"
@@ -89,9 +96,10 @@ with st.sidebar:
 # ============================================================
 # TABS
 # ============================================================
-tab_monitor, tab_scanner, tab_backtest, tab_synth = st.tabs([
-    "Pair Monitor", "Scanner", "Backtest Pair", "Synthetic Paths"
+tab_monitor, tab_scanner, tab_backtest, tab_synth, tab_opt = st.tabs([
+    "Pair Monitor", "Scanner", "Backtest Pair", "Synthetic Paths", "Optimization"
 ])
+
 
 
 # Force auto-navigation vers Pair Monitor après un "Load"
@@ -142,6 +150,22 @@ with tab_monitor:
         corr = compute_corr(series_y, series_x)
         eg_t, eg_p, _ = compute_coint(series_y, series_x)
         half_life = compute_half_life(spread)
+
+        # Paramètres OU
+        if half_life and half_life > 0:
+            theta_ou = np.log(2) / half_life
+        else:
+            theta_ou = 0
+
+        mu_ou = float(spread.mean())
+        sigma_ou = float(np.std(spread.diff().dropna()))
+        s0_ou = float(spread.iloc[-1])
+
+        # Stockage pour l'onglet Synthetic Paths
+        st.session_state["ou_mu"] = mu_ou
+        st.session_state["ou_theta"] = theta_ou
+        st.session_state["ou_sigma"] = sigma_ou
+        st.session_state["ou_s0"] = s0_ou
 
         merged["spread"] = spread
         merged["zscore"] = compute_zscore(spread, window=30)
@@ -750,77 +774,174 @@ with tab_backtest:
 # TAB 4 : SYNTHETIC TRAJECTORIES
 # ============================================================
 
+# ============================================================
+# TAB 4 : SYNTHETIC TRAJECTORIES
+# ============================================================
+
 with tab_synth:
     st.subheader("Visualiser les trajectoires synthétiques")
 
     st.markdown("## Paramètres de génération")
 
-    c1, c2, c3, c4 = st.columns(4)
+    c1, c2 = st.columns(2)
     n_paths = c1.slider("Nombre de trajectoires", 5, 200, 20, 5)
     n_steps = c2.slider("Nombre de pas", 50, 2000, 500, 50)
-    mu = c3.number_input("Drift μ", value=0.0002, format="%.6f")
-    sigma = c4.number_input("Volatilité σ", value=0.01, format="%.6f")
 
-    s0 = st.number_input("Prix initial S₀", value=100.0)
+    model = st.selectbox("Modèle", ["GBM", "OU", "Cointegrated PRO"])
+
+    st.markdown("---")
+
+    # Pré-init
+    paths = None
+    A = B = S = None
+
+    # =============== GBM ===============
+    if model == "GBM":
+        c3, c4, c5 = st.columns(3)
+        mu = c3.number_input("Drift μ", value=0.0002, format="%.6f")
+        sigma = c4.number_input("Volatilité σ", value=0.01, format="%.6f")
+        s0 = c5.number_input("Prix initial S₀", value=100.0)
+
+    # =============== OU simple ===============
+    elif model == "OU":
+        st.markdown("### Paramètres OU estimés depuis la paire sélectionnée")
+
+        mu_ou = st.session_state.get("ou_mu", 0.0)
+        theta_ou = st.session_state.get("ou_theta", 0.0)
+        sigma_ou = st.session_state.get("ou_sigma", 0.0)
+        s0_ou = st.session_state.get("ou_s0", 0.0)
+
+        c3, c4, c5, c6 = st.columns(4)
+        mu_ou = c3.number_input("μ (mean reversion)", value=float(mu_ou), format="%.6f")
+        theta_ou = c4.number_input("θ (speed)", value=float(theta_ou), format="%.6f")
+        sigma_ou = c5.number_input("σ (vol résiduelle)", value=float(sigma_ou), format="%.6f")
+        s0_ou = c6.number_input("S₀ (spread initial)", value=float(s0_ou), format="%.6f")
+
+    # =============== Cointegrated PRO ===============
+    else:
+        st.markdown("### Paramètres calibrés automatiquement (Heston + OU)")
+
+        params = calibrate_params_from_pair(df1, df2, spread, beta)
+
+        c3, c4, c5 = st.columns(3)
+        mu_s = c3.number_input("OU mean (μ_s)", value=float(params["mu_s"]), format="%.6f")
+        theta_s = c4.number_input("OU speed (θ_s)", value=float(params["theta_s"]), format="%.6f")
+        sigma_s = c5.number_input("OU vol (σ_s)", value=float(params["sigma_s"]), format="%.6f")
+
+        c6, c7, c8 = st.columns(3)
+        mu_m = c6.number_input("Market drift μ", value=float(params["mu"]), format="%.6f")
+        v0 = c7.number_input("Initial variance v0", value=float(params["v0"]), format="%.6f")
+        rho = c8.number_input("Corr price-vol ρ", value=float(params["rho"]), format="%.3f")
+
+        beta_val = st.number_input("Hedge ratio β", value=float(params["beta"]), format="%.6f")
+
+    st.markdown("---")
 
     run_syn = st.button("Générer")
 
     if run_syn:
         with st.spinner("Génération des trajectoires..."):
 
-            paths = generate_synthetic_paths(
-                n_paths=n_paths,
-                n_steps=n_steps,
-                mu=mu,
-                sigma=sigma,
-                s0=s0,
-            )
+            if model == "GBM":
+                paths = generate_synthetic_paths(
+                    n_paths=n_paths,
+                    n_steps=n_steps,
+                    mu=mu,
+                    sigma=sigma,
+                    s0=s0,
+                )
+
+            elif model == "OU":
+                paths = generate_ou_paths(
+                    n_paths=n_paths,
+                    n_steps=n_steps,
+                    mu=mu_ou,
+                    theta=theta_ou,
+                    sigma=sigma_ou,
+                    s0=s0_ou,
+                )
+
+            else:  # Cointegrated PRO
+                # on génère UNE paire A/B, pas n_paths (pour visualisation)
+                A, B, X, S, v = simulate_cointegrated_assets(
+                    n_steps,
+                    beta_val,
+                    X0=params["X0"], v0=v0, mu=mu_m,
+                    theta=params["theta"], kappa=params["kappa"],
+                    xi=params["xi"], rho=rho,
+                    mu_s=mu_s, theta_s=theta_s,
+                    sigma_s=sigma_s, S0=params["S0"],
+                )
 
             st.markdown("### Trajectoires simulées")
 
-            fig_paths = go.Figure()
-            for i in range(min(n_paths, 20)):   # limiter l’affichage
-                fig_paths.add_scatter(
-                    x=np.arange(n_steps),
-                    y=paths[i],
-                    mode="lines",
-                    line=dict(width=1)
-                )
+            if model == "Cointegrated PRO":
+                fig = go.Figure()
+                fig.add_scatter(x=np.arange(n_steps), y=A, name="Asset A", mode="lines", line=dict(width=2))
+                fig.add_scatter(x=np.arange(n_steps), y=B, name="Asset B", mode="lines", line=dict(width=2))
+                fig.add_scatter(x=np.arange(n_steps), y=S, name="Spread (OU)", mode="lines", line=dict(width=1))
+            else:
+                fig = go.Figure()
+                for i in range(min(n_paths, paths.shape[0])):
+                    fig.add_scatter(
+                        x=np.arange(n_steps),
+                        y=paths[i],
+                        mode="lines",
+                        line=dict(width=1),
+                        showlegend=False,
+                    )
 
-            fig_paths.update_layout(
+            fig.update_layout(
                 height=400,
                 template="plotly_dark",
                 margin=dict(l=20, r=20, t=40, b=20),
                 plot_bgcolor="rgba(0,0,0,0)",
                 paper_bgcolor="rgba(0,0,0,0)",
             )
-            st.plotly_chart(fig_paths, use_container_width=True)
+            st.plotly_chart(fig, use_container_width=True)
 
-            # Distribution des moyennes
-            st.markdown("### Distribution des moyennes")
 
-            means = np.mean(paths, axis=1)
+with tab_opt:
+    st.subheader("Optimisation robuste (réel + synthétique)")
 
-            fig_mean = px.histogram(
-                means, nbins=20,
-                title="Distribution des moyennes",
-                template="plotly_dark"
+    c1, c2, c3 = st.columns(3)
+    n_synth = c1.number_input("Nb trajectoires synthétiques", 10, 500, 50)
+    n_param = c2.number_input("Nb de combinaisons de paramètres", 5, 200, 20)
+    seed = c3.number_input("Seed RNG", 0, 999999, 42)
+
+    st.markdown("### Plages de paramètres")
+
+    p1, p2, p3, p4 = st.columns(4)
+    z_entry_range = p1.slider("Z-entry", 1.0, 4.0, (1.2, 2.5), 0.1)
+    z_exit_range = p2.slider("Z-exit", 0.0, 2.0, (0.2, 0.8), 0.05)
+    z_window_range = p3.slider("Z-window", 20, 200, (40, 80), 5)
+    wf_train_range = p4.slider("WF-train", 50, 500, (100, 200), 10)
+
+    run_opt = st.button("Lancer optimisation")
+
+    if run_opt:
+        with st.spinner("Optimisation en cours..."):
+            df_opt = run_full_optimization(
+                merged,
+                asset1,
+                asset2,
+                df1,
+                df2,
+                spread,
+                beta,
+                n_synth,
+                n_param,
+                z_entry_range,
+                z_exit_range,
+                z_window_range,
+                wf_train_range,
+                seed,
             )
-            fig_mean.update_layout(height=300)
-            st.plotly_chart(fig_mean, use_container_width=True)
 
-            # Distribution des variances
-            st.markdown("### Distribution des variances")
+            st.success("Optimisation terminée !")
 
-            variances = np.var(paths, axis=1)
+            st.dataframe(df_opt, use_container_width=True)
 
-            fig_var = px.histogram(
-                variances, nbins=20,
-                title="Distribution des variances",
-                template="plotly_dark"
-            )
-            fig_var.update_layout(height=300)
-            st.plotly_chart(fig_var, use_container_width=True)
 
 
 
