@@ -940,7 +940,76 @@ with tab_opt:
 
             st.success("Optimisation terminée !")
 
+            st.markdown("### Résultats")
             st.dataframe(df_opt, use_container_width=True)
+
+            # Zone d'interaction
+            st.markdown("### Explorer une configuration")
+
+            selected_index = st.number_input(
+                "Index de la ligne à explorer",
+                min_value=0,
+                max_value=len(df_opt) - 1,
+                step=1,
+                value=0
+            )
+
+            if st.button("Explorer cette configuration"):
+                st.session_state["selected_opt_params"] = df_opt.iloc[selected_index].to_dict()
+                st.experimental_rerun()
+
+            if "selected_opt_params" in st.session_state:
+                st.markdown("---")
+                st.markdown("## 🔎 Exploration de la configuration sélectionnée")
+
+                params = st.session_state["selected_opt_params"]
+
+                # Affichage des paramètres
+                st.json(params)
+
+                # Recalcul du backtest réel
+                spread_bt, zscore_bt, beta_wf = walk_forward_beta_spread_zscore(
+                    merged[f"norm_{asset1}"],
+                    merged[f"norm_{asset2}"],
+                    train=int(params["wf_train"]),
+                    test=int(params["wf_test"]),
+                    z_window=int(params["z_window"]),
+                )
+
+                equity, trades, pnl_list = backtest_pair(
+                    spread_bt,
+                    zscore_bt,
+                    merged[f"norm_{asset1}"],
+                    merged[f"norm_{asset2}"],
+                    beta,
+                    z_entry=float(params["z_entry"]),
+                    z_exit=float(params["z_exit"]),
+                    z_stop=float(params["z_entry"]) * 2,
+                    fees=0.0002,
+                )
+
+                # Figures
+                st.markdown("### 📈 Equity Curve")
+                fig_eq = go.Figure()
+                fig_eq.add_scatter(x=merged["datetime"], y=equity, mode="lines")
+                st.plotly_chart(fig_eq, use_container_width=True)
+
+                # Résumé métriques
+                st.markdown("### 📊 Metrics")
+                st.write({
+                    "Sharpe_real": params["Sharpe_real"],
+                    "Trades": len(trades),
+                    "Max DD": float(np.min(equity) / np.max(equity) - 1) if len(equity) > 1 else 0
+                })
+
+                # Liste trades
+                st.markdown("### 📋 Trade List")
+                if len(trades) > 0:
+                    st.dataframe(pd.DataFrame(trades), use_container_width=True)
+                else:
+                    st.info("Aucun trade pour cette configuration.")
+
+
 
 
 

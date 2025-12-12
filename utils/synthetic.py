@@ -1,4 +1,6 @@
 import numpy as np
+import pandas as pd
+
 from utils.metrics import compute_half_life
 
 def stationary_bootstrap(series, block_prob=0.1, size=None):
@@ -77,33 +79,36 @@ def simulate_heston(
 ):
     """
     Retourne X_t et v_t simulés sous Heston
+    (schéma full-truncation pour éviter les NaN)
     """
     X = np.zeros(n_steps)
     v = np.zeros(n_steps)
 
     X[0] = X0
-    v[0] = v0
+    v[0] = max(v0, 1e-8)  # évite v = 0 ou négatif
 
-    # Brownian correlés
     for t in range(1, n_steps):
         z1 = np.random.normal()
         z2 = np.random.normal()
+
         w1 = z1
-        w2 = rho*z1 + np.sqrt(1-rho**2)*z2
+        w2 = rho * z1 + np.sqrt(1 - rho**2) * z2
 
-        # vol stochastique
-        v[t] = np.abs(
-            v[t-1]
-            + kappa*(theta - v[t-1])*dt
-            + xi*np.sqrt(v[t-1]*dt)*w2
-        )
+        # on tronque v[t-1] avant de l'utiliser
+        v_prev = max(v[t-1], 1e-8)
 
-        # prix
+        # mise à jour de la variance (full truncation)
+        dv = kappa * (theta - v_prev) * dt + xi * np.sqrt(v_prev * dt) * w2
+        v_new = v_prev + dv
+        v[t] = max(v_new, 1e-8)
+
+        # mise à jour du prix avec v_prev (non négatif)
         X[t] = X[t-1] * np.exp(
-            (mu - 0.5*v[t-1])*dt + np.sqrt(v[t-1]*dt)*w1
+            (mu - 0.5 * v_prev) * dt + np.sqrt(v_prev * dt) * w1
         )
 
     return X, v
+
 
 
 def simulate_ou(n_steps, mu_s, theta_s, sigma_s, S0=0, dt=1/252):
@@ -119,35 +124,61 @@ def simulate_ou(n_steps, mu_s, theta_s, sigma_s, S0=0, dt=1/252):
 
 def calibrate_params_from_pair(df1, df2, spread, beta):
     """
-    Calibre automatiquement les paramètres pour la simulation cointegrée.
-    df1, df2 : prix réels (dataframes)
-    spread : série du spread
-    beta : hedge ratio réel
+    Calibration robuste des paramètres pour simulate_cointegrated_assets.
+    Corrige tous les NaN possibles dans mid, ret, vol, etc.
     """
-    # === 1) Calibration OU (déjà connu dans ton app)
+
+    # --- 1) Fix spread
+    spread = spread.dropna()
+    S0 = float(spread.iloc[-1])
     mu_s = float(spread.mean())
+
     sigma_s = float(np.std(spread.diff().dropna()))
     hl = compute_half_life(spread)
-    theta_s = np.log(2) / hl if hl and hl > 0 else 0.05
-    S0 = float(spread.iloc[-1])
+    theta_s = np.log(2) / hl if (hl is not None and hl > 0) else 0.05
 
-    # === 2) Calibration marché X(t)
-    # On approxime X(t) comme moyenne pondérée des deux actifs
-    mid = 0.5 * (df1["norm"] + df2["norm"])
+    # --- 2) Fix des séries df1 / df2
+    df1_norm = df1["norm"].ffill().bfill()
+    df2_norm = df2["norm"].ffill().bfill()
+
+    # --- 3) mid robuste
+    mid = 0.5 * (df1_norm + df2_norm)
+    mid = mid.dropna()
+
+    if len(mid) == 0:
+        print("WARNING: mid empty, fallback to spread")
+        mid = spread.dropna()
+
+    if len(mid) == 0:
+        print("CRITICAL: mid AND spread empty -> fallback to X0=1")
+        mid = pd.Series([1.0])
+
+    X0 = float(mid.iloc[-1])
+
+    # --- 4) returns robustes
     ret = mid.diff().dropna()
+    if len(ret) == 0:
+        # fallback minimal
+        ret = pd.Series([0.0])
 
-    # Drift & Vol
     mu = float(ret.mean())
     vol = float(ret.std())
 
-    # Paramètres Heston simples
-    # => v0 = vol^2, theta = v0, kappa et xi constants raisonnables
-    X0 = mid.iloc[-1]
-    v0 = vol**2
+    # clamp vol pour éviter v0=0 ou NaN
+    if not np.isfinite(vol) or vol <= 0:
+        vol = 0.01      # vol fallback raisonnable
+
+    # --- 5) Heston params robustes
+    v0 = max(1e-4, vol**2)
     theta = v0
     kappa = 1.5
     xi = 0.5
-    rho = -0.3  # corr prix-vol réaliste
+    rho = -0.3
+
+    # DEBUG
+    print("DEBUG mid last:", X0)
+    print("DEBUG vol:", vol)
+    print("DEBUG v0:", v0)
 
     return {
         "mu_s": mu_s,
@@ -163,6 +194,8 @@ def calibrate_params_from_pair(df1, df2, spread, beta):
         "xi": xi,
         "rho": rho,
     }
+
+
 
 
 def simulate_cointegrated_assets(
@@ -189,5 +222,8 @@ def simulate_cointegrated_assets(
     # 3) reconstruction cointegrée
     A = X + S
     B = X - beta * S
+    print("DEBUG - spread simulated std:", np.std(S))
+    print("DEBUG - A std:", np.std(A))
+    print("DEBUG - B std:", np.std(B))
 
     return A, B, X, S, v
