@@ -1,0 +1,56 @@
+[
+  {
+    "pair_id": "AMZN-TSLA",
+    "asset1": "AMZN",
+    "asset2": "TSLA",
+    "timeframe": "Hourly",
+    "source": "FMP",
+    "lb_used": 365,
+    "created_at": "2025-12-14 18:58:49",
+    "notes": "",
+    "params": {
+      "z_entry": 1.7133459736282406,
+      "z_exit": 0.3760929048308229,
+      "z_window": 50,
+      "wf_train": 187,
+      "wf_test": 56,
+      "fees": 0.0002,
+      "z_stop_mult": 2.0,
+      "beta_ref": 0.31168508871632755
+    },
+    "metrics": {
+      "Sharpe_real": 1.3298957551654964,
+      "Sharpe_median": 2.3231562216735453,
+      "Sharpe_min": 0.7230014609714979,
+      "Sharpe_std": 0.5078926778986357,
+      "Robustness": 1.8152635437749096
+    }
+  },
+  {
+    "pair_id": "CSCO-META",
+    "asset1": "CSCO",
+    "asset2": "META",
+    "timeframe": "Hourly",
+    "source": "FMP",
+    "lb_used": 365,
+    "created_at": "2025-12-14 23:32:37",
+    "notes": "",
+    "params": {
+      "z_entry": 1.7052804765963265,
+      "z_exit": 0.3628094190643376,
+      "z_window": 63,
+      "wf_train": 184,
+      "wf_test": 55,
+      "fees": 0.0002,
+      "z_stop_mult": 2.0,
+      "beta_ref": 0.8464460198415473
+    },
+    "metrics": {
+      "Sharpe_real": 1.9714546856620527,
+      "Sharpe_median": 2.181280871972042,
+      "Sharpe_min": 1.1286400358953574,
+      "Sharpe_std": 0.3967963261866538,
+      "Robustness": 1.784484545785388
+    }
+  }
+]
