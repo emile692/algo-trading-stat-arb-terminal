@@ -1,0 +1,1607 @@
+category_id,category_name,instrument_name,id,earliest_data_utc,earliest_date_iso
+hong-kong,Hong Kong 🇭🇰,HSBC Holdings,0005hkhkd,"Jan 2, 2018",2018-01-02
+hong-kong,Hong Kong 🇭🇰,Galaxy Entertainment Group,0027hkhkd,"Jan 2, 2018",2018-01-02
+hong-kong,Hong Kong 🇭🇰,Geely Automobile Holdings,0175hkhkd,"Jan 2, 2018",2018-01-02
+hong-kong,Hong Kong 🇭🇰,China Resources Beer Holdings,0291hkhkd,"Jan 2, 2018",2018-01-02
+hong-kong,Hong Kong 🇭🇰,Sinopec Corp,0386hkhkd,"Mar 1, 2018",2018-03-01
+hong-kong,Hong Kong 🇭🇰,HK Exchanges & Clearing,0388hkhkd,"Jan 2, 2018",2018-01-02
+hong-kong,Hong Kong 🇭🇰,Tencent Holdings,0700hkhkd,"Jan 2, 2018",2018-01-02
+hong-kong,Hong Kong 🇭🇰,PetroChina,0857hkhkd,"Jan 2, 2018",2018-01-02
+hong-kong,Hong Kong 🇭🇰,China National Offshore Oil Corporation,0883hkhkd,"Jan 2, 2018",2018-01-02
+hong-kong,Hong Kong 🇭🇰,China Construction Bank,0939hkhkd,"Jan 2, 2018",2018-01-02
+hong-kong,Hong Kong 🇭🇰,China Mobile,0941hkhkd,"May 23, 2018",2018-05-23
+hong-kong,Hong Kong 🇭🇰,CITIC Bank International,0998hkhkd,"Feb 1, 2018",2018-02-01
+hong-kong,Hong Kong 🇭🇰,CSPC Pharmaceutical Group,1093hkhkd,"Jan 2, 2018",2018-01-02
+hong-kong,Hong Kong 🇭🇰,Sino Biopharmeceutical,1177hkhkd,"Jul 4, 2018",2018-07-04
+hong-kong,Hong Kong 🇭🇰,Agricultural Bank of China,1288hkhkd,"Jan 2, 2018",2018-01-02
+hong-kong,Hong Kong 🇭🇰,AIA,1299hkhkd,"Jan 2, 2018",2018-01-02
+hong-kong,Hong Kong 🇭🇰,Industrial and Commercial Bank of China,1398hkhkd,"Jan 2, 2018",2018-01-02
+hong-kong,Hong Kong 🇭🇰,Xiaomi Corp,1810hkhkd,"Sep 28, 2020",2020-09-28
+hong-kong,Hong Kong 🇭🇰,Sunac China Holdings,1918hkhkd,"Feb 1, 2018",2018-02-01
+hong-kong,Hong Kong 🇭🇰,Country Garden Holdings,2007hkhkd,"Jan 2, 2018",2018-01-02
+hong-kong,Hong Kong 🇭🇰,AAC Technologies Holdings,2018hkhkd,"Jan 2, 2018",2018-01-02
+hong-kong,Hong Kong 🇭🇰,Ping An Insurance,2318hkhkd,"Jan 2, 2018",2018-01-02
+hong-kong,Hong Kong 🇭🇰,BOC Hong Kong (Holdings),2388hkhkd,"Apr 10, 2018",2018-04-10
+japan,Japan 🇯🇵,Asahi Group Holdings,2502jpjpy,"Sep 26, 2018",2018-09-26
+japan,Japan 🇯🇵,Kirin Brewery Co,2503jpjpy,"Sep 26, 2018",2018-09-26
+hong-kong,Hong Kong 🇭🇰,China Life Insurance Company,2628hkhkd,"Jan 2, 2018",2018-01-02
+etf_cfd_hk,Hong Kong ETFs 🇭🇰📈,CSOP FTSE China A50 ETF,2822hkhkd,"Sep 28, 2020",2020-09-28
+etf_cfd_hk,Hong Kong ETFs 🇭🇰📈,Hang Seng H-Share Index ETF,2828hkhkd,"Sep 28, 2020",2020-09-28
+etf_cfd_hk,Hong Kong ETFs 🇭🇰📈,iShares Core S&P BSE SENSEX India ETF,2836hkhkd,"Sep 28, 2020",2020-09-28
+japan,Japan 🇯🇵,Japan Tobacco,2914jpjpy,"Sep 21, 2018",2018-09-21
+etf_cfd_hk,Hong Kong ETFs 🇭🇰📈,ChinaAMC CSI 300 Index ETF,3188hkhkd,"Sep 28, 2020",2020-09-28
+hong-kong,Hong Kong 🇭🇰,China Evergrande Group,3333hkhkd,"Jan 2, 2018",2018-01-02
+japan,Japan 🇯🇵,Seven and I Holdings,3382jpjpy,"Sep 21, 2018",2018-09-21
+japan,Japan 🇯🇵,Sumco Corp,3436jpjpy,"Sep 26, 2018",2018-09-26
+hong-kong,Hong Kong 🇭🇰,China Merchants Bank,3968hkhkd,"Jan 2, 2018",2018-01-02
+hong-kong,Hong Kong 🇭🇰,Bank of China,3988hkhkd,"Jun 4, 2019",2019-06-04
+japan,Japan 🇯🇵,Showa Denko,4004jpjpy,"Sep 21, 2018",2018-09-21
+japan,Japan 🇯🇵,Sumitomo Chemical,4005jpjpy,"Sep 21, 2018",2018-09-21
+japan,Japan 🇯🇵,Shin-Etsu Chemical,4063jpjpy,"Sep 21, 2018",2018-09-21
+japan,Japan 🇯🇵,Kao Corp,4452jpjpy,"Sep 26, 2018",2018-09-26
+japan,Japan 🇯🇵,Takeda,4502jpjpy,"Sep 21, 2018",2018-09-21
+japan,Japan 🇯🇵,Astellas Pharma,4503jpjpy,"Sep 26, 2018",2018-09-26
+japan,Japan 🇯🇵,Shionogi,4507jpjpy,"Sep 26, 2018",2018-09-26
+japan,Japan 🇯🇵,Eisai,4523jpjpy,"Sep 21, 2018",2018-09-21
+japan,Japan 🇯🇵,Terumo Corp,4543jpjpy,"Sep 26, 2018",2018-09-26
+japan,Japan 🇯🇵,Yahoo Japan Corp,4689jpjpy,"Sep 21, 2018",2018-09-21
+japan,Japan 🇯🇵,Shiseido,4911jpjpy,"Sep 21, 2018",2018-09-21
+japan,Japan 🇯🇵,Bridgestone Corp,5108jpjpy,"Sep 26, 2018",2018-09-26
+japan,Japan 🇯🇵,Tokai Carbon,5301jpjpy,"Sep 21, 2018",2018-09-21
+japan,Japan 🇯🇵,Nippon Steel Corp,5401jpjpy,"Sep 21, 2018",2018-09-21
+japan,Japan 🇯🇵,Recruit Holdings Co Ltd,6098jpjpy,"Sep 26, 2018",2018-09-26
+japan,Japan 🇯🇵,Komatsu,6301jpjpy,"Sep 21, 2018",2018-09-21
+japan,Japan 🇯🇵,Daikin Industries,6367jpjpy,"Sep 26, 2018",2018-09-26
+japan,Japan 🇯🇵,Hitachi,6501jpjpy,"Sep 26, 2018",2018-09-26
+japan,Japan 🇯🇵,Toshiba Corp,6502jpjpy,"Sep 26, 2018",2018-09-26
+japan,Japan 🇯🇵,Mitsubishi Electric Corp,6503jpjpy,"Sep 26, 2018",2018-09-26
+japan,Japan 🇯🇵,Yaskawa Electric Corp,6506jpjpy,"Sep 21, 2018",2018-09-21
+japan,Japan 🇯🇵,Fujitsu,6702jpjpy,"Sep 26, 2018",2018-09-26
+japan,Japan 🇯🇵,Panasonic Corp,6752jpjpy,"Sep 26, 2018",2018-09-26
+japan,Japan 🇯🇵,Sony Corp Japan,6758jpjpy,"Sep 21, 2018",2018-09-21
+japan,Japan 🇯🇵,TDK Corp,6762jpjpy,"Sep 21, 2018",2018-09-21
+japan,Japan 🇯🇵,Denso Corp,6902jpjpy,"Sep 21, 2018",2018-09-21
+japan,Japan 🇯🇵,Fanuc,6954jpjpy,"Sep 21, 2018",2018-09-21
+japan,Japan 🇯🇵,Kyocera,6971jpjpy,"Sep 21, 2018",2018-09-21
+japan,Japan 🇯🇵,Nissan Motor Co,7201jpjpy,"Sep 26, 2018",2018-09-26
+japan,Japan 🇯🇵,Toyota Motor Corp,7203jpjpy,"Sep 21, 2018",2018-09-21
+japan,Japan 🇯🇵,Mazda Motor,7261jpjpy,"Sep 26, 2018",2018-09-26
+japan,Japan 🇯🇵,Honda Motor Company,7267jpjpy,"Sep 21, 2018",2018-09-21
+japan,Japan 🇯🇵,Suzuki Motor Corp,7269jpjpy,"Sep 26, 2018",2018-09-26
+japan,Japan 🇯🇵,Subaru Corporation,7270jpjpy,"Sep 26, 2018",2018-09-26
+japan,Japan 🇯🇵,Canon,7751jpjpy,"Sep 21, 2018",2018-09-21
+japan,Japan 🇯🇵,Nintendo Co Ltd,7974jpjpy,"Sep 21, 2018",2018-09-21
+japan,Japan 🇯🇵,Mitsui and Company,8031jpjpy,"Sep 26, 2018",2018-09-26
+japan,Japan 🇯🇵,Tokyo Electron,8035jpjpy,"Sep 21, 2018",2018-09-21
+japan,Japan 🇯🇵,Mitsubishi UFJ Financial Group,8306jpjpy,"Sep 21, 2018",2018-09-21
+japan,Japan 🇯🇵,Sumitomo Mitsui Financial Group,8316jpjpy,"Sep 21, 2018",2018-09-21
+japan,Japan 🇯🇵,Mizuho Financial Group,8411jpjpy,"Sep 26, 2018",2018-09-26
+japan,Japan 🇯🇵,Tokio Marine Holdings,8766jpjpy,"Sep 26, 2018",2018-09-26
+japan,Japan 🇯🇵,Mitsui Fudosan Company,8801jpjpy,"Sep 26, 2018",2018-09-26
+japan,Japan 🇯🇵,Mitsubishi Estate Company,8802jpjpy,"Sep 26, 2018",2018-09-26
+japan,Japan 🇯🇵,East Japan Railway Company,9020jpjpy,"Sep 26, 2018",2018-09-26
+japan,Japan 🇯🇵,Nippon Telegraph and Tel,9432jpjpy,"Sep 21, 2018",2018-09-21
+japan,Japan 🇯🇵,KDDI Corp,9433jpjpy,"Sep 26, 2018",2018-09-26
+japan,Japan 🇯🇵,Tokyo Electric Power Company,9501jpjpy,"Sep 21, 2018",2018-09-21
+japan,Japan 🇯🇵,Fast Retailing,9983jpjpy,"Sep 21, 2018",2018-09-21
+japan,Japan 🇯🇵,Softbank Group Corp,9984jpjpy,"Sep 21, 2018",2018-09-21
+italy,Italy 🇮🇹,A2A Spa,a2aiteur,"Jun 1, 2020",2020-06-01
+us,United States 🇺🇸,AbbVie Inc,aabvususd,"Oct 1, 2020",2020-10-01
+uk,United Kingdom 🇬🇧,Anglo American PLC,aalgbgbx,"Jan 4, 2011",2011-01-04
+us,United States 🇺🇸,AMERICAN AIRLINES GROUP INC,aalususd,"Nov 2, 2017",2017-11-02
+us,United States 🇺🇸,APPLE INC,aaplususd,"Jan 26, 2017",2017-01-26
+us,United States 🇺🇸,ADVANCE AUTO PARTS INC,aapususd,"May 12, 2022",2022-05-12
+us,United States 🇺🇸,ALCOA INC,aaususd,"Jan 30, 2018",2018-01-30
+switzerland,Switzerland 🇨🇭,ABB Ltd,abbnchchf,"Jan 3, 2011",2011-01-03
+sweden,Sweden 🇸🇪,ABB Ltd,abbsesek,"Jan 3, 2011",2011-01-03
+us,United States 🇺🇸,AMERISOURCEBERGEN CORP,abcususd,"Jan 30, 2018",2018-01-30
+us,United States 🇺🇸,Ambev S.A.,abevususd,"Jan 26, 2017",2017-01-26
+uk,United Kingdom 🇬🇧,Associated British Foods PLC,abfgbgbx,"Jan 4, 2011",2011-01-04
+belgium,Belgium 🇧🇪,Anheuser-Busch InBev NV,abibeeur,"Jan 3, 2011",2011-01-03
+us,United States 🇺🇸,ABIOMED INC,abmdususd,"May 12, 2022",2022-05-12
+us,United States 🇺🇸,ABBOTT LABORATORIES,abtususd,"May 11, 2017",2017-05-11
+france,France 🇫🇷,Credit Agricole SA,acafreur,"Jan 3, 2011",2011-01-03
+france,France 🇫🇷,Accor SA,acfreur,"Jan 3, 2011",2011-01-03
+us,United States 🇺🇸,ARCH CAPITAL GROUP LTD,acglususd,"May 12, 2022",2022-05-12
+us,United States 🇺🇸,AECOM,acmususd,"May 12, 2022",2022-05-12
+us,United States 🇺🇸,ACCENTURE PLC-CL A,acnususd,"May 12, 2022",2022-05-12
+spain,Spain 🇪🇸,ACS Actividades de Construccion y Servicios SA,acseseur,"Jan 3, 2011",2011-01-03
+spain,Spain 🇪🇸,Acerinox SA,acxeseur,"Jan 3, 2011",2011-01-03
+vccy,Crypto assets ₿,Cardano vs US Dollar,adausd,"Sep 25, 2021",2021-09-25
+us,United States 🇺🇸,ADOBE SYSTEMS INC,adbeususd,"May 11, 2017",2017-05-11
+switzerland,Switzerland 🇨🇭,Adecco SA,adenchchf,"Jan 3, 2011",2011-01-03
+us,United States 🇺🇸,ANALOG DEVICES INC,adiususd,"Jan 30, 2018",2018-01-30
+uk,United Kingdom 🇬🇧,Admiral Group PLC,admgbgbx,"Jan 4, 2011",2011-01-04
+us,United States 🇺🇸,AUTOMATIC DATA PROCESSING,adpususd,"Nov 2, 2017",2017-11-02
+germany,Germany 🇩🇪,Adidas AG,adsdeeur,"Jan 3, 2011",2011-01-03
+us,United States 🇺🇸,AUTODESK INC,adskususd,"Jan 30, 2018",2018-01-30
+fx_crosses,Forex currencies 💱,United Arab Emirates dirham vs. Renminbi (offshore),aedcnh,"Sep 17, 2024",2024-09-17
+fx_crosses,Forex currencies 💱,United Arab Emirates dirham vs. Czech koruna,aedczk,"Sep 16, 2024",2024-09-16
+fx_crosses,Forex currencies 💱,United Arab Emirates dirham vs. Hong Kong dollar,aedhkd,"Sep 17, 2024",2024-09-17
+fx_crosses,Forex currencies 💱,United Arab Emirates dirham vs. Hungarian forint,aedhuf,"Sep 16, 2024",2024-09-16
+fx_crosses,Forex currencies 💱,United Arab Emirates dirham vs. Japanese yen,aedjpy,"Sep 16, 2024",2024-09-16
+fx_crosses,Forex currencies 💱,United Arab Emirates dirham vs. Mexican peso,aedmxn,"Sep 16, 2024",2024-09-16
+fx_crosses,Forex currencies 💱,United Arab Emirates dirham vs. Romanian leu,aedron,"Sep 16, 2024",2024-09-16
+fx_crosses,Forex currencies 💱,United Arab Emirates dirham vs. Saudi riyal,aedsar,"Sep 16, 2024",2024-09-16
+fx_crosses,Forex currencies 💱,United Arab Emirates dirham vs. Thai baht,aedthb,"Sep 16, 2024",2024-09-16
+fx_crosses,Forex currencies 💱,United Arab Emirates dirham vs. Turkish lira,aedtry,"Sep 16, 2024",2024-09-16
+fx_crosses,Forex currencies 💱,United Arab Emirates dirham vs. South African rand,aedzar,"Sep 16, 2024",2024-09-16
+spain,Spain 🇪🇸,Aena SA,aenaeseur,"Feb 11, 2015",2015-02-11
+us,United States 🇺🇸,AMERICAN ELECTRIC POWER,aepususd,"Sep 26, 2016",2016-09-26
+france,France 🇫🇷,Air France-KLM,affreur,"Jan 3, 2011",2011-01-03
+us,United States 🇺🇸,AMERICAN FINANCIAL GROUP INC,afgususd,"Aug 22, 2022",2022-08-22
+etf_cfd,ETFs 📈,iShares Ageing Population UCITS ETF USD (Acc),agesgbgbx,"Mar 20, 2020",2020-03-20
+uk,United Kingdom 🇬🇧,Aggreko PLC,agkgbgbx,"Jan 4, 2011",2011-01-04
+italy,Italy 🇮🇹,Autogrill Spa,agliteur,"Jun 1, 2020",2020-06-01
+us,United States 🇺🇸,AGNC INVESTMENT CORP,agncususd,"May 12, 2022",2022-05-12
+netherlands,Netherlands 🇳🇱,Aegon NV,agnnleur,"Jan 3, 2011",2011-01-03
+belgium,Belgium 🇧🇪,Ageas,agsbeeur,"Jan 3, 2011",2011-01-03
+netherlands,Netherlands 🇳🇱,Koninklijke Ahold Delhaize NV,ahnleur,"Jan 3, 2011",2011-01-03
+uk,United Kingdom 🇬🇧,Ashtead Group PLC,ahtgbgbx,"Jan 4, 2011",2011-01-04
+etf_cfd,ETFs 📈,L&G Artificial Intelligence UCITS ETF,aiaigbusd,"Feb 28, 2020",2020-02-28
+france,France 🇫🇷,Air Liquide SA,aifreur,"Jan 3, 2011",2011-01-03
+us,United States 🇺🇸,AMERICAN INTERNATIONAL GROUP,aigususd,"May 11, 2017",2017-05-11
+france,France 🇫🇷,Airbus Group SE,airfreur,"Jan 2, 2014",2014-01-02
+us,United States 🇺🇸,ARTHUR J GALLAGHER & CO,ajgususd,"May 12, 2022",2022-05-12
+netherlands,Netherlands 🇳🇱,Akzo Nobel NV,akzanleur,"Jan 3, 2011",2011-01-03
+us,United States 🇺🇸,ALBEMARLE CORP,albususd,"May 12, 2022",2022-05-12
+mexico,Mexico 🇲🇽,Alfa SA B A,alfaamxmxn,"Oct 13, 2022",2022-10-13
+sweden,Sweden 🇸🇪,Alfa Laval AB,alfasesek,"Jan 3, 2011",2011-01-03
+us,United States 🇺🇸,ALIGN TECHNOLOGY INC,algnususd,"May 16, 2022",2022-05-16
+us,United States 🇺🇸,ALKERMES PLC,alksususd,"May 12, 2022",2022-05-12
+us,United States 🇺🇸,ALASKA AIR GROUP INC,alkususd,"May 12, 2022",2022-05-12
+us,United States 🇺🇸,ALLEGION PLC,alleususd,"May 12, 2022",2022-05-12
+us,United States 🇺🇸,ALLSTATE CORP,allususd,"Jan 31, 2018",2018-01-31
+us,United States 🇺🇸,ALLY FINANCIAL INC,allyususd,"Jun 15, 2022",2022-06-15
+us,United States 🇺🇸,ALNYLAM PHARMACEUTICALS INC,alnyususd,"May 12, 2022",2022-05-12
+france,France 🇫🇷,Alstom SA,alofreur,"Jan 3, 2011",2011-01-03
+mexico,Mexico 🇲🇽,Alsea SAB de CV,alseamxmxn,"Oct 13, 2022",2022-10-13
+germany,Germany 🇩🇪,Allianz SE,alvdeeur,"Jan 3, 2011",2011-01-03
+us,United States 🇺🇸,ALEXION PHARMACEUTICALS INC,alxnususd,"Jan 26, 2017",2017-01-26
+us,United States 🇺🇸,APPLIED MATERIALS INC,amatususd,"May 11, 2017",2017-05-11
+us,United States 🇺🇸,AMCOR PLC,amcrususd,"May 12, 2022",2022-05-12
+us,United States 🇺🇸,ADVANCED MICRO DEVICES,amdususd,"Nov 2, 2017",2017-11-02
+us,United States 🇺🇸,AMGEN INC,amgnususd,"Jan 26, 2017",2017-01-26
+us,United States 🇺🇸,AMERICAN HOMES 4 RENT- A,amhususd,"May 12, 2022",2022-05-12
+italy,Italy 🇮🇹,Amplifon Spa,ampiteur,"Jun 1, 2020",2020-06-01
+us,United States 🇺🇸,AMERIPRISE FINANCIAL INC,ampususd,"Jan 31, 2018",2018-01-31
+spain,Spain 🇪🇸,Amadeus IT Holding SA,amseseur,"Jan 3, 2011",2011-01-03
+us,United States 🇺🇸,AMERICAN TOWER CORP,amtususd,"Nov 2, 2017",2017-11-02
+us,United States 🇺🇸,American Well Corp Class A,amwlususd,"Oct 1, 2020",2020-10-01
+mexico,Mexico 🇲🇽,America Movil SAB de C SERL,amxlmxmxn,"Oct 13, 2022",2022-10-13
+us,United States 🇺🇸,AMAZON.COM INC,amznususd,"Jan 26, 2017",2017-01-26
+us,United States 🇺🇸,ARISTA NETWORKS INC,anetususd,"May 12, 2022",2022-05-12
+us,United States 🇺🇸,ANSYS INC,anssususd,"May 12, 2022",2022-05-12
+us,United States 🇺🇸,ANTHEM INC,antmususd,"Nov 2, 2017",2017-11-02
+uk,United Kingdom 🇬🇧,Antofagasta PLC,antogbgbx,"Jan 4, 2011",2011-01-04
+us,United States 🇺🇸,AON PLC-CLASS A,aonususd,"May 12, 2022",2022-05-12
+us,United States 🇺🇸,SMITH (A.O.) CORP,aosususd,"May 12, 2022",2022-05-12
+us,United States 🇺🇸,APACHE CORP,apaususd,"Jan 31, 2018",2018-01-31
+us,United States 🇺🇸,AIR PRODUCTS & CHEMICALS INC,apdususd,"Nov 2, 2017",2017-11-02
+spain,Spain 🇪🇸,Applus Services,appeseur,"May 11, 2022",2022-05-11
+us,United States 🇺🇸,APTIV PLC,aptvususd,"May 12, 2022",2022-05-12
+mexico,Mexico 🇲🇽,Arca Continental SAB de CV,arcamxmxn,"Oct 13, 2022",2022-10-13
+us,United States 🇺🇸,ALEXANDRIA REAL ESTATE EQUIT,areususd,"May 12, 2022",2022-05-12
+etf_cfd,ETFs 📈,ARK 21Shares Active Bitcoin Ethereum Strategy ETF Fund,arkiususd,"Apr 25, 2024",2024-04-25
+etf_cfd_us,United States ETFs 🇺🇸📈,ARK Autonomous Technology & Robotics ETF,arkqususd,"Mar 19, 2020",2020-03-19
+etf_cfd_us,United States ETFs 🇺🇸📈,ARK Space Exporation & Innovation ETF,arkxususd,"Jan 2, 2024",2024-01-02
+us,United States 🇺🇸,ARAMARK,armkususd,"May 13, 2022",2022-05-13
+us,United States 🇺🇸,ANTERO RESOURCES CORP,arususd,"May 12, 2022",2022-05-12
+us,United States 🇺🇸,ARROW ELECTRONICS INC,arwususd,"May 17, 2022",2022-05-17
+netherlands,Netherlands 🇳🇱,ASML Holding NV,asmlnleur,"Jan 3, 2011",2011-01-03
+mexico,Mexico 🇲🇽,Grupo Aeroportuario del Sureste,asurbmxmxn,"Oct 13, 2022",2022-10-13
+sweden,Sweden 🇸🇪,Atlas Copco AB,atcoasesek,"Jan 3, 2011",2011-01-03
+italy,Italy 🇮🇹,Atlantia Spa,atliteur,"Jun 1, 2020",2020-06-01
+france,France 🇫🇷,ATOS SE,atofreur,"Jun 14, 2022",2022-06-14
+us,United States 🇺🇸,ATMOS ENERGY CORP,atoususd,"May 12, 2022",2022-05-12
+us,United States 🇺🇸,ACTIVISION BLIZZARD INC,atviususd,"May 11, 2017",2017-05-11
+fx_crosses,Forex currencies 💱,Australian dollar vs. United Arab Emirates dirham,audaed,"Sep 16, 2024",2024-09-16
+fx_crosses,Forex currencies 💱,Australian Dollar vs Canadian Dollar,audcad,"Nov 18, 1992",1992-11-18
+fx_crosses,Forex currencies 💱,Australian Dollar vs Swiss Franc,audchf,"Nov 22, 1991",1991-11-22
+fx_crosses,Forex currencies 💱,Australian dollar vs. Renminbi (offshore),audcnh,"Apr 17, 2023",2023-04-17
+fx_crosses,Forex currencies 💱,Australian dollar vs. Czech koruna,audczk,"Dec 19, 2023",2023-12-19
+fx_crosses,Forex currencies 💱,Australian dollar vs. Danish krone,auddkk,"Dec 19, 2023",2023-12-19
+fx_crosses,Forex currencies 💱,Australian dollar vs. Hong Kong dollar,audhkd,"Dec 19, 2023",2023-12-19
+fx_crosses,Forex currencies 💱,Australian dollar vs. Hungarian forint,audhuf,"Apr 23, 2024",2024-04-23
+fx_crosses,Forex currencies 💱,Australian dollar vs. Israeli new shekel,audils,"Sep 16, 2024",2024-09-16
+fx_crosses,Forex currencies 💱,Australian Dollar vs Japanese Yen,audjpy,"Feb 4, 1991",1991-02-04
+fx_crosses,Forex currencies 💱,Australian dollar vs. Mexican peso,audmxn,"Dec 19, 2023",2023-12-19
+fx_crosses,Forex currencies 💱,Australian dollar vs. Norwegian krone,audnok,"Dec 19, 2023",2023-12-19
+fx_crosses,Forex currencies 💱,Australian Dollar vs New Zealand Dollar,audnzd,"Dec 21, 1993",1993-12-21
+fx_crosses,Forex currencies 💱,Australian dollar vs. Polish zÅ‚oty,audpln,"Jan 2, 1990",1990-01-02
+fx_crosses,Forex currencies 💱,Australian dollar vs. Romanian leu,audron,"Sep 16, 2024",2024-09-16
+fx_crosses,Forex currencies 💱,Australian dollar vs. Saudi riyal,audsar,"Sep 16, 2024",2024-09-16
+fx_crosses,Forex currencies 💱,Australian dollar vs. Swedish krona,audsek,"Dec 19, 2023",2023-12-19
+fx_crosses,Forex currencies 💱,Australian Dollar vs Singapore Dollar,audsgd,"Jun 4, 1999",1999-06-04
+fx_crosses,Forex currencies 💱,Australian dollar vs. Thai baht,audthb,"Sep 16, 2024",2024-09-16
+fx_crosses,Forex currencies 💱,Australian dollar vs. Turkish lira,audtry,"Dec 19, 2023",2023-12-19
+fx_majors,Forex major currencies 💶,Australian Dollar vs US Dollar,audusd,"Jan 4, 1993",1993-01-04
+fx_crosses,Forex currencies 💱,Australian dollar vs. South African rand,audzar,"Apr 24, 2024",2024-04-24
+idx_asia,Asia 🌏,Australia 200 Index,ausidxaud,"Jun 1, 2014",2014-06-01
+us,United States 🇺🇸,AGILENT TECHNOLOGIES INC,aususd,"May 25, 2017",2017-05-25
+us,United States 🇺🇸,AVALONBAY COMMUNITIES INC,avbususd,"Jan 31, 2018",2018-01-31
+vccy,Crypto assets ₿,Aave vs US Dollar,aveusd,"Sep 15, 2021",2021-09-15
+uk,United Kingdom 🇬🇧,Aviva PLC,avgbgbx,"Jan 4, 2011",2011-01-04
+us,United States 🇺🇸,Broadcom Limited,avgoususd,"Jan 26, 2017",2017-01-26
+us,United States 🇺🇸,AVALARA INC,avlrususd,"May 12, 2022",2022-05-12
+us,United States 🇺🇸,AVANTOR INC,avtrususd,"May 12, 2022",2022-05-12
+uk,United Kingdom 🇬🇧,AVEVA GROUP PLC,avvgbgbx,"May 11, 2022",2022-05-11
+etf_cfd_us,United States ETFs 🇺🇸📈,Amplify Travel Tech ETF,awayususd,"Mar 19, 2020",2020-03-19
+us,United States 🇺🇸,AMERICAN WATER WORKS CO INC,awkususd,"May 12, 2022",2022-05-12
+us,United States 🇺🇸,AMERICAN EXPRESS CO,axpususd,"Nov 2, 2017",2017-11-02
+us,United States 🇺🇸,AXALTA COATING SYSTEMS LTD,axtaususd,"May 12, 2022",2022-05-12
+us,United States 🇺🇸,ALTERYX INC - CLASS A,ayxususd,"May 12, 2022",2022-05-12
+italy,Italy 🇮🇹,Azimut Holding Spa,azmiteur,"Jun 1, 2020",2020-06-01
+uk,United Kingdom 🇬🇧,AstraZeneca PLC,azngbgbx,"Jan 4, 2011",2011-01-04
+us,United States 🇺🇸,AstraZeneca PLC,aznususd,"Jan 26, 2017",2017-01-26
+us,United States 🇺🇸,AUTOZONE INC,azoususd,"Nov 2, 2017",2017-11-02
+us,United States 🇺🇸,ASPEN TECHNOLOGY INC,azpnususd,"May 18, 2022",2022-05-18
+us,United States 🇺🇸,ALIBABA GROUP HOLDING-SP ADR,babaususd,"Jan 26, 2017",2017-01-26
+uk,United Kingdom 🇬🇧,Babcock International Group PLC,babgbgbx,"Jan 4, 2011",2011-01-04
+us,United States 🇺🇸,BANK OF AMERICA CORP,bacususd,"Jan 26, 2017",2017-01-26
+switzerland,Switzerland 🇨🇭,Julius Baer Group Ltd,baerchchf,"Jan 3, 2011",2011-01-03
+uk,United Kingdom 🇬🇧,BAE Systems PLC,bagbgbx,"Jan 4, 2011",2011-01-04
+us,United States 🇺🇸,BOOZ ALLEN HAMILTON HOLDINGS,bahususd,"May 12, 2022",2022-05-12
+italy,Italy 🇮🇹,Banco BPM Spa,bamiiteur,"Aug 10, 2020",2020-08-10
+uk,United Kingdom 🇬🇧,Barclays PLC,barcgbgbx,"Jan 4, 2011",2011-01-04
+germany,Germany 🇩🇪,BASF SE,basdeeur,"Jan 3, 2011",2011-01-03
+uk,United Kingdom 🇬🇧,British American Tobacco PLC,batsgbgbx,"Jan 4, 2011",2011-01-04
+vccy,Crypto assets ₿,Basic Attention Token vs US Dollar,batusd,"Aug 5, 2019",2019-08-05
+us,United States 🇺🇸,Boeing Co,baususd,"Jan 26, 2017",2017-01-26
+germany,Germany 🇩🇪,Bayer AG,bayndeeur,"Jan 3, 2011",2011-01-03
+mexico,Mexico 🇲🇽,Banco Del Bajio SA,bbajioomxmxn,"Oct 13, 2022",2022-10-13
+us,United States 🇺🇸,Banco Bradesco S.A.,bbdususd,"Jan 26, 2017",2017-01-26
+spain,Spain 🇪🇸,Banco Bilbao Vizcaya Argentaria SA,bbvaeseur,"Jan 3, 2011",2011-01-03
+us,United States 🇺🇸,BATH & BODY WORKS INC,bbwiususd,"May 12, 2022",2022-05-12
+us,United States 🇺🇸,BEST BUY CO INC,bbyususd,"May 11, 2017",2017-05-11
+vccy,Crypto assets ₿,Bitcoin Cash vs. Swiss franc,bchchf,"Mar 14, 2023",2023-03-14
+vccy,Crypto assets ₿,Bitcoin Cash vs. Euro,bcheur,"Mar 14, 2023",2023-03-14
+vccy,Crypto assets ₿,Bitcoin Cash vs. Pound sterling,bchgbp,"Mar 14, 2023",2023-03-14
+vccy,Crypto assets ₿,Bitcoin Cash vs US dollar,bchusd,"May 17, 2021",2021-05-17
+italy,Italy 🇮🇹,Brunello Cucinelli Spa,bciteur,"Nov 2, 2020",2020-11-02
+uk,United Kingdom 🇬🇧,BARRATT DEVELOPMENTS PLC,bdevgbgbx,"May 11, 2022",2022-05-11
+us,United States 🇺🇸,BECTON DICKINSON AND CO,bdxususd,"Jan 31, 2018",2018-01-31
+germany,Germany 🇩🇪,Beiersdorf AG,beideeur,"Jan 3, 2011",2011-01-03
+belgium,Belgium 🇧🇪,Proximus,belgbeeur,"Jan 3, 2011",2011-01-03
+us,United States 🇺🇸,BERRY GLOBAL GROUP INC,beryususd,"May 12, 2022",2022-05-12
+us,United States 🇺🇸,BUNGE LTD,bgususd,"May 12, 2022",2022-05-12
+us,United States 🇺🇸,BAIDU INC,biduususd,"Nov 2, 2017",2017-11-02
+us,United States 🇺🇸,BIOGEN INC,biibususd,"May 11, 2017",2017-05-11
+us,United States 🇺🇸,BIO-RAD LABORATORIES-A,bioususd,"May 12, 2022",2022-05-12
+ireland,Ireland 🇮🇪,Bank Of Ireland Plc,birgieeur,"Jun 1, 2020",2020-06-01
+etf_cfd_us,United States ETFs 🇺🇸📈,ProShares Bitcoin ETF,bitoususd,"Nov 22, 2022",2022-11-22
+us,United States 🇺🇸,BLACK KNIGHT INC,bkiususd,"May 12, 2022",2022-05-12
+us,United States 🇺🇸,BAKER HUGHES CO,bkrususd,"May 12, 2022",2022-05-12
+us,United States 🇺🇸,BANK OF NEW YORK MELLON CORP,bkususd,"May 11, 2017",2017-05-11
+us,United States 🇺🇸,BLACKROCK INC,blkususd,"May 12, 2022",2022-05-12
+uk,United Kingdom 🇬🇧,British Land Co PLC,blndgbgbx,"Jan 4, 2011",2011-01-04
+uk,United Kingdom 🇬🇧,BHP Billiton PLC,bltgbgbx,"Jan 4, 2011",2011-01-04
+italy,Italy 🇮🇹,Banca Monte dei Paschi di Siena Spa,bmpsiteur,"Dec 17, 2020",2020-12-17
+us,United States 🇺🇸,BIOMARIN PHARMACEUTICAL INC,bmrnususd,"May 12, 2022",2022-05-12
+germany,Germany 🇩🇪,Bayerische Motoren Werke AG,bmwdeeur,"Jan 3, 2011",2011-01-03
+us,United States 🇺🇸,BRISTOL-MYERS SQUIBB CO,bmyususd,"May 11, 2017",2017-05-11
+france,France 🇫🇷,Danone SA,bnfreur,"Jan 3, 2011",2011-01-03
+france,France 🇫🇷,BNP Paribas SA,bnpfreur,"Jan 3, 2011",2011-01-03
+germany,Germany 🇩🇪,BRENNTAG SE,bnrdeeur,"May 12, 2022",2022-05-12
+uk,United Kingdom 🇬🇧,Bunzl PLC,bnzlgbgbx,"Jan 4, 2011",2011-01-04
+mexico,Mexico 🇲🇽,Bolsa Mexicana de Valores SAB de CV,bolsaamxmxn,"Oct 13, 2022",2022-10-13
+germany,Germany 🇩🇪,HUGO BOSS AG,bossdeeur,"Jun 18, 2012",2012-06-18
+italy,Italy 🇮🇹,Bper Banca Spa,bpeiteur,"Dec 17, 2020",2020-12-17
+uk,United Kingdom 🇬🇧,BP PLC,bpgbgbx,"Jan 4, 2011",2011-01-04
+us,United States 🇺🇸,POPULAR INC,bpopususd,"May 13, 2022",2022-05-13
+us,United States 🇺🇸,BP p.l.c.,bpususd,"Jan 31, 2018",2018-01-31
+uk,United Kingdom 🇬🇧,Burberry Group PLC,brbygbgbx,"Jan 4, 2011",2011-01-04
+italy,Italy 🇮🇹,Brembo Spa,breiteur,"Dec 17, 2020",2020-12-17
+cmd_energy,Energy commodities ⚡,US Brent Crude Oil,brentcmdusd,"Nov 17, 2006",2006-11-17
+us,United States 🇺🇸,BERKSHIRE HATHAWAY INC-CL B,brkbususd,"Nov 6, 2017",2017-11-06
+us,United States 🇺🇸,BRUKER CORP,brkrususd,"May 12, 2022",2022-05-12
+us,United States 🇺🇸,BROWN & BROWN INC,broususd,"May 12, 2022",2022-05-12
+us,United States 🇺🇸,BROADRIDGE FINANCIAL SOLUTIO,brususd,"May 12, 2022",2022-05-12
+us,United States 🇺🇸,BRIXMOR PROPERTY GROUP INC,brxususd,"May 13, 2022",2022-05-13
+us,United States 🇺🇸,BOSTON SCIENTIFIC CORP,bsxususd,"May 11, 2017",2017-05-11
+vccy,Crypto assets ₿,Bitcoin vs. Swiss franc,btcchf,"Mar 14, 2023",2023-03-14
+vccy,Crypto assets ₿,Bitcoin vs. Euro,btceur,"May 15, 2018",2018-05-15
+vccy,Crypto assets ₿,Bitcoin vs. Pound sterling,btcgbp,"Mar 14, 2023",2023-03-14
+vccy,Crypto assets ₿,Bitcoin vs US Dollar,btcusd,"May 7, 2017",2017-05-07
+etf_cfd_us,United States ETFs 🇺🇸📈,Valkyrie Bitcoin and Ether Strategy ETF,btfususd,"Jun 29, 2022",2022-06-29
+uk,United Kingdom 🇬🇧,BT Group PLC,btgbgbx,"Jan 4, 2011",2011-01-04
+etf_cfd,ETFs 📈,Global X Cybersecurity UCITS ETF Fund,bugggbgbx,"Oct 21, 2024",2024-10-21
+bnd_cfd,Bonds 📊,Euro Bund,bundtreur,"May 2, 2016",2016-05-02
+us,United States 🇺🇸,BURLINGTON STORES INC,burlususd,"Jun 15, 2022",2022-06-15
+us,United States 🇺🇸,BORGWARNER INC,bwaususd,"May 12, 2022",2022-05-12
+us,United States 🇺🇸,BEYOND MEAT INC,byndususd,"May 12, 2022",2022-05-12
+italy,Italy 🇮🇹,Buzzi Unicem Spa,bzuiteur,"Dec 17, 2020",2020-12-17
+spain,Spain 🇪🇸,CaixaBank,cabkeseur,"Jul 1, 2011",2011-07-01
+us,United States 🇺🇸,CREDIT ACCEPTANCE CORP,caccususd,"May 12, 2022",2022-05-12
+us,United States 🇺🇸,CACI INTERNATIONAL INC -CL A,caciususd,"May 13, 2022",2022-05-13
+fx_crosses,Forex currencies 💱,Canadian dollar vs. United Arab Emirates dirham,cadaed,"Sep 16, 2024",2024-09-16
+fx_crosses,Forex currencies 💱,Canadian Dollar vs Swiss Franc,cadchf,"Nov 22, 1991",1991-11-22
+fx_crosses,Forex currencies 💱,Canadian dollar vs. Renminbi (offshore),cadcnh,"Sep 16, 2024",2024-09-16
+fx_crosses,Forex currencies 💱,Canadian dollar vs. Czech koruna,cadczk,"May 15, 2024",2024-05-15
+fx_crosses,Forex currencies 💱,Canadian dollar vs. Danish krone,caddkk,"May 15, 2024",2024-05-15
+fx_crosses,Forex currencies 💱,Canadian Dollar vs Hong Kong Dollar,cadhkd,"Jun 16, 1999",1999-06-16
+fx_crosses,Forex currencies 💱,Canadian dollar vs. Hungarian forint,cadhuf,"May 15, 2024",2024-05-15
+fx_crosses,Forex currencies 💱,Canadian dollar vs. Israeli new shekel,cadils,"Sep 16, 2024",2024-09-16
+fx_crosses,Forex currencies 💱,Canadian Dollar vs Japanese Yen,cadjpy,"Feb 23, 1993",1993-02-23
+fx_crosses,Forex currencies 💱,Canadian dollar vs. Mexican peso,cadmxn,"May 15, 2024",2024-05-15
+fx_crosses,Forex currencies 💱,Canadian dollar vs. Norwegian krone,cadnok,"May 15, 2024",2024-05-15
+fx_crosses,Forex currencies 💱,Canadian dollar vs. Polish zÅ‚oty,cadpln,"Nov 10, 1999",1999-11-10
+fx_crosses,Forex currencies 💱,Canadian dollar vs. Romanian leu,cadron,"Sep 16, 2024",2024-09-16
+fx_crosses,Forex currencies 💱,Canadian dollar vs. Saudi riyal,cadsar,"Sep 16, 2024",2024-09-16
+fx_crosses,Forex currencies 💱,Canadian dollar vs. Swedish krona,cadsek,"May 15, 2024",2024-05-15
+fx_crosses,Forex currencies 💱,Canadian dollar vs. Singapore dollar,cadsgd,"May 15, 2024",2024-05-15
+fx_crosses,Forex currencies 💱,Canadian dollar vs. Thai baht,cadthb,"Sep 16, 2024",2024-09-16
+fx_crosses,Forex currencies 💱,Canadian dollar vs. Turkish lira,cadtry,"May 15, 2024",2024-05-15
+fx_crosses,Forex currencies 💱,Canadian dollar vs. South African rand,cadzar,"May 15, 2024",2024-05-15
+france,France 🇫🇷,Carrefour SA,cafreur,"Jan 3, 2011",2011-01-03
+us,United States 🇺🇸,CONAGRA FOODS INC,cagususd,"Jan 31, 2018",2018-01-31
+us,United States 🇺🇸,CARDINAL HEALTH INC,cahususd,"Jan 31, 2018",2018-01-31
+france,France 🇫🇷,Cap Gemini SA,capfreur,"Jan 3, 2011",2011-01-03
+denmark,Denmark 🇩🇰,Carlsberg A/S,carlbdkdkk,"Jan 3, 2011",2011-01-03
+us,United States 🇺🇸,CARRIER GLOBAL CORP,carrususd,"May 12, 2022",2022-05-12
+italy,Italy 🇮🇹,Cattolica Ass Coop A,cassiteur,"Dec 17, 2020",2020-12-17
+us,United States 🇺🇸,CASEY'S GENERAL STORES INC,casyususd,"May 12, 2022",2022-05-12
+us,United States 🇺🇸,CATERPILLAR INC,catususd,"May 11, 2017",2017-05-11
+germany,Germany 🇩🇪,Commerzbank AG,cbkdeeur,"Jan 3, 2011",2011-01-03
+us,United States 🇺🇸,CBOE GLOBAL MARKETS INC,cboeususd,"May 12, 2022",2022-05-12
+us,United States 🇺🇸,CHUBB LTD,cbususd,"May 12, 2022",2022-05-12
+us,United States 🇺🇸,CROWN CASTLE INTL CORP,cciususd,"May 12, 2022",2022-05-12
+us,United States 🇺🇸,CROWN HOLDINGS INC,cckususd,"May 13, 2022",2022-05-13
+uk,United Kingdom 🇬🇧,Carnival PLC,cclgbgbx,"Jan 4, 2011",2011-01-04
+us,United States 🇺🇸,CARNIVAL CORP,cclususd,"May 12, 2022",2022-05-12
+us,United States 🇺🇸,CERIDIAN HCM HOLDING INC,cdayususd,"May 12, 2022",2022-05-12
+us,United States 🇺🇸,CENTENNIAL RESOURCE DEVELO-A,cdevususd,"May 13, 2022",2022-05-13
+us,United States 🇺🇸,CDK GLOBAL INC,cdkususd,"May 12, 2022",2022-05-12
+us,United States 🇺🇸,CADENCE DESIGN SYS INC,cdnsususd,"May 12, 2022",2022-05-12
+us,United States 🇺🇸,CDW CORP/DE,cdwususd,"May 12, 2022",2022-05-12
+mexico,Mexico 🇲🇽,Cemex Sab de CV,cemexcpomxmxn,"Oct 13, 2022",2022-10-13
+us,United States 🇺🇸,CERNER CORP,cernususd,"May 18, 2018",2018-05-18
+italy,Italy 🇮🇹,Cerved Information Solutions SPA,cerviteur,"Dec 17, 2020",2020-12-17
+us,United States 🇺🇸,CELANESE CORP,ceususd,"May 12, 2022",2022-05-12
+us,United States 🇺🇸,CITIZENS FINANCIAL GROUP,cfgususd,"May 12, 2022",2022-05-12
+switzerland,Switzerland 🇨🇭,Richemont,cfrchchf,"Jun 14, 2022",2022-06-14
+us,United States 🇺🇸,CULLEN/FROST BANKERS INC,cfrususd,"May 12, 2022",2022-05-12
+us,United States 🇺🇸,CF INDUSTRIES HOLDINGS INC,cfususd,"Jan 31, 2018",2018-01-31
+us,United States 🇺🇸,COGNEX CORP,cgnxususd,"May 12, 2022",2022-05-12
+us,United States 🇺🇸,CHURCH & DWIGHT CO INC,chdususd,"May 12, 2022",2022-05-12
+idx_europe,Europe 🇪🇺,Switzerland 20 Index,cheidxchf,"Jan 3, 1992",1992-01-03
+fx_crosses,Forex currencies 💱,Swiss franc vs. United Arab Emirates dirham,chfaed,"Sep 17, 2024",2024-09-17
+fx_crosses,Forex currencies 💱,Swiss franc vs. Renminbi (offshore),chfcnh,"Sep 16, 2024",2024-09-16
+fx_crosses,Forex currencies 💱,Swiss franc vs. Czech koruna,chfczk,"May 15, 2024",2024-05-15
+fx_crosses,Forex currencies 💱,Swiss franc vs. Danish krone,chfdkk,"May 15, 2024",2024-05-15
+fx_crosses,Forex currencies 💱,Swiss franc vs. Hong Kong dollar,chfhkd,"May 15, 2024",2024-05-15
+fx_crosses,Forex currencies 💱,Swiss franc vs. Hungarian forint,chfhuf,"May 15, 2024",2024-05-15
+fx_crosses,Forex currencies 💱,Swiss franc vs. Israeli new shekel,chfils,"Sep 16, 2024",2024-09-16
+fx_crosses,Forex currencies 💱,Swiss Franc vs Japanese Yen,chfjpy,"Dec 3, 1990",1990-12-03
+fx_crosses,Forex currencies 💱,Swiss franc vs. Mexican peso,chfmxn,"May 15, 2024",2024-05-15
+fx_crosses,Forex currencies 💱,Swiss franc vs. Norwegian krone,chfnok,"May 15, 2024",2024-05-15
+fx_crosses,Forex currencies 💱,Swiss franc vs. Polish zÅ‚oty,chfpln,"Oct 4, 2004",2004-10-04
+fx_crosses,Forex currencies 💱,Swiss franc vs. Romanian leu,chfron,"Sep 16, 2024",2024-09-16
+fx_crosses,Forex currencies 💱,Swiss franc vs. Saudi riyal,chfsar,"Sep 16, 2024",2024-09-16
+fx_crosses,Forex currencies 💱,Swiss franc vs. Swedish krona,chfsek,"May 15, 2024",2024-05-15
+fx_crosses,Forex currencies 💱,Swiss Franc vs Singapore Dollar,chfsgd,"Apr 29, 1998",1998-04-29
+fx_crosses,Forex currencies 💱,Swiss franc vs. Thai baht,chfthb,"Sep 16, 2024",2024-09-16
+fx_crosses,Forex currencies 💱,Swiss franc vs. Turkish lira,chftry,"May 15, 2024",2024-05-15
+fx_crosses,Forex currencies 💱,Swiss franc vs. South African rand,chfzar,"May 15, 2024",2024-05-15
+idx_asia,Asia 🌏,China A50 Index,chiidxusd,"Jul 17, 2017",2017-07-17
+us,United States 🇺🇸,CHANGE HEALTHCARE INC,chngususd,"May 12, 2022",2022-05-12
+us,United States 🇺🇸,CIGNA CORP,ciususd,"May 11, 2017",2017-05-11
+switzerland,Switzerland 🇨🇭,Clariant AG,clnchchf,"Jan 3, 2011",2011-01-03
+us,United States 🇺🇸,CONTINENTAL RESOURCES INC/OK,clrususd,"May 12, 2022",2022-05-12
+us,United States 🇺🇸,COLGATE-PALMOLIVE CO,clususd,"Nov 2, 2017",2017-11-02
+us,United States 🇺🇸,COMCAST CORP-CLASS A,cmcsaususd,"Jan 26, 2017",2017-01-26
+us,United States 🇺🇸,CME GROUP INC,cmeususd,"May 11, 2017",2017-05-11
+us,United States 🇺🇸,CHIPOTLE MEXICAN GRILL INC,cmgususd,"May 11, 2017",2017-05-11
+us,United States 🇺🇸,CUMMINS INC,cmiususd,"Feb 1, 2018",2018-02-01
+vccy,Crypto assets ₿,Compound vs US Dollar,cmpusd,"Sep 25, 2021",2021-09-25
+uk,United Kingdom 🇬🇧,Centrica PLC,cnagbgbx,"Jan 4, 2011",2011-01-04
+us,United States 🇺🇸,CENTENE CORP,cncususd,"May 12, 2022",2022-05-12
+etf_cfd,ETFs 📈,iShares NASDAQ 100 UCITS ETF USD (Acc),cndxgbusd,"Feb 28, 2020",2020-02-28
+fx_crosses,Forex currencies 💱,Renminbi (offshore) vs. Czech koruna,cnhczk,"Sep 16, 2024",2024-09-16
+fx_crosses,Forex currencies 💱,Renminbi (offshore) vs. Hong Kong dollar,cnhhkd,"Sep 16, 2024",2024-09-16
+fx_crosses,Forex currencies 💱,Renminbi (offshore) vs. Hungarian forint,cnhhuf,"Sep 16, 2024",2024-09-16
+fx_crosses,Forex currencies 💱,Renminbi (offshore) vs. Japanese yen,cnhjpy,"May 15, 2024",2024-05-15
+fx_crosses,Forex currencies 💱,Renminbi (offshore) vs. Mexican peso,cnhmxn,"Sep 16, 2024",2024-09-16
+fx_crosses,Forex currencies 💱,Renminbi (offshore) vs. Thai baht,cnhthb,"Sep 16, 2024",2024-09-16
+fx_crosses,Forex currencies 💱,Renminbi (offshore) vs. Turkish lira,cnhtry,"Sep 16, 2024",2024-09-16
+fx_crosses,Forex currencies 💱,Renminbi (offshore) vs. South African rand,cnhzar,"Sep 16, 2024",2024-09-16
+cmd_agricultural,Agricultural commodities ☕,NY Cocoa,cocoacmdusd,"Oct 20, 2017",2017-10-20
+cmd_agricultural,Agricultural commodities ☕,Coffee Arabica,coffeecmdusx,"Dec 4, 2017",2017-12-04
+us,United States 🇺🇸,CAPITAL ONE FINANCIAL CORP,cofususd,"May 18, 2018",2018-05-18
+us,United States 🇺🇸,COHERENT INC,cohrususd,"May 13, 2022",2022-05-13
+us,United States 🇺🇸,AMERICOLD REALTY TRUST,coldususd,"May 12, 2022",2022-05-12
+denmark,Denmark 🇩🇰,Coloplast A/S,colobdkdkk,"Jan 3, 2011",2011-01-03
+germany,Germany 🇩🇪,Continental AG,condeeur,"Jan 3, 2011",2011-01-03
+us,United States 🇺🇸,COOPER COS INC/THE,cooususd,"May 12, 2022",2022-05-12
+cmd_metals,Metals commodities ⚙️,High Grade Copper,coppercmdusd,"Mar 2, 2012",2012-03-02
+us,United States 🇺🇸,CONOCOPHILLIPS,copususd,"Nov 2, 2017",2017-11-02
+us,United States 🇺🇸,COSTCO WHOLESALE CORP,costususd,"Nov 2, 2017",2017-11-02
+cmd_agricultural,Agricultural commodities ☕,Cotton,cottoncmdusx,"Oct 20, 2017",2017-10-20
+us,United States 🇺🇸,COUPA SOFTWARE INC,coupususd,"May 16, 2022",2022-05-16
+germany,Germany 🇩🇪,Covestro AG,covdeeur,"May 12, 2022",2022-05-12
+uk,United Kingdom 🇬🇧,Compass Group PLC,cpggbgbx,"Jan 4, 2011",2011-01-04
+uk,United Kingdom 🇬🇧,Capita PLC,cpigbgbx,"Jan 4, 2011",2011-01-04
+italy,Italy 🇮🇹,Davide Campari-Milano Spa,cpriteur,"Dec 17, 2020",2020-12-17
+us,United States 🇺🇸,CAPRI HOLDINGS LTD,cpriususd,"May 12, 2022",2022-05-12
+us,United States 🇺🇸,COPART INC,cprtususd,"May 12, 2022",2022-05-12
+us,United States 🇺🇸,CAMDEN PROPERTY TRUST,cptususd,"May 12, 2022",2022-05-12
+uk,United Kingdom 🇬🇧,Croda International PLC,crdagbgbx,"Jan 4, 2011",2011-01-04
+ireland,Ireland 🇮🇪,CRH Plc,crgieeur,"Oct 1, 2020",2020-10-01
+uk,United Kingdom 🇬🇧,CRH PLC,crhgbgbx,"Jan 4, 2011",2011-01-04
+us,United States 🇺🇸,CHARLES RIVER LABORATORIES,crlususd,"May 12, 2022",2022-05-12
+us,United States 🇺🇸,SALESFORCE.COM INC,crmususd,"May 11, 2017",2017-05-11
+us,United States 🇺🇸,CISCO SYSTEMS INC,cscoususd,"Jan 26, 2017",2017-01-26
+france,France 🇫🇷,AXA SA,csfreur,"Jan 3, 2011",2011-01-03
+switzerland,Switzerland 🇨🇭,Credit Suisse Group AG,csgnchchf,"Jan 3, 2011",2011-01-03
+us,United States 🇺🇸,COSTAR GROUP INC,csgpususd,"May 12, 2022",2022-05-12
+etf_cfd,ETFs 📈,Lyxor Smart Overnight Return - UCITS ETF C-EUR,csh2freur,"Jan 2, 2023",2023-01-02
+etf_cfd,ETFs 📈,Lyxor Smart Overnight Return - UCITS ETF C-GBP,csh2gbgbx,"Mar 1, 2023",2023-03-01
+us,United States 🇺🇸,CARLISLE COS INC,cslususd,"Jun 15, 2022",2022-06-15
+us,United States 🇺🇸,Credit Suisse Group AG,csususd,"Jan 26, 2017",2017-01-26
+us,United States 🇺🇸,CSX CORP,csxususd,"Nov 2, 2017",2017-11-02
+us,United States 🇺🇸,CATALENT INC,ctltususd,"May 12, 2022",2022-05-12
+us,United States 🇺🇸,CENTURYLINK INC,ctlususd,"Nov 2, 2017",2017-11-02
+us,United States 🇺🇸,COGNIZANT TECH SOLUTIONS-A,ctshususd,"Nov 2, 2017",2017-11-02
+us,United States 🇺🇸,CORTEVA INC,ctvaususd,"May 12, 2022",2022-05-12
+us,United States 🇺🇸,CITRIX SYSTEMS INC,ctxsususd,"May 18, 2018",2018-05-18
+us,United States 🇺🇸,CUBESMART,cubeususd,"May 12, 2022",2022-05-12
+us,United States 🇺🇸,CITIGROUP INC,cususd,"Jan 26, 2017",2017-01-26
+italy,Italy 🇮🇹,Credito Valtellinese Spa,cvaliteur,"Dec 17, 2020",2020-12-17
+us,United States 🇺🇸,CARVANA CO,cvnaususd,"May 12, 2022",2022-05-12
+us,United States 🇺🇸,CVS HEALTH CORP,cvsususd,"Nov 2, 2017",2017-11-02
+us,United States 🇺🇸,CHEVRON CORP,cvxususd,"Jan 26, 2017",2017-01-26
+etf_cfd,ETFs 📈,WisdomTree Cybersecurity UCITS ETF Fund,cysegbgbx,"Feb 1, 2021",2021-02-01
+fx_crosses,Forex currencies 💱,Czech koruna vs. Hungarian forint,czkhuf,"May 15, 2024",2024-05-15
+fx_crosses,Forex currencies 💱,Czech koruna vs. Japanese yen,czkjpy,"May 15, 2024",2024-05-15
+fx_crosses,Forex currencies 💱,Czech koruna vs. Thai baht,czkthb,"Sep 16, 2024",2024-09-16
+fx_crosses,Forex currencies 💱,Czech koruna vs. Turkish lira,czktry,"May 15, 2024",2024-05-15
+us,United States 🇺🇸,CAESARS ENTERTAINMENT INC,czrususd,"May 16, 2022",2022-05-16
+germany,Germany 🇩🇪,Daimler AG,daideeur,"Jan 3, 2011",2011-01-03
+us,United States 🇺🇸,DELTA AIR LINES INC,dalususd,"Nov 2, 2017",2017-11-02
+italy,Italy 🇮🇹,Danieli & Co Spa,daniteur,"Dec 17, 2020",2020-12-17
+denmark,Denmark 🇩🇰,Danske Bank A/S,danskedkdkk,"Jan 3, 2011",2011-01-03
+germany,Germany 🇩🇪,Deutsche Boerse AG,db1deeur,"Jan 3, 2011",2011-01-03
+germany,Germany 🇩🇪,Deutsche Bank AG,dbkdeeur,"Jan 3, 2011",2011-01-03
+us,United States 🇺🇸,DROPBOX INC-CLASS A,dbxususd,"May 12, 2022",2022-05-12
+uk,United Kingdom 🇬🇧,DCC PLC,dccgbgbx,"May 11, 2022",2022-05-11
+us,United States 🇺🇸,DELL TECHNOLOGIES -C,dellususd,"May 12, 2022",2022-05-12
+idx_europe,Europe 🇪🇺,Germany 40 Index,deuidxeur,"Jan 1, 2013",2013-01-01
+us,United States 🇺🇸,DEERE & CO,deususd,"May 11, 2017",2017-05-11
+etf_cfd,ETFs 📈,VanEck Defense ETF A USD Acc (GBP),dfnggbgbp,"Apr 11, 2023",2023-04-11
+us,United States 🇺🇸,DISCOVER FINANCIAL SERVICES,dfsususd,"Feb 1, 2018",2018-02-01
+uk,United Kingdom 🇬🇧,Diageo PLC,dgegbgbx,"Jan 4, 2011",2011-01-04
+france,France 🇫🇷,Vinci SA,dgfreur,"Jan 3, 2011",2011-01-03
+us,United States 🇺🇸,DOLLAR GENERAL CORP,dgususd,"May 11, 2017",2017-05-11
+us,United States 🇺🇸,DR HORTON INC,dhiususd,"Feb 1, 2018",2018-02-01
+germany,Germany 🇩🇪,Delivery Hero AG,dhrdeeur,"May 12, 2022",2022-05-12
+us,United States 🇺🇸,DANAHER CORP,dhrususd,"Nov 2, 2017",2017-11-02
+spain,Spain 🇪🇸,Distribuidora Internacional de Alimentacion SA,diaeseur,"Jul 5, 2011",2011-07-05
+italy,Italy 🇮🇹,Diasorin Spa,diaiteur,"Dec 17, 2020",2020-12-17
+etf_cfd_us,United States ETFs 🇺🇸📈,SPDR Dow Jones® Industrial Average ETF,diaususd,"May 11, 2017",2017-05-11
+cmd_energy,Energy commodities ⚡,Gas oil,dieselcmdusd,"Dec 26, 2017",2017-12-26
+us,United States 🇺🇸,WALT DISNEY CO/THE,disususd,"Jan 26, 2017",2017-01-26
+fx_crosses,Forex currencies 💱,Danish krone vs. United Arab Emirates dirham,dkkaed,"Sep 16, 2024",2024-09-16
+fx_crosses,Forex currencies 💱,Danish krone vs. Renminbi (offshore),dkkcnh,"Sep 16, 2024",2024-09-16
+fx_crosses,Forex currencies 💱,Danish krone vs. Czech koruna,dkkczk,"May 15, 2024",2024-05-15
+fx_crosses,Forex currencies 💱,Danish krone vs. Hong Kong dollar,dkkhkd,"May 15, 2024",2024-05-15
+fx_crosses,Forex currencies 💱,Danish krone vs. Hungarian forint,dkkhuf,"May 15, 2024",2024-05-15
+fx_crosses,Forex currencies 💱,Danish krone vs. Israeli new shekel,dkkils,"Sep 16, 2024",2024-09-16
+fx_crosses,Forex currencies 💱,Danish krone vs. Japanese yen,dkkjpy,"May 15, 2024",2024-05-15
+fx_crosses,Forex currencies 💱,Danish krone vs. Mexican peso,dkkmxn,"May 15, 2024",2024-05-15
+fx_crosses,Forex currencies 💱,Danish krone vs. Romanian leu,dkkron,"Sep 16, 2024",2024-09-16
+fx_crosses,Forex currencies 💱,Danish krone vs. Saudi riyal,dkksar,"Sep 16, 2024",2024-09-16
+fx_crosses,Forex currencies 💱,Danish krone vs. Thai baht,dkkthb,"Sep 16, 2024",2024-09-16
+fx_crosses,Forex currencies 💱,Danish krone vs. Turkish lira,dkktry,"May 15, 2024",2024-05-15
+fx_crosses,Forex currencies 💱,Danish krone vs. South African rand,dkkzar,"May 15, 2024",2024-05-15
+us,United States 🇺🇸,DICK'S SPORTING GOODS INC,dksususd,"May 12, 2022",2022-05-12
+us,United States 🇺🇸,DIGITAL REALTY TRUST INC,dlrususd,"May 12, 2022",2022-05-12
+us,United States 🇺🇸,DOLLAR TREE INC,dltrususd,"Nov 2, 2017",2017-11-02
+norway,Norway 🇳🇴,DNB ASA,dnbnonok,"Nov 15, 2011",2011-11-15
+us,United States 🇺🇸,DOCUSIGN INC,docuususd,"May 12, 2022",2022-05-12
+idx_america,America 🌎,US Dollar Index,dollaridxusd,"Dec 1, 2017",2017-12-01
+us,United States 🇺🇸,AMDOCS LTD,doxususd,"May 16, 2022",2022-05-16
+uk,United Kingdom 🇬🇧,DECHRA PHARMACEUTICALS PLC,dphgbgbx,"May 11, 2022",2022-05-11
+germany,Germany 🇩🇪,Deutsche Post AG,dpwdeeur,"Jan 3, 2011",2011-01-03
+us,United States 🇺🇸,DOMINO'S PIZZA INC,dpzususd,"May 12, 2022",2022-05-12
+us,United States 🇺🇸,DUKE REALTY CORP,dreususd,"May 12, 2022",2022-05-12
+etf_cfd_fr,France ETFs 🇫🇷📈,LYXOR ETF Daily X2 Short Bund,dsbfreur,"Sep 22, 2020",2020-09-22
+vccy,Crypto assets ₿,Dashcoin vs US Dollar,dshusd,"Aug 4, 2019",2019-08-04
+netherlands,Netherlands 🇳🇱,Koninklijke DSM NV,dsmnleur,"Jan 3, 2011",2011-01-03
+france,France 🇫🇷,DASSAULT SYSTEMES SE,dsyfreur,"May 12, 2022",2022-05-12
+germany,Germany 🇩🇪,Deutsche Telekom AG,dtedeeur,"Jan 3, 2011",2011-01-03
+us,United States 🇺🇸,DYNATRACE INC,dtususd,"May 12, 2022",2022-05-12
+us,United States 🇺🇸,DUKE ENERGY CORP,dukususd,"May 11, 2017",2017-05-11
+us,United States 🇺🇸,DOMINION RESOURCES INC/VA,dususd,"Feb 1, 2018",2018-02-01
+us,United States 🇺🇸,DAVITA HEALTHCARE PARTNERS I,dvaususd,"Feb 1, 2018",2018-02-01
+us,United States 🇺🇸,DEVON ENERGY CORP,dvnususd,"Feb 1, 2018",2018-02-01
+etf_cfd_us,United States ETFs 🇺🇸📈,iShares Select Dividend ETF,dvyususd,"May 11, 2017",2017-05-11
+us,United States 🇺🇸,DEXCOM INC,dxcmususd,"May 12, 2022",2022-05-12
+us,United States 🇺🇸,DXC TECHNOLOGY CO,dxcususd,"May 12, 2022",2022-05-12
+us,United States 🇺🇸,ELECTRONIC ARTS INC,eaususd,"May 11, 2017",2017-05-11
+us,United States 🇺🇸,EBAY INC,ebayususd,"Nov 2, 2017",2017-11-02
+spain,Spain 🇪🇸,Ebro Foods SA,ebreseur,"May 11, 2022",2022-05-11
+austria,Austria 🇦🇹,Erste Group Bank AG,ebsateur,"Jan 3, 2011",2011-01-03
+etf_cfd,ETFs 📈,iShares Electric Vehicles and Driving Technology UCITS ETF USD (Acc),ecargbusd,"Mar 25, 2020",2020-03-25
+uk,United Kingdom 🇬🇧,ELECTROCOMPONENTS PLC,ecmgbgbx,"May 11, 2022",2022-05-11
+france,France 🇫🇷,Electricite de France SA,edffreur,"Jan 3, 2011",2011-01-03
+portugal,Portugal 🇵🇹,EDP - Energias de Portugal SA,edppteur,"Jan 3, 2011",2011-01-03
+us,United States 🇺🇸,EURONET WORLDWIDE INC,eeftususd,"May 12, 2022",2022-05-12
+etf_cfd_us,United States ETFs 🇺🇸📈,iShares MSCI Emerging Markets ETF,eemususd,"Jan 26, 2017",2017-01-26
+etf_cfd_us,United States ETFs 🇺🇸📈,iShares MSCI EAFE ETF,efaususd,"Jan 26, 2017",2017-01-26
+us,United States 🇺🇸,EQUIFAX INC,efxususd,"Nov 2, 2017",2017-11-02
+us,United States 🇺🇸,ENCOMPASS HEALTH CORP,ehcususd,"May 12, 2022",2022-05-12
+us,United States 🇺🇸,EDISON INTERNATIONAL,eixususd,"Feb 1, 2018",2018-02-01
+us,United States 🇺🇸,ELANCO ANIMAL HEALTH INC,elanususd,"May 12, 2022",2022-05-12
+spain,Spain 🇪🇸,Endesa SA,eleeseur,"Jan 3, 2011",2011-01-03
+mexico,Mexico 🇲🇽,Grupo Elektra SAB DE CV,elektramxmxn,"Oct 13, 2022",2022-10-13
+finland,Finland 🇫🇮,Elisa OYJ,eli1vfieur,"Jan 3, 2011",2011-01-03
+us,United States 🇺🇸,EQUITY LIFESTYLE PROPERTIES,elsususd,"May 12, 2022",2022-05-12
+us,United States 🇺🇸,ESTEE LAUDER COMPANIES-CL A,elususd,"Feb 1, 2018",2018-02-01
+sweden,Sweden 🇸🇪,Electrolux AB,eluxbsesek,"Jan 3, 2011",2011-01-03
+etf_cfd_us,United States ETFs 🇺🇸📈,iShares J.P. Morgan USD Emerging Markets Bond ETF,embususd,"May 11, 2017",2017-05-11
+us,United States 🇺🇸,EMERSON ELECTRIC CO,emrususd,"Feb 1, 2018",2018-02-01
+italy,Italy 🇮🇹,Enel SpA,eneliteur,"Dec 17, 2020",2020-12-17
+france,France 🇫🇷,Bouygues SA,enfreur,"Jan 3, 2011",2011-01-03
+spain,Spain 🇪🇸,Enagas SA,engeseur,"Jan 3, 2011",2011-01-03
+france,France 🇫🇷,Engie,engifreur,"Jul 31, 2015",2015-07-31
+italy,Italy 🇮🇹,ENI Spa,eniiteur,"Dec 17, 2020",2020-12-17
+vccy,Crypto assets ₿,Enjin vs US Dollar,enjusd,"Sep 25, 2021",2021-09-25
+us,United States 🇺🇸,ENPHASE ENERGY INC,enphususd,"May 12, 2022",2022-05-12
+us,United States 🇺🇸,ENTEGRIS INC,entgususd,"May 12, 2022",2022-05-12
+germany,Germany 🇩🇪,E.ON SE,eoandeeur,"Jan 3, 2011",2011-01-03
+us,United States 🇺🇸,EOG RESOURCES INC,eogususd,"Nov 2, 2017",2017-11-02
+vccy,Crypto assets ₿,EOS vs US Dollar,eosusd,"Aug 4, 2019",2019-08-04
+us,United States 🇺🇸,EPAM SYSTEMS INC,epamususd,"May 16, 2022",2022-05-16
+us,United States 🇺🇸,EQUITABLE HOLDINGS INC,eqhususd,"May 12, 2022",2022-05-12
+us,United States 🇺🇸,EQT CORP,eqtususd,"Nov 2, 2017",2017-11-02
+italy,Italy 🇮🇹,ERG Spa,ergiteur,"Dec 17, 2020",2020-12-17
+sweden,Sweden 🇸🇪,Telefonaktiebolaget LM Ericsson,ericbsesek,"Jan 3, 2011",2011-01-03
+etf_cfd,ETFs 📈,iShares MSCI Europe Health Care Sector UCITS ETF Fund,esihgbgbx,"Oct 24, 2024",2024-10-24
+idx_europe,Europe 🇪🇺,Spain 35 Index,espidxeur,"Jun 2, 2014",2014-06-02
+etf_cfd_us,United States ETFs 🇺🇸📈,VanEck Video Gaming and eSports ETF,espoususd,"Mar 19, 2020",2020-03-19
+us,United States 🇺🇸,ESSEX PROPERTY TRUST INC,essususd,"May 12, 2022",2022-05-12
+us,United States 🇺🇸,ELASTIC NV,estcususd,"May 12, 2022",2022-05-12
+us,United States 🇺🇸,EVERSOURCE ENERGY,esususd,"May 12, 2022",2022-05-12
+vccy,Crypto assets ₿,Ethereum vs. Swiss franc,ethchf,"Mar 14, 2023",2023-03-14
+vccy,Crypto assets ₿,Ethereum vs. Euro,etheur,"Mar 14, 2023",2023-03-14
+vccy,Crypto assets ₿,Ethereum vs. Pound sterling,ethgbp,"Mar 14, 2023",2023-03-14
+vccy,Crypto assets ₿,Ether vs US Dollar,ethusd,"Dec 11, 2017",2017-12-11
+us,United States 🇺🇸,EATON CORP PLC,etnususd,"May 12, 2022",2022-05-12
+us,United States 🇺🇸,ETSY INC,etsyususd,"May 12, 2022",2022-05-12
+fx_crosses,Forex currencies 💱,Euro vs. United Arab Emirates dirham,euraed,"Sep 16, 2024",2024-09-16
+fx_crosses,Forex currencies 💱,Euro vs Australian Dollar,euraud,"Oct 9, 1991",1991-10-09
+fx_crosses,Forex currencies 💱,Euro vs Canadian Dollar,eurcad,"Oct 9, 1991",1991-10-09
+fx_crosses,Forex currencies 💱,Euro vs Swiss Franc,eurchf,"Jan 14, 1991",1991-01-14
+fx_crosses,Forex currencies 💱,Euro vs. Renminbi (offshore),eurcnh,"May 15, 2024",2024-05-15
+fx_crosses,Forex currencies 💱,Euro vs Czech Koruna,eurczk,"Jan 3, 2016",2016-01-03
+fx_crosses,Forex currencies 💱,Euro vs Danish Krone,eurdkk,"Feb 26, 1993",1993-02-26
+fx_crosses,Forex currencies 💱,Euro vs Pound Sterling,eurgbp,"Apr 14, 1995",1995-04-14
+fx_crosses,Forex currencies 💱,Euro vs Hong Kong Dollar,eurhkd,"Jun 3, 1999",1999-06-03
+fx_crosses,Forex currencies 💱,Euro vs Hungarian Forint,eurhuf,"Jun 30, 1999",1999-06-30
+fx_crosses,Forex currencies 💱,Euro vs. Israeli new shekel,eurils,"Sep 16, 2024",2024-09-16
+fx_crosses,Forex currencies 💱,Euro vs Japanese Yen,eurjpy,"Jun 28, 1989",1989-06-28
+fx_crosses,Forex currencies 💱,Euro vs. Mexican peso,eurmxn,"Mar 22, 1999",1999-03-22
+fx_crosses,Forex currencies 💱,Euro vs Norwegian Krone,eurnok,"Jun 3, 1991",1991-06-03
+fx_crosses,Forex currencies 💱,Euro vs New Zealand Dollar,eurnzd,"Jan 5, 1999",1999-01-05
+fx_crosses,Forex currencies 💱,Euro vs Polish Zloty,eurpln,"Jun 3, 1999",1999-06-03
+fx_crosses,Forex currencies 💱,Euro vs. Romanian leu,eurron,"Sep 16, 2024",2024-09-16
+fx_crosses,Forex currencies 💱,Euro vs. Saudi riyal,eursar,"Sep 16, 2024",2024-09-16
+fx_crosses,Forex currencies 💱,Euro vs Swedish Krona,eursek,"Nov 20, 1992",1992-11-20
+fx_crosses,Forex currencies 💱,Euro vs Singapore Dollar,eursgd,"Apr 29, 1998",1998-04-29
+fx_crosses,Forex currencies 💱,Euro vs. Thai baht,eurthb,"Sep 16, 2024",2024-09-16
+fx_crosses,Forex currencies 💱,Euro vs Turkish Lira,eurtry,"Jan 3, 2005",2005-01-03
+fx_majors,Forex major currencies 💶,Euro vs US Dollar,eurusd,"Mar 1, 1973",1973-03-01
+fx_crosses,Forex currencies 💱,Euro vs. South African rand,eurzar,"Jun 7, 1999",1999-06-07
+idx_europe,Europe 🇪🇺,Europe 50 Index,eusidxeur,"Jun 2, 2014",2014-06-02
+us,United States 🇺🇸,EVERGY INC,evrgususd,"May 12, 2022",2022-05-12
+us,United States 🇺🇸,EAST WEST BANCORP INC,ewbcususd,"May 12, 2022",2022-05-12
+etf_cfd_us,United States ETFs 🇺🇸📈,iShares MSCI Hong Kong ETF,ewhususd,"Nov 6, 2017",2017-11-06
+etf_cfd_us,United States ETFs 🇺🇸📈,iShares MSCI Japan ETF,ewjususd,"Jan 26, 2017",2017-01-26
+us,United States 🇺🇸,EDWARDS LIFESCIENCES CORP,ewususd,"May 12, 2022",2022-05-12
+etf_cfd_us,United States ETFs 🇺🇸📈,iShares MSCI Mexico Capped,ewwususd,"Mar 13, 2017",2017-03-13
+etf_cfd_us,United States ETFs 🇺🇸📈,iShares MSCI Brazil Capped,ewzususd,"Jan 26, 2017",2017-01-26
+us,United States 🇺🇸,EXELON CORP,excususd,"Feb 1, 2018",2018-02-01
+us,United States 🇺🇸,EXELIXIS INC,exelususd,"May 12, 2022",2022-05-12
+us,United States 🇺🇸,EXPEDIA INC,expeususd,"Nov 2, 2017",2017-11-02
+uk,United Kingdom 🇬🇧,Experian PLC,expngbgbx,"Jan 4, 2011",2011-01-04
+us,United States 🇺🇸,EXTRA SPACE STORAGE INC,exrususd,"May 12, 2022",2022-05-12
+uk,United Kingdom 🇬🇧,easyJet PLC,ezjgbgbx,"Jan 4, 2011",2011-01-04
+etf_cfd_us,United States ETFs 🇺🇸📈,iShares MSCI EMU ETF,ezuususd,"Feb 1, 2018",2018-02-01
+us,United States 🇺🇸,DIAMONDBACK ENERGY INC,fangususd,"May 12, 2022",2022-05-12
+us,United States 🇺🇸,FORTUNE BRANDS HOME & SECURI,fbhsususd,"May 12, 2022",2022-05-12
+italy,Italy 🇮🇹,FinecoBank Banca Fineco Spa,fbkiteur,"Dec 17, 2020",2020-12-17
+us,United States 🇺🇸,FACEBOOK INC-A / META,fbususd,"Jan 26, 2017",2017-01-26
+italy,Italy 🇮🇹,Fiat Chrysler Auto NV,fcaiteur,"Dec 17, 2020",2020-12-17
+spain,Spain 🇪🇸,Fomento de Construcciones y Contratas SA,fcceseur,"Jan 3, 2011",2011-01-03
+us,United States 🇺🇸,FIRST CITIZENS BCSHS -CL A,fcncaususd,"May 12, 2022",2022-05-12
+us,United States 🇺🇸,FREEPORT-MCMORAN INC,fcxususd,"Nov 2, 2017",2017-11-02
+us,United States 🇺🇸,FACTSET RESEARCH SYSTEMS INC,fdsususd,"Jun 3, 2022",2022-06-03
+us,United States 🇺🇸,FEDEX CORP,fdxususd,"Nov 2, 2017",2017-11-02
+mexico,Mexico 🇲🇽,Fomento Economico Mexica UBD,femsaubdmxmxn,"Oct 13, 2022",2022-10-13
+spain,Spain 🇪🇸,Ferrovial SA,fereseur,"Jan 3, 2011",2011-01-03
+us,United States 🇺🇸,FIRSTENERGY CORP,feususd,"Feb 1, 2018",2018-02-01
+us,United States 🇺🇸,FAIR ISAAC CORP,ficoususd,"May 18, 2022",2022-05-18
+etf_cfd_us,United States ETFs 🇺🇸📈,Global X FinTech ETF,finxususd,"Mar 18, 2020",2020-03-18
+us,United States 🇺🇸,FIFTH THIRD BANCORP,fitbususd,"Jan 31, 2018",2018-01-31
+us,United States 🇺🇸,FIVE BELOW,fiveususd,"May 12, 2022",2022-05-12
+us,United States 🇺🇸,FLEETCOR TECHNOLOGIES INC,fltususd,"May 12, 2022",2022-05-12
+us,United States 🇺🇸,FOOT LOCKER INC,flususd,"May 12, 2022",2022-05-12
+germany,Germany 🇩🇪,Fresenius Medical Care AG & Co KGaA,fmedeeur,"Jan 3, 2011",2011-01-03
+us,United States 🇺🇸,FLOOR & DECOR HOLDINGS INC-A,fndususd,"May 12, 2022",2022-05-12
+us,United States 🇺🇸,FIDELITY NATIONAL FINANCIAL,fnfususd,"May 12, 2022",2022-05-12
+us,United States 🇺🇸,TWENTY-FIRST CENTURY FOX-A,foxaususd,"Jan 31, 2018",2018-01-31
+france,France 🇫🇷,Total SA,fpfreur,"Jan 3, 2011",2011-01-03
+idx_europe,Europe 🇪🇺,France 40 Index,fraidxeur,"Dec 31, 1987",1987-12-31
+us,United States 🇺🇸,FIRST REPUBLIC BANK/CA,frcususd,"May 12, 2022",2022-05-12
+germany,Germany 🇩🇪,Fresenius SE & Co KGaA,fredeeur,"Jan 3, 2011",2011-01-03
+uk,United Kingdom 🇬🇧,Fresnillo PLC,fresgbgbx,"Jan 4, 2011",2011-01-04
+france,France 🇫🇷,Valeo SA,frfreur,"Jan 3, 2011",2011-01-03
+us,United States 🇺🇸,FMC TECHNOLOGIES INC,ftiususd,"May 12, 2022",2022-05-12
+us,United States 🇺🇸,FORTINET INC,ftntususd,"May 12, 2022",2022-05-12
+us,United States 🇺🇸,FORTIVE CORP,ftvususd,"May 12, 2022",2022-05-12
+etf_cfd_us,United States ETFs 🇺🇸📈,First Trust Nasdaq Food & Beverage ETF,ftxgususd,"Jan 2, 2024",2024-01-02
+us,United States 🇺🇸,FORD MOTOR CO,fususd,"Nov 2, 2017",2017-11-02
+etf_cfd_us,United States ETFs 🇺🇸📈,iShares China Large-Cap ETF,fxiususd,"Jan 26, 2017",2017-01-26
+portugal,Portugal 🇵🇹,Galp Energia SGPS SA,galppteur,"Jan 3, 2011",2011-01-03
+spain,Spain 🇪🇸,Gamesa Corporacion Tecnologica SA,gameseur,"Jan 3, 2011",2011-01-03
+mexico,Mexico 🇲🇽,Grupo Aeroportuario del Pacific Sab CV,gapbmxmxn,"Oct 13, 2022",2022-10-13
+cmd_energy,Energy commodities ⚡,Natural Gas,gascmdusd,"Sep 2, 2012",2012-09-02
+spain,Spain 🇪🇸,Gas Natural SDG SA,gaseseur,"Jan 3, 2011",2011-01-03
+fx_crosses,Forex currencies 💱,Pound sterling vs. United Arab Emirates dirham,gbpaed,"Sep 16, 2024",2024-09-16
+fx_crosses,Forex currencies 💱,Pound Sterling vs Australian Dollar,gbpaud,"Jan 30, 1991",1991-01-30
+fx_crosses,Forex currencies 💱,Pound Sterling vs Canadian Dollar,gbpcad,"Oct 25, 1990",1990-10-25
+fx_crosses,Forex currencies 💱,Pound Sterling vs Swiss Franc,gbpchf,"Sep 6, 1990",1990-09-06
+fx_crosses,Forex currencies 💱,Pound sterling vs. Renminbi (offshore),gbpcnh,"May 15, 2024",2024-05-15
+fx_crosses,Forex currencies 💱,Pound sterling vs. Czech koruna,gbpczk,"May 15, 2024",2024-05-15
+fx_crosses,Forex currencies 💱,Pound sterling vs. Danish krone,gbpdkk,"May 15, 2024",2024-05-15
+fx_crosses,Forex currencies 💱,Pound sterling vs. Hong Kong dollar,gbphkd,"May 15, 2024",2024-05-15
+fx_crosses,Forex currencies 💱,Pound sterling vs. Hungarian forint,gbphuf,"May 15, 2024",2024-05-15
+fx_crosses,Forex currencies 💱,Pound sterling vs. Israeli new shekel,gbpils,"Sep 16, 2024",2024-09-16
+fx_crosses,Forex currencies 💱,Pound Sterling vs Japanese Yen,gbpjpy,"Jan 2, 1991",1991-01-02
+fx_crosses,Forex currencies 💱,Pound sterling vs. Mexican peso,gbpmxn,"May 15, 2024",2024-05-15
+fx_crosses,Forex currencies 💱,Pound sterling vs. Norwegian krone,gbpnok,"May 15, 2024",2024-05-15
+fx_crosses,Forex currencies 💱,Pound Sterling vs New Zealand Dollar,gbpnzd,"Jan 20, 1997",1997-01-20
+fx_crosses,Forex currencies 💱,Pound sterling vs. Polish zÅ‚oty,gbppln,"Aug 22, 1990",1990-08-22
+fx_crosses,Forex currencies 💱,Pound sterling vs. Romanian leu,gbpron,"Sep 16, 2024",2024-09-16
+fx_crosses,Forex currencies 💱,Pound sterling vs. Saudi riyal,gbpsar,"Sep 17, 2024",2024-09-17
+fx_crosses,Forex currencies 💱,Pound sterling vs. Swedish krona,gbpsek,"May 15, 2024",2024-05-15
+fx_crosses,Forex currencies 💱,Pound sterling vs. Singapore dollar,gbpsgd,"May 15, 2024",2024-05-15
+fx_crosses,Forex currencies 💱,Pound sterling vs. Thai baht,gbpthb,"Sep 17, 2024",2024-09-17
+fx_crosses,Forex currencies 💱,Pound sterling vs. Turkish lira,gbptry,"May 15, 2024",2024-05-15
+fx_majors,Forex major currencies 💶,Pound Sterling vs US Dollar,gbpusd,"Feb 10, 1986",1986-02-10
+fx_crosses,Forex currencies 💱,Pound sterling vs. South African rand,gbpzar,"May 15, 2024",2024-05-15
+idx_europe,Europe 🇪🇺,UK 100 Index,gbridxgbp,"Apr 5, 1988",1988-04-05
+mexico,Mexico 🇲🇽,Grupo Carso Sab De CV,gcarsoa1mxmxn,"Oct 13, 2022",2022-10-13
+mexico,Mexico 🇲🇽,Grupo Cementos de Chihuahua,gccmxmxn,"Oct 13, 2022",2022-10-13
+us,United States 🇺🇸,GODADDY INC - CLASS A,gddyususd,"May 12, 2022",2022-05-12
+us,United States 🇺🇸,GENERAL DYNAMICS CORP,gdususd,"May 12, 2022",2022-05-12
+etf_cfd_us,United States ETFs 🇺🇸📈,VanEck Vectors Junior Gold Miners ETF,gdxjususd,"Jan 26, 2017",2017-01-26
+etf_cfd_us,United States ETFs 🇺🇸📈,VanEck Vectors Gold Miners ETF,gdxususd,"Jan 26, 2017",2017-01-26
+sweden,Sweden 🇸🇪,Getinge AB,getibsesek,"Jan 3, 2011",2011-01-03
+us,United States 🇺🇸,GENERAL ELECTRIC CO,geususd,"Jan 26, 2017",2017-01-26
+mexico,Mexico 🇲🇽,Grupo Financiero Banorte O,gfnorteomxmxn,"Oct 13, 2022",2022-10-13
+uk,United Kingdom 🇬🇧,G4S PLC,gfsgbgbx,"Jan 4, 2011",2011-01-04
+us,United States 🇺🇸,GRACO INC,gggususd,"May 12, 2022",2022-05-12
+us,United States 🇺🇸,GUARDANT HEALTH INC,ghususd,"May 12, 2022",2022-05-12
+us,United States 🇺🇸,GILEAD SCIENCES INC,gildususd,"Jan 26, 2017",2017-01-26
+us,United States 🇺🇸,GENERAL MILLS INC,gisususd,"Feb 1, 2018",2018-02-01
+italy,Italy 🇮🇹,Assicurazioni Generali Spa,giteur,"Dec 17, 2020",2020-12-17
+switzerland,Switzerland 🇨🇭,Givaudan SA,givnchchf,"Jan 3, 2011",2011-01-03
+etf_cfd_us,United States ETFs 🇺🇸📈,SPDR Gold Shares ETF,gldususd,"Jan 26, 2017",2017-01-26
+france,France 🇫🇷,Societe Generale SA,glefreur,"Jan 3, 2011",2011-01-03
+uk,United Kingdom 🇬🇧,Glencore PLC,glengbgbx,"May 19, 2011",2011-05-19
+etf_cfd,ETFs 📈,L&G Clean Water UCITS ETF,glgggbgbx,"Mar 3, 2020",2020-03-03
+us,United States 🇺🇸,GAMING AND LEISURE PROPERTIE,glpiususd,"May 12, 2022",2022-05-12
+us,United States 🇺🇸,GLOBE LIFE INC,glususd,"May 12, 2022",2022-05-12
+us,United States 🇺🇸,CORNING INC,glwususd,"May 11, 2017",2017-05-11
+mexico,Mexico 🇲🇽,Grupo Mexico SAB DE CV SER B,gmexicobmxmxn,"Oct 13, 2022",2022-10-13
+us,United States 🇺🇸,GENERAL MOTORS CO,gmususd,"Nov 2, 2017",2017-11-02
+us,United States 🇺🇸,GENERAC HOLDINGS INC,gnrcususd,"May 12, 2022",2022-05-12
+us,United States 🇺🇸,ALPHABET INC-CL A,googlususd,"Jan 26, 2017",2017-01-26
+us,United States 🇺🇸,ALPHABET INC-CL C,googususd,"Jan 26, 2017",2017-01-26
+us,United States 🇺🇸,GLOBAL PAYMENTS INC,gpnususd,"May 12, 2022",2022-05-12
+us,United States 🇺🇸,GAP INC/THE,gpsususd,"Feb 1, 2018",2018-02-01
+spain,Spain 🇪🇸,GRIFOLS SA,grfeseur,"May 11, 2022",2022-05-11
+mexico,Mexico 🇲🇽,Gruma SA BB,grumabmxmxn,"Oct 13, 2022",2022-10-13
+uk,United Kingdom 🇬🇧,GlaxoSmithKline PLC,gskgbgbx,"Jan 4, 2011",2011-01-04
+us,United States 🇺🇸,GOLDMAN SACHS GROUP INC,gsususd,"Jan 26, 2017",2017-01-26
+us,United States 🇺🇸,GENPACT LTD,gususd,"May 12, 2022",2022-05-12
+us,United States 🇺🇸,WW GRAINGER INC,gwwususd,"Feb 1, 2018",2018-02-01
+us,United States 🇺🇸,HALLIBURTON CO,halususd,"Nov 2, 2017",2017-11-02
+us,United States 🇺🇸,HANESBRANDS INC,hbiususd,"May 12, 2022",2022-05-12
+us,United States 🇺🇸,HCA HEALTHCARE INC,hcaususd,"May 12, 2022",2022-05-12
+us,United States 🇺🇸,WELLTOWER INC,hcnususd,"Feb 1, 2018",2018-02-01
+us,United States 🇺🇸,HOME DEPOT INC,hdususd,"Jan 26, 2017",2017-01-26
+netherlands,Netherlands 🇳🇱,Heineken NV,heianleur,"Jan 3, 2011",2011-01-03
+germany,Germany 🇩🇪,HeidelbergCement AG,heideeur,"Jan 3, 2011",2011-01-03
+us,United States 🇺🇸,HEICO CORP,heiususd,"May 16, 2022",2022-05-16
+germany,Germany 🇩🇪,Henkel AG & Co KGaA,hen3deeur,"Jan 3, 2011",2011-01-03
+us,United States 🇺🇸,HESS CORP,hesususd,"Nov 2, 2017",2017-11-02
+germany,Germany 🇩🇪,HELLOFRESH SE,hfgdeeur,"May 12, 2022",2022-05-12
+us,United States 🇺🇸,HUNTINGTON INGALLS INDUSTRIE,hiiususd,"May 12, 2022",2022-05-12
+uk,United Kingdom 🇬🇧,HIKMA PHARMACEUTICALS PLC,hikgbgbx,"May 12, 2022",2022-05-12
+fx_crosses,Forex currencies 💱,Hong Kong dollar vs. Czech koruna,hkdczk,"May 15, 2024",2024-05-15
+fx_crosses,Forex currencies 💱,Hong Kong dollar vs. Hungarian forint,hkdhuf,"May 15, 2024",2024-05-15
+fx_crosses,Forex currencies 💱,Hong Kong Dollar vs Japanese Yen,hkdjpy,"Nov 4, 1998",1998-11-04
+fx_crosses,Forex currencies 💱,Hong Kong dollar vs. Mexican peso,hkdmxn,"May 15, 2024",2024-05-15
+fx_crosses,Forex currencies 💱,Hong Kong dollar vs. Thai baht,hkdthb,"Sep 17, 2024",2024-09-17
+fx_crosses,Forex currencies 💱,Hong Kong dollar vs. Turkish lira,hkdtry,"May 15, 2024",2024-05-15
+fx_crosses,Forex currencies 💱,Hong Kong dollar vs. South African rand,hkdzar,"May 15, 2024",2024-05-15
+idx_asia,Asia 🌏,Hong Kong 40 Index,hkgidxhkd,"Jun 3, 2013",2013-06-03
+uk,United Kingdom 🇬🇧,HALMA PLC,hlmagbgbx,"May 12, 2022",2022-05-12
+us,United States 🇺🇸,HILTON WORLDWIDE HOLDINGS IN,hltususd,"May 12, 2022",2022-05-12
+sweden,Sweden 🇸🇪,Hennes & Mauritz AB,hmbsesek,"Jan 3, 2011",2011-01-03
+uk,United Kingdom 🇬🇧,Hammerson PLC,hmsogbgbx,"Jan 4, 2011",2011-01-04
+germany,Germany 🇩🇪,Hannover Rueckversicheru-Reg,hnrdeeur,"May 12, 2022",2022-05-12
+france,France 🇫🇷,THALES SA,hofreur,"May 12, 2022",2022-05-12
+us,United States 🇺🇸,HARLEY-DAVIDSON INC,hogususd,"May 12, 2022",2022-05-12
+us,United States 🇺🇸,HONEYWELL INTERNATIONAL INC,honususd,"Nov 2, 2017",2017-11-02
+us,United States 🇺🇸,HEWLETT PACKARD ENTERPRISE,hpeususd,"May 12, 2022",2022-05-12
+us,United States 🇺🇸,HP INC,hpqususd,"Feb 1, 2018",2018-02-01
+uk,United Kingdom 🇬🇧,HSBC Holdings PLC,hsbagbgbx,"Jan 4, 2011",2011-01-04
+us,United States 🇺🇸,HEALTHCARE TRUST OF AME-CL A,htaususd,"May 12, 2022",2022-05-12
+us,United States 🇺🇸,HUBBELL INC,hubbususd,"May 13, 2022",2022-05-13
+us,United States 🇺🇸,HUBSPOT INC,hubsususd,"May 12, 2022",2022-05-12
+us,United States 🇺🇸,HUMANA INC,humususd,"Nov 2, 2017",2017-11-02
+us,United States 🇺🇸,HYATT HOTELS CORP - CL A,hususd,"May 12, 2022",2022-05-12
+us,United States 🇺🇸,HOWMET AEROSPACE INC,hwmususd,"May 12, 2022",2022-05-12
+us,United States 🇺🇸,HORIZON THERAPEUTICS PLC,hznpususd,"May 12, 2022",2022-05-12
+uk,United Kingdom 🇬🇧,International Consolidated Airlines Grou,iaggbgbx,"Jan 24, 2011",2011-01-24
+etf_cfd_us,United States ETFs 🇺🇸📈,iShares US Insurance ETF,iakususd,"Mar 23, 2020",2020-03-23
+etf_cfd_us,United States ETFs 🇺🇸📈,iShares Nasdaq Biotechnology ETF,ibbususd,"May 11, 2017",2017-05-11
+spain,Spain 🇪🇸,Iberdrola SA,ibeeseur,"Jan 3, 2011",2011-01-03
+us,United States 🇺🇸,INTERACTIVE BROKERS GRO-CL A,ibkrususd,"May 12, 2022",2022-05-12
+us,United States 🇺🇸,INTL BUSINESS MACHINES CORP,ibmususd,"Jan 26, 2017",2017-01-26
+us,United States 🇺🇸,INTERCONTINENTAL EXCHANGE IN,iceususd,"Nov 6, 2017",2017-11-06
+uk,United Kingdom 🇬🇧,INTERMEDIATE CAPITAL GROUP,icpgbgbx,"May 12, 2022",2022-05-12
+us,United States 🇺🇸,IDEXX LABORATORIES INC,idxxususd,"May 12, 2022",2022-05-12
+etf_cfd_us,United States ETFs 🇺🇸📈,iShares 7-10 Year Treasury Bond ETF,iefususd,"Feb 1, 2018",2018-02-01
+us,United States 🇺🇸,IDEX CORP,iexususd,"May 12, 2022",2022-05-12
+germany,Germany 🇩🇪,Infineon Technologies AG,ifxdeeur,"Jan 3, 2011",2011-01-03
+italy,Italy 🇮🇹,Italgas Spa,igiteur,"Dec 17, 2020",2020-12-17
+etf_cfd,ETFs 📈,iShares Physical Gold ETC Fund,iglnususd,"Jan 22, 2020",2020-01-22
+uk,United Kingdom 🇬🇧,InterContinental Hotels Group PLC,ihggbgbx,"Jan 4, 2011",2011-01-04
+uk,United Kingdom 🇬🇧,3i Group PLC,iiigbgbx,"Jan 4, 2011",2011-01-04
+etf_cfd_us,United States ETFs 🇺🇸📈,iShares Core S&P Mid-Cap ETF,ijhususd,"Feb 1, 2018",2018-02-01
+etf_cfd_us,United States ETFs 🇺🇸📈,iShares Core S&P Small-Cap ETF,ijrususd,"May 11, 2017",2017-05-11
+us,United States 🇺🇸,ILLUMINA INC,ilmnususd,"Feb 1, 2018",2018-02-01
+fx_crosses,Forex currencies 💱,Israeli new shekel vs. United Arab Emirates dirham,ilsaed,"Sep 17, 2024",2024-09-17
+fx_crosses,Forex currencies 💱,Israeli new shekel vs. Renminbi (offshore),ilscnh,"Sep 17, 2024",2024-09-17
+fx_crosses,Forex currencies 💱,Israeli new shekel vs. Czech koruna,ilsczk,"Sep 17, 2024",2024-09-17
+fx_crosses,Forex currencies 💱,Israeli new shekel vs. Hong Kong dollar,ilshkd,"Sep 17, 2024",2024-09-17
+fx_crosses,Forex currencies 💱,Israeli new shekel vs. Hungarian forint,ilshuf,"Sep 17, 2024",2024-09-17
+fx_crosses,Forex currencies 💱,Israeli new shekel vs. Japanese yen,ilsjpy,"Sep 17, 2024",2024-09-17
+fx_crosses,Forex currencies 💱,Israeli new shekel vs. Mexican peso,ilsmxn,"Sep 17, 2024",2024-09-17
+fx_crosses,Forex currencies 💱,Israeli new shekel vs. Romanian leu,ilsron,"Sep 17, 2024",2024-09-17
+fx_crosses,Forex currencies 💱,Israeli new shekel vs. Saudi riyal,ilssar,"Sep 17, 2024",2024-09-17
+fx_crosses,Forex currencies 💱,Israeli new shekel vs. Thai baht,ilsthb,"Sep 17, 2024",2024-09-17
+fx_crosses,Forex currencies 💱,Israeli new shekel vs. Turkish lira,ilstry,"Sep 17, 2024",2024-09-17
+fx_crosses,Forex currencies 💱,Israeli new shekel vs. South African rand,ilszar,"Sep 17, 2024",2024-09-17
+uk,United Kingdom 🇬🇧,Imperial Brands Plc,imtgbgbx,"Feb 8, 2016",2016-02-08
+us,United States 🇺🇸,INCYTE CORP,incyususd,"May 12, 2022",2022-05-12
+idx_asia,Asia 🌏,India 50 Index,indidxusd,"Dec 1, 2017",2017-12-01
+netherlands,Netherlands 🇳🇱,ING Groep NV,inganleur,"Jul 22, 2016",2016-07-22
+us,United States 🇺🇸,INTEL CORP,intcususd,"Jan 26, 2017",2017-01-26
+etf_cfd,ETFs 📈,WisdomTree Artificial Intelligence UCITS ETF - USD Acc,intlgbgbx,"Jan 2, 2020",2020-01-02
+us,United States 🇺🇸,INTUIT INC,intuususd,"Feb 1, 2018",2018-02-01
+sweden,Sweden 🇸🇪,Investor AB,invebsesek,"Jan 3, 2011",2011-01-03
+us,United States 🇺🇸,INVITATION HOMES INC,invhususd,"May 12, 2022",2022-05-12
+italy,Italy 🇮🇹,Infrastrutture Wireless Italiane Spa,inwiteur,"Dec 17, 2020",2020-12-17
+us,United States 🇺🇸,IONIS PHARMACEUTICALS INC,ionsususd,"May 12, 2022",2022-05-12
+us,United States 🇺🇸,IPG PHOTONICS CORP,ipgpususd,"May 12, 2022",2022-05-12
+us,United States 🇺🇸,INTERPUBLIC GROUP OF COS INC,ipgususd,"Feb 1, 2018",2018-02-01
+us,United States 🇺🇸,IQVIA HOLDINGS INC,iqvususd,"May 12, 2022",2022-05-12
+us,United States 🇺🇸,INGERSOLL-RAND INC,irususd,"May 12, 2022",2022-05-12
+italy,Italy 🇮🇹,Intesa Sanpaolo Spa,ispiteur,"Dec 17, 2020",2020-12-17
+etf_cfd,ETFs 📈,L&G Cyber Security UCITS ETF,ispygbgbx,"Feb 28, 2020",2020-02-28
+us,United States 🇺🇸,INTUITIVE SURGICAL INC,isrgususd,"Feb 1, 2018",2018-02-01
+idx_europe,Europe 🇪🇺,Italy 40 Index,itaidxeur,"Jul 29, 2016",2016-07-29
+etf_cfd_us,United States ETFs 🇺🇸📈,iShares US Aerospace & Defense ETF,itaususd,"Mar 23, 2020",2020-03-23
+uk,United Kingdom 🇬🇧,Intertek Group PLC,itrkgbgbx,"Jan 4, 2011",2011-01-04
+us,United States 🇺🇸,Itau Unibanco Holding S.A.,itubususd,"Jan 26, 2017",2017-01-26
+us,United States 🇺🇸,GARTNER INC,itususd,"May 12, 2022",2022-05-12
+uk,United Kingdom 🇬🇧,ITV PLC,itvgbgbx,"Jan 4, 2011",2011-01-04
+us,United States 🇺🇸,ILLINOIS TOOL WORKS,itwususd,"May 11, 2017",2017-05-11
+spain,Spain 🇪🇸,Inditex SA,itxeseur,"Jan 3, 2011",2011-01-03
+etf_cfd,ETFs 📈,iShares S&P 500 Financials Sector UCITS ETF,iufsususd,"Mar 20, 2020",2020-03-20
+etf_cfd_us,United States ETFs 🇺🇸📈,iShares S&P 500 Value ETF,iveususd,"May 11, 2017",2017-05-11
+etf_cfd_us,United States ETFs 🇺🇸📈,iShares S&P 500 Growth ETF,ivwususd,"May 11, 2017",2017-05-11
+us,United States 🇺🇸,INVESCO LTD,ivzususd,"May 12, 2022",2022-05-12
+etf_cfd_us,United States ETFs 🇺🇸📈,iShares Russell 1000 Value ETF,iwdususd,"Feb 1, 2018",2018-02-01
+etf_cfd_us,United States ETFs 🇺🇸📈,iShares Russell 1000 Growth ETF,iwfususd,"Feb 1, 2018",2018-02-01
+etf_cfd_us,United States ETFs 🇺🇸📈,iShares Russell 2000 ETF,iwmususd,"Jan 26, 2017",2017-01-26
+etf_cfd_us,United States ETFs 🇺🇸📈,iShares U.S. Real Estate ETF,iyrususd,"Jan 26, 2017",2017-01-26
+us,United States 🇺🇸,JAZZ PHARMACEUTICALS PLC,jazzususd,"May 12, 2022",2022-05-12
+us,United States 🇺🇸,JETBLUE AIRWAYS CORP,jbluususd,"May 12, 2022",2022-05-12
+us,United States 🇺🇸,JOHNSON CONTROLS INC,jciususd,"Nov 2, 2017",2017-11-02
+us,United States 🇺🇸,JEFFERIES FINANCIAL GROUP IN,jefususd,"May 12, 2022",2022-05-12
+etf_cfd_us,United States ETFs 🇺🇸📈,US Global Jets ETF,jetsususd,"May 15, 2020",2020-05-15
+us,United States 🇺🇸,JACK HENRY & ASSOCIATES INC,jkhyususd,"May 12, 2022",2022-05-12
+us,United States 🇺🇸,JONES LANG LASALLE INC,jllususd,"May 12, 2022",2022-05-12
+us,United States 🇺🇸,JOHNSON & JOHNSON,jnjususd,"Jan 26, 2017",2017-01-26
+etf_cfd_us,United States ETFs 🇺🇸📈,SPDR Barclays Capital High Yield Bond ETF,jnkususd,"Jan 26, 2017",2017-01-26
+us,United States 🇺🇸,JPMORGAN CHASE & CO,jpmususd,"Jan 26, 2017",2017-01-26
+idx_asia,Asia 🌏,Japan 225,jpnidxjpy,"Sep 4, 1986",1986-09-04
+fx_crosses,Forex currencies 💱,Japanese yen vs. Hungarian forint,jpyhuf,"Sep 17, 2024",2024-09-17
+italy,Italy 🇮🇹,Juventus Football Club Spa,juveiteur,"Dec 17, 2020",2020-12-17
+us,United States 🇺🇸,NORDSTROM INC,jwnususd,"May 11, 2017",2017-05-11
+belgium,Belgium 🇧🇪,KBC Groep NV,kbcbeeur,"Jan 3, 2011",2011-01-03
+france,France 🇫🇷,Kering,kerfreur,"Jan 3, 2011",2011-01-03
+us,United States 🇺🇸,KEYSIGHT TECHNOLOGIES IN,keysususd,"May 12, 2022",2022-05-12
+us,United States 🇺🇸,KEYCORP,keyususd,"Nov 2, 2017",2017-11-02
+uk,United Kingdom 🇬🇧,Kingfisher PLC,kgfgbgbx,"Jan 4, 2011",2011-01-04
+us,United States 🇺🇸,KRAFT HEINZ CO/THE,khcususd,"May 11, 2017",2017-05-11
+etf_cfd_us,United States ETFs 🇺🇸📈,SPDR S&P Insurance ETF,kieususd,"Jan 2, 2020",2020-01-02
+mexico,Mexico 🇲🇽,Kimberly Clark DE Mexico A,kimberamxmxn,"Oct 13, 2022",2022-10-13
+us,United States 🇺🇸,KIMBERLY-CLARK CORP,kmbususd,"May 11, 2017",2017-05-11
+us,United States 🇺🇸,KINDER MORGAN INC,kmiususd,"Nov 2, 2017",2017-11-02
+us,United States 🇺🇸,CARMAX INC,kmxususd,"May 12, 2022",2022-05-12
+switzerland,Switzerland 🇨🇭,Kuehne + Nagel International AG,kninchchf,"Jan 3, 2011",2011-01-03
+us,United States 🇺🇸,KNIGHT-SWIFT TRANSPORTATION,knxususd,"May 12, 2022",2022-05-12
+mexico,Mexico 🇲🇽,Coca Cola Femsa Sab,kofublmxmxn,"Oct 13, 2022",2022-10-13
+us,United States 🇺🇸,COCA-COLA CO/THE,koususd,"Jan 26, 2017",2017-01-26
+netherlands,Netherlands 🇳🇱,Koninklijke KPN NV,kpnnleur,"Jan 3, 2011",2011-01-03
+us,United States 🇺🇸,KILROY REALTY CORP,krcususd,"May 13, 2022",2022-05-13
+etf_cfd_us,United States ETFs 🇺🇸📈,SPDR S&P Regional Banking ETF,kreususd,"Mar 23, 2020",2020-03-23
+us,United States 🇺🇸,KROGER CO,krususd,"Nov 2, 2017",2017-11-02
+ireland,Ireland 🇮🇪,Kingspan Group Plc,krxieeur,"Jun 1, 2020",2020-06-01
+ireland,Ireland 🇮🇪,Kerry Group Plc,krzieeur,"Jun 1, 2020",2020-06-01
+us,United States 🇺🇸,KOHLS CORP,kssususd,"Feb 1, 2018",2018-02-01
+us,United States 🇺🇸,KELLOGG CO,kususd,"May 11, 2017",2017-05-11
+mexico,Mexico 🇲🇽,Genomma Lab Internacional SAB de CV,labbmxmxn,"Oct 13, 2022",2022-10-13
+us,United States 🇺🇸,LAMAR ADVERTISING CO-A,lamrususd,"May 13, 2022",2022-05-13
+uk,United Kingdom 🇬🇧,Land Securities Group PLC,landgbgbx,"Jan 4, 2011",2011-01-04
+italy,Italy 🇮🇹,Leonardo Spa,ldoiteur,"Dec 17, 2020",2020-12-17
+us,United States 🇺🇸,LEIDOS HOLDINGS INC,ldosususd,"May 12, 2022",2022-05-12
+us,United States 🇺🇸,LEAR CORP,leaususd,"Jun 15, 2022",2022-06-15
+us,United States 🇺🇸,LENNAR CORP-A,lenususd,"May 11, 2017",2017-05-11
+uk,United Kingdom 🇬🇧,Legal & General Group PLC,lgengbgbx,"Jan 4, 2011",2011-01-04
+germany,Germany 🇩🇪,Deutsche Lufthansa AG,lhadeeur,"Jan 3, 2011",2011-01-03
+switzerland,Switzerland 🇨🇭,Lafarge Holcim Ltd,lhnchchf,"Jun 17, 2015",2015-06-17
+us,United States 🇺🇸,L3HARRIS TECHNOLOGIES INC,lhxususd,"May 12, 2022",2022-05-12
+france,France 🇫🇷,Klepierre,lifreur,"Jan 3, 2011",2011-01-03
+cmd_energy,Energy commodities ⚡,US Light Crude Oil,lightcmdusd,"Apr 20, 1983",1983-04-20
+germany,Germany 🇩🇪,Linde AG,lindeeur,"Jan 3, 2011",2011-01-03
+switzerland,Switzerland 🇨🇭,Chocoladefabriken Lindt & Sprungli,lispchchf,"Jun 14, 2022",2022-06-14
+mexico,Mexico 🇲🇽,El Puerto de Liverpool,livepolc1mxmxn,"Oct 13, 2022",2022-10-13
+us,United States 🇺🇸,LKQ CORP,lkqususd,"May 12, 2022",2022-05-12
+uk,United Kingdom 🇬🇧,Lloyds Banking Group PLC,lloygbgbx,"Jan 4, 2011",2011-01-04
+us,United States 🇺🇸,ELI LILLY & CO,llyususd,"May 11, 2017",2017-05-11
+us,United States 🇺🇸,LOCKHEED MARTIN CORP,lmtususd,"May 11, 2017",2017-05-11
+us,United States 🇺🇸,LINCOLN NATIONAL CORP,lncususd,"May 12, 2022",2022-05-12
+us,United States 🇺🇸,CHENIERE ENERGY INC,lngususd,"May 12, 2022",2022-05-12
+vccy,Crypto assets ₿,Chainlink vs US Dollar,lnkusd,"Sep 25, 2021",2021-09-25
+us,United States 🇺🇸,ALLIANT ENERGY CORP,lntususd,"May 12, 2022",2022-05-12
+switzerland,Switzerland 🇨🇭,Logitech International SA,lognchchf,"Jan 3, 2011",2011-01-03
+switzerland,Switzerland 🇨🇭,Lonza Group AG,lonnchchf,"Jan 3, 2011",2011-01-03
+us,United States 🇺🇸,LOWE'S COS INC,lowususd,"Nov 2, 2017",2017-11-02
+us,United States 🇺🇸,LPL FINANCIAL HOLDINGS INC,lplaususd,"Jun 15, 2022",2022-06-15
+us,United States 🇺🇸,LAM RESEARCH CORP,lrcxususd,"Nov 2, 2017",2017-11-02
+france,France 🇫🇷,Legrand SA,lrfreur,"Jan 3, 2011",2011-01-03
+uk,United Kingdom 🇬🇧,London Stock Exchange Group PLC,lsegbgbx,"Jan 4, 2011",2011-01-04
+us,United States 🇺🇸,LIFE STORAGE INC,lsiususd,"May 12, 2022",2022-05-12
+us,United States 🇺🇸,LANDSTAR SYSTEM INC,lstrususd,"May 13, 2022",2022-05-13
+vccy,Crypto assets ₿,Litecoin vs. Swiss franc,ltcchf,"Mar 14, 2023",2023-03-14
+vccy,Crypto assets ₿,Litecoin vs. Euro,ltceur,"Mar 14, 2023",2023-03-14
+vccy,Crypto assets ₿,Litecoin vs. Pound sterling,ltcgbp,"Mar 14, 2023",2023-03-14
+vccy,Crypto assets ₿,Litecoin vs US Dollar,ltcusd,"Sep 3, 2018",2018-09-03
+us,United States 🇺🇸,LULULEMON ATHLETICA INC,luluususd,"May 13, 2022",2022-05-13
+us,United States 🇺🇸,LOEWS CORP,lususd,"May 11, 2017",2017-05-11
+us,United States 🇺🇸,SOUTHWEST AIRLINES CO,luvususd,"Nov 2, 2017",2017-11-02
+etf_cfd_fr,France ETFs 🇫🇷📈,Lyxor ETF Leverage CAC 40,lvcfreur,"Sep 22, 2020",2020-09-22
+us,United States 🇺🇸,Las Vegas Sands Corp.,lvsususd,"Jan 26, 2017",2017-01-26
+us,United States 🇺🇸,LAMB WESTON HOLDINGS INC,lwususd,"May 16, 2022",2022-05-16
+germany,Germany 🇩🇪,Lanxess AG,lxsdeeur,"Jan 3, 2011",2011-01-03
+us,United States 🇺🇸,LYONDELLBASELL INDU-CL A,lybususd,"May 13, 2022",2022-05-13
+us,United States 🇺🇸,LYFT INC-A,lyftususd,"May 13, 2022",2022-05-13
+us,United States 🇺🇸,LIVE NATION ENTERTAINMENT IN,lyvususd,"May 13, 2022",2022-05-13
+etf_cfd_fr,France ETFs 🇫🇷📈,Lyxor UCITS ETF STOXX EUROPE 600 Banks,lyxbnkfreur,"Sep 22, 2020",2020-09-22
+us,United States 🇺🇸,MID-AMERICA APARTMENT COMM,maaususd,"May 13, 2022",2022-05-13
+denmark,Denmark 🇩🇰,AP Moeller - Maersk A/S,maerskbdkdkk,"Jan 3, 2011",2011-01-03
+us,United States 🇺🇸,MANHATTAN ASSOCIATES INC,manhususd,"May 13, 2022",2022-05-13
+spain,Spain 🇪🇸,Mapfre SA,mapeseur,"Jan 3, 2011",2011-01-03
+us,United States 🇺🇸,MARRIOTT INTERNATIONAL -CL A,marususd,"Nov 2, 2017",2017-11-02
+us,United States 🇺🇸,MASIMO CORP,masiususd,"May 13, 2022",2022-05-13
+vccy,Crypto assets ₿,Polygon vs US Dollar,matusd,"Sep 25, 2021",2021-09-25
+us,United States 🇺🇸,MATTEL INC,matususd,"Feb 1, 2018",2018-02-01
+us,United States 🇺🇸,MASTERCARD INC-CLASS A,maususd,"May 11, 2017",2017-05-11
+italy,Italy 🇮🇹,Mediobanca Spa,mbiteur,"Dec 17, 2020",2020-12-17
+switzerland,Switzerland 🇨🇭,Meyer Burger,mbtnchchf,"Jun 14, 2022",2022-06-14
+us,United States 🇺🇸,MCDONALD'S CORP,mcdususd,"Nov 2, 2017",2017-11-02
+france,France 🇫🇷,LVMH Moet Hennessy Louis Vuitton SA,mcfreur,"Jan 3, 2011",2011-01-03
+us,United States 🇺🇸,MICROCHIP TECHNOLOGY INC,mchpususd,"Feb 1, 2018",2018-02-01
+us,United States 🇺🇸,MCKESSON CORP,mckususd,"Nov 2, 2017",2017-11-02
+us,United States 🇺🇸,MONGODB INC,mdbususd,"May 13, 2022",2022-05-13
+us,United States 🇺🇸,MONDELEZ INTERNATIONAL INC-A,mdlzususd,"Nov 2, 2017",2017-11-02
+us,United States 🇺🇸,MEDTRONIC PLC,mdtususd,"May 13, 2022",2022-05-13
+mexico,Mexico 🇲🇽,Megacable Holdings SAB de CV,megacpomxmxn,"Oct 13, 2022",2022-10-13
+us,United States 🇺🇸,METLIFE INC,metususd,"Nov 2, 2017",2017-11-02
+uk,United Kingdom 🇬🇧,Meggitt PLC,mggtgbgbx,"Jan 4, 2011",2011-01-04
+us,United States 🇺🇸,MGM RESORTS INTERNATIONAL,mgmususd,"Nov 2, 2017",2017-11-02
+norway,Norway 🇳🇴,Marine Harvest ASA,mhgnonok,"Jan 3, 2011",2011-01-03
+us,United States 🇺🇸,MOHAWK INDUSTRIES INC,mhkususd,"May 13, 2022",2022-05-13
+us,United States 🇺🇸,MIDDLEBY CORP,middususd,"May 13, 2022",2022-05-13
+us,United States 🇺🇸,MARKEL CORP,mklususd,"May 13, 2022",2022-05-13
+vccy,Crypto assets ₿,Maker vs US Dollar,mkrusd,"Sep 25, 2021",2021-09-25
+uk,United Kingdom 🇬🇧,Marks & Spencer Group PLC,mksgbgbx,"Jan 4, 2011",2011-01-04
+us,United States 🇺🇸,MKS INSTRUMENTS INC,mksiususd,"May 13, 2022",2022-05-13
+us,United States 🇺🇸,MARKETAXESS HOLDINGS INC,mktxususd,"May 13, 2022",2022-05-13
+france,France 🇫🇷,Michelin SA,mlfreur,"Jun 14, 2022",2022-06-14
+us,United States 🇺🇸,MARTIN MARIETTA MATERIALS,mlmususd,"May 13, 2022",2022-05-13
+us,United States 🇺🇸,3M CO,mmmususd,"May 11, 2017",2017-05-11
+uk,United Kingdom 🇬🇧,Mondi PLC,mndigbgbx,"Jan 4, 2011",2011-01-04
+us,United States 🇺🇸,MANDIANT INC,mndtususd,"May 13, 2022",2022-05-13
+uk,United Kingdom 🇬🇧,M&G PLC,mnggbgbx,"May 12, 2022",2022-05-12
+us,United States 🇺🇸,MOLINA HEALTHCARE INC,mohususd,"May 13, 2022",2022-05-13
+italy,Italy 🇮🇹,Moncler Spa,monciteur,"Dec 17, 2020",2020-12-17
+us,United States 🇺🇸,ALTRIA GROUP INC,moususd,"Nov 2, 2017",2017-11-02
+us,United States 🇺🇸,MARATHON PETROLEUM CORP,mpcususd,"Feb 1, 2018",2018-02-01
+us,United States 🇺🇸,MONOLITHIC POWER SYSTEMS INC,mpwrususd,"May 13, 2022",2022-05-13
+us,United States 🇺🇸,MEDICAL PROPERTIES TRUST INC,mpwususd,"May 13, 2022",2022-05-13
+germany,Germany 🇩🇪,Merck KGaA,mrkdeeur,"Jan 3, 2011",2011-01-03
+us,United States 🇺🇸,MERCK & CO. INC.,mrkususd,"Nov 2, 2017",2017-11-02
+us,United States 🇺🇸,Moderna,mrnaususd,"Oct 1, 2020",2020-10-01
+us,United States 🇺🇸,MARATHON OIL CORP,mroususd,"Feb 1, 2018",2018-02-01
+us,United States 🇺🇸,MARVELL TECHNOLOGY INC,mrvlususd,"May 13, 2022",2022-05-13
+uk,United Kingdom 🇬🇧,WM Morrison Supermarkets PLC,mrwgbgbx,"Jan 4, 2011",2011-01-04
+us,United States 🇺🇸,MSCI INC,msciususd,"Jun 15, 2022",2022-06-15
+us,United States 🇺🇸,MICROSOFT CORP,msftususd,"Jan 26, 2017",2017-01-26
+italy,Italy 🇮🇹,Mediaset Spa,msiteur,"Dec 17, 2020",2020-12-17
+us,United States 🇺🇸,MORGAN STANLEY,msususd,"Nov 2, 2017",2017-11-02
+us,United States 🇺🇸,MATCH GROUP INC,mtchususd,"May 13, 2022",2022-05-13
+us,United States 🇺🇸,METTLER-TOLEDO INTERNATIONAL,mtdususd,"May 13, 2022",2022-05-13
+netherlands,Netherlands 🇳🇱,ArcelorMittal,mtnleur,"Jan 3, 2011",2011-01-03
+us,United States 🇺🇸,VAIL RESORTS INC,mtnususd,"May 13, 2022",2022-05-13
+germany,Germany 🇩🇪,MTU AERO ENGINES AG,mtxdeeur,"May 12, 2022",2022-05-12
+us,United States 🇺🇸,MACY'S INC,mususd,"Nov 2, 2017",2017-11-02
+us,United States 🇺🇸,MICRON TECHNOLOGY INC,muususd,"Nov 2, 2017",2017-11-02
+germany,Germany 🇩🇪,Muenchener Rueckversicherungs AG,muv2deeur,"Jan 3, 2011",2011-01-03
+fx_crosses,Forex currencies 💱,Mexican peso vs. Czech koruna,mxnczk,"May 15, 2024",2024-05-15
+fx_crosses,Forex currencies 💱,Mexican peso vs. Hungarian forint,mxnhuf,"May 15, 2024",2024-05-15
+fx_crosses,Forex currencies 💱,Mexican peso vs. Japanese yen,mxnjpy,"Jul 23, 1998",1998-07-23
+fx_crosses,Forex currencies 💱,Mexican peso vs. Thai baht,mxnthb,"Sep 17, 2024",2024-09-17
+fx_crosses,Forex currencies 💱,Mexican peso vs. Turkish lira,mxntry,"May 15, 2024",2024-05-15
+us,United States 🇺🇸,NEUROCRINE BIOSCIENCES INC,nbixususd,"May 13, 2022",2022-05-13
+us,United States 🇺🇸,NORWEGIAN CRUISE LINE HOLDIN,nclhususd,"May 13, 2022",2022-05-13
+sweden,Sweden 🇸🇪,Nordea Bank AB,ndasesek,"Jan 3, 2011",2011-01-03
+us,United States 🇺🇸,NORDSON CORP,ndsnususd,"May 13, 2022",2022-05-13
+us,United States 🇺🇸,NEXTERA ENERGY INC,neeususd,"Feb 1, 2018",2018-02-01
+us,United States 🇺🇸,NEWMONT MINING CORP,nemususd,"May 11, 2017",2017-05-11
+finland,Finland 🇫🇮,Neste OYJ,nes1vfieur,"Jan 3, 2011",2011-01-03
+switzerland,Switzerland 🇨🇭,Nestle SA,nesnchchf,"Jan 3, 2011",2011-01-03
+us,United States 🇺🇸,NETFLIX INC,nflxususd,"Jan 26, 2017",2017-01-26
+uk,United Kingdom 🇬🇧,National Grid PLC,nggbgbx,"Jan 4, 2011",2011-01-04
+norway,Norway 🇳🇴,Norsk Hydro ASA,nhynonok,"Jan 3, 2011",2011-01-03
+us,United States 🇺🇸,Nio INC,nioususd,"Nov 23, 2020",2020-11-23
+us,United States 🇺🇸,NIKE INC,nkeususd,"Nov 2, 2017",2017-11-02
+idx_europe,Europe 🇪🇺,Netherlands 25 Index,nldidxeur,"Dec 1, 2017",2017-12-01
+us,United States 🇺🇸,NORTONLIFELOCK INC,nlokususd,"Jun 15, 2022",2022-06-15
+us,United States 🇺🇸,NIELSEN HOLDINGS PLC,nlsnususd,"May 13, 2022",2022-05-13
+us,United States 🇺🇸,ANNALY CAPITAL MANAGEMENT IN,nlyususd,"May 13, 2022",2022-05-13
+us,United States 🇺🇸,NORTHROP GRUMMAN CORP,nocususd,"May 11, 2017",2017-05-11
+fx_crosses,Forex currencies 💱,Norwegian krone vs. United Arab Emirates dirham,nokaed,"Sep 17, 2024",2024-09-17
+fx_crosses,Forex currencies 💱,Norwegian krone vs. Renminbi (offshore),nokcnh,"Sep 17, 2024",2024-09-17
+fx_crosses,Forex currencies 💱,Norwegian krone vs. Czech koruna,nokczk,"May 15, 2024",2024-05-15
+fx_crosses,Forex currencies 💱,Norwegian krone vs. Danish krone,nokdkk,"May 15, 2024",2024-05-15
+fx_crosses,Forex currencies 💱,Norwegian krone vs. Hong Kong dollar,nokhkd,"May 15, 2024",2024-05-15
+fx_crosses,Forex currencies 💱,Norwegian krone vs. Hungarian forint,nokhuf,"May 15, 2024",2024-05-15
+fx_crosses,Forex currencies 💱,Norwegian krone vs. Israeli new shekel,nokils,"Sep 17, 2024",2024-09-17
+fx_crosses,Forex currencies 💱,Norwegian krone vs. Japanese yen,nokjpy,"May 15, 2024",2024-05-15
+fx_crosses,Forex currencies 💱,Norwegian krone vs. Mexican peso,nokmxn,"May 26, 2024",2024-05-26
+fx_crosses,Forex currencies 💱,Norwegian krone vs. Romanian leu,nokron,"Sep 17, 2024",2024-09-17
+fx_crosses,Forex currencies 💱,Norwegian krone vs. Saudi riyal,noksar,"Sep 17, 2024",2024-09-17
+fx_crosses,Forex currencies 💱,Norwegian krone vs. Swedish krona,noksek,"May 15, 2024",2024-05-15
+fx_crosses,Forex currencies 💱,Norwegian krone vs. Thai baht,nokthb,"Sep 17, 2024",2024-09-17
+fx_crosses,Forex currencies 💱,Norwegian krone vs. Turkish lira,noktry,"May 15, 2024",2024-05-15
+fx_crosses,Forex currencies 💱,Norwegian krone vs. South African rand,nokzar,"May 15, 2024",2024-05-15
+switzerland,Switzerland 🇨🇭,Novartis AG,novnchchf,"Jan 3, 2011",2011-01-03
+denmark,Denmark 🇩🇰,Novo Nordisk A/S,novobdkdkk,"Jan 3, 2011",2011-01-03
+us,United States 🇺🇸,SERVICENOW INC,nowususd,"May 13, 2022",2022-05-13
+finland,Finland 🇫🇮,Nokian Renkaat OYJ,nre1vfieur,"Jan 3, 2011",2011-01-03
+us,United States 🇺🇸,NRG ENERGY INC,nrgususd,"Feb 1, 2018",2018-02-01
+us,United States 🇺🇸,NORFOLK SOUTHERN CORP,nscususd,"Feb 1, 2018",2018-02-01
+us,United States 🇺🇸,NUTANIX INC - A,ntnxususd,"May 13, 2022",2022-05-13
+us,United States 🇺🇸,NVIDIA CORP,nvdaususd,"Jan 26, 2017",2017-01-26
+us,United States 🇺🇸,NVR INC,nvrususd,"May 26, 2022",2022-05-26
+us,United States 🇺🇸,NEWELL BRANDS INC,nwlususd,"Nov 2, 2017",2017-11-02
+us,United States 🇺🇸,NEWS CORP - CLASS B,nwsususd,"May 13, 2022",2022-05-13
+us,United States 🇺🇸,NEXSTAR MEDIA GROUP INC-CL A,nxstususd,"May 13, 2022",2022-05-13
+uk,United Kingdom 🇬🇧,Next PLC,nxtgbgbx,"Jan 4, 2011",2011-01-04
+us,United States 🇺🇸,NEW YORK TIMES CO-A,nytususd,"May 13, 2022",2022-05-13
+fx_crosses,Forex currencies 💱,New Zealand dollar vs. United Arab Emirates dirham,nzdaed,"Sep 17, 2024",2024-09-17
+fx_crosses,Forex currencies 💱,New Zealand Dollar vs Canadian Dollar,nzdcad,"Mar 25, 2002",2002-03-25
+fx_crosses,Forex currencies 💱,New Zealand Dollar vs Swiss Franc,nzdchf,"Jan 7, 1999",1999-01-07
+fx_crosses,Forex currencies 💱,New Zealand dollar vs. Renminbi (offshore),nzdcnh,"May 15, 2024",2024-05-15
+fx_crosses,Forex currencies 💱,New Zealand dollar vs. Czech koruna,nzdczk,"May 15, 2024",2024-05-15
+fx_crosses,Forex currencies 💱,New Zealand dollar vs. Danish krone,nzddkk,"May 15, 2024",2024-05-15
+fx_crosses,Forex currencies 💱,New Zealand dollar vs. Hong Kong dollar,nzdhkd,"May 15, 2024",2024-05-15
+fx_crosses,Forex currencies 💱,New Zealand dollar vs. Hungarian forint,nzdhuf,"May 15, 2024",2024-05-15
+fx_crosses,Forex currencies 💱,New Zealand dollar vs. Israeli new shekel,nzdils,"Sep 17, 2024",2024-09-17
+fx_crosses,Forex currencies 💱,New Zealand Dollar vs Japanese Yen,nzdjpy,"Oct 1, 1998",1998-10-01
+fx_crosses,Forex currencies 💱,New Zealand dollar vs. Mexican peso,nzdmxn,"May 15, 2024",2024-05-15
+fx_crosses,Forex currencies 💱,New Zealand dollar vs. Norwegian krone,nzdnok,"May 15, 2024",2024-05-15
+fx_crosses,Forex currencies 💱,New Zealand dollar vs. Polish zÅ‚oty,nzdpln,"May 4, 2001",2001-05-04
+fx_crosses,Forex currencies 💱,New Zealand dollar vs. Romanian leu,nzdron,"Sep 17, 2024",2024-09-17
+fx_crosses,Forex currencies 💱,New Zealand dollar vs. Saudi riyal,nzdsar,"Sep 17, 2024",2024-09-17
+fx_crosses,Forex currencies 💱,New Zealand dollar vs. Swedish krona,nzdsek,"May 15, 2024",2024-05-15
+fx_crosses,Forex currencies 💱,New Zealand dollar vs. Singapore dollar,nzdsgd,"Jun 3, 1999",1999-06-03
+fx_crosses,Forex currencies 💱,New Zealand dollar vs. Thai baht,nzdthb,"Sep 17, 2024",2024-09-17
+fx_crosses,Forex currencies 💱,New Zealand dollar vs. Turkish lira,nzdtry,"May 15, 2024",2024-05-15
+fx_majors,Forex major currencies 💶,New Zealand Dollar vs US Dollar,nzdusd,"Jul 8, 1991",1991-07-08
+fx_crosses,Forex currencies 💱,New Zealand dollar vs. South African rand,nzdzar,"May 15, 2024",2024-05-15
+denmark,Denmark 🇩🇰,Novozymes A/S,nzymbdkdkk,"Jan 3, 2011",2011-01-03
+uk,United Kingdom 🇬🇧,OCADO GROUP PLC,ocdogbgbx,"May 12, 2022",2022-05-12
+us,United States 🇺🇸,OWENS CORNING,ocususd,"May 13, 2022",2022-05-13
+us,United States 🇺🇸,OLD DOMINION FREIGHT LINE,odflususd,"May 13, 2022",2022-05-13
+switzerland,Switzerland 🇨🇭,OC Oerlikon Corporation,oerlchchf,"Jan 3, 2011",2011-01-03
+us,United States 🇺🇸,OGE ENERGY CORP,ogeususd,"May 13, 2022",2022-05-13
+us,United States 🇺🇸,ORGANON & CO,ognususd,"May 13, 2022",2022-05-13
+us,United States 🇺🇸,OMEGA HEALTHCARE INVESTORS,ohiususd,"May 13, 2022",2022-05-13
+cmd_agricultural,Agricultural commodities ☕,Orange Juice,ojuicecmdusx,"Oct 20, 2017",2017-10-20
+us,United States 🇺🇸,ONEOK INC,okeususd,"Feb 1, 2018",2018-02-01
+us,United States 🇺🇸,OKTA INC,oktaususd,"May 13, 2022",2022-05-13
+us,United States 🇺🇸,UNIVERSAL DISPLAY CORP,oledususd,"May 13, 2022",2022-05-13
+us,United States 🇺🇸,OLLIE'S BARGAIN OUTLET HOLDI,olliususd,"May 13, 2022",2022-05-13
+us,United States 🇺🇸,OLIN CORP,olnususd,"May 13, 2022",2022-05-13
+mexico,Mexico 🇲🇽,Grupo Aeroportuario del Centro Norte,omabmxmxn,"Oct 13, 2022",2022-10-13
+us,United States 🇺🇸,OMNICOM GROUP,omcususd,"Feb 1, 2018",2018-02-01
+us,United States 🇺🇸,ONEMAIN HOLDINGS INC,omfususd,"May 13, 2022",2022-05-13
+us,United States 🇺🇸,ON SEMICONDUCTOR,onususd,"May 13, 2022",2022-05-13
+france,France 🇫🇷,Orange SA,orafreur,"Jul 1, 2013",2013-07-01
+mexico,Mexico 🇲🇽,Orbia Advance Corp SAB DE CV,orbiamxmxn,"Oct 13, 2022",2022-10-13
+us,United States 🇺🇸,ORACLE CORP,orclususd,"Nov 2, 2017",2017-11-02
+france,France 🇫🇷,L'Oreal SA,orfreur,"Jan 3, 2011",2011-01-03
+norway,Norway 🇳🇴,Orkla ASA,orknonok,"Jan 3, 2011",2011-01-03
+us,United States 🇺🇸,O'REILLY AUTOMOTIVE INC,orlyususd,"Nov 2, 2017",2017-11-02
+finland,Finland 🇫🇮,Outotec OYJ,ote1vfieur,"Jan 3, 2011",2011-01-03
+us,United States 🇺🇸,OTIS WORLDWIDE CORP,otisususd,"May 13, 2022",2022-05-13
+us,United States 🇺🇸,REALTY INCOME CORP,oususd,"May 13, 2022",2022-05-13
+finland,Finland 🇫🇮,Outokumpu OYJ,out1vfieur,"Mar 3, 2014",2014-03-03
+us,United States 🇺🇸,OCCIDENTAL PETROLEUM CORP,oxyususd,"May 11, 2017",2017-05-11
+germany,Germany 🇩🇪,Porsche Automobil Holding SE,pah3deeur,"Jan 3, 2011",2011-01-03
+us,United States 🇺🇸,PALO ALTO NETWORKS INC,panwususd,"May 13, 2022",2022-05-13
+us,United States 🇺🇸,PARAMOUNT GLOBAL-CLASS B,paraususd,"Jun 15, 2022",2022-06-15
+us,United States 🇺🇸,PAYCOM SOFTWARE INC,paycususd,"May 13, 2022",2022-05-13
+us,United States 🇺🇸,PAYCHEX INC,payxususd,"Feb 1, 2018",2018-02-01
+us,United States 🇺🇸,PBF ENERGY INC-CLASS A,pbfususd,"May 13, 2022",2022-05-13
+etf_cfd_us,United States ETFs 🇺🇸📈,Invesco Food & Beverage ETF,pbjususd,"Mar 20, 2020",2020-03-20
+us,United States 🇺🇸,Petroleo Brasileiro S.A.,pbrususd,"Jan 26, 2017",2017-01-26
+us,United States 🇺🇸,PACCAR INC,pcarususd,"Feb 1, 2018",2018-02-01
+us,United States 🇺🇸,P G & E CORP,pcgususd,"Nov 2, 2017",2017-11-02
+us,United States 🇺🇸,PRICELINE GROUP INC/THE,pclnususd,"Jan 26, 2017",2017-01-26
+us,United States 🇺🇸,PAYLOCITY HOLDING CORP,pctyususd,"May 19, 2022",2022-05-19
+us,United States 🇺🇸,HEALTHPEAK PROPERTIES INC,peakususd,"Jun 15, 2022",2022-06-15
+etf_cfd_us,United States ETFs 🇺🇸📈,Invesco Leisure & Entertainment ETF,pejususd,"Mar 18, 2020",2020-03-18
+us,United States 🇺🇸,PENN NATIONAL GAMING INC,pennususd,"May 13, 2022",2022-05-13
+mexico,Mexico 🇲🇽,Industrias Penoles SAB DE CV,peolesmxmxn,"Oct 13, 2022",2022-10-13
+us,United States 🇺🇸,PEPSICO INC,pepususd,"Nov 2, 2017",2017-11-02
+uk,United Kingdom 🇬🇧,Petrofac Ltd,pfcgbgbx,"Jan 4, 2011",2011-01-04
+us,United States 🇺🇸,PFIZER INC,pfeususd,"Jan 26, 2017",2017-01-26
+us,United States 🇺🇸,PROGRESSIVE CORP,pgrususd,"Feb 1, 2018",2018-02-01
+us,United States 🇺🇸,PROCTER & GAMBLE CO/THE,pgususd,"Jan 26, 2017",2017-01-26
+netherlands,Netherlands 🇳🇱,Koninklijke Philips NV,phianleur,"Jan 3, 2011",2011-01-03
+uk,United Kingdom 🇬🇧,PHOENIX GROUP HOLDINGS PLC,phnxgbgbx,"May 12, 2022",2022-05-12
+us,United States 🇺🇸,PARKER HANNIFIN CORP,phususd,"Feb 1, 2018",2018-02-01
+italy,Italy 🇮🇹,Piaggio & C. Spa,piaiteur,"Dec 17, 2020",2020-12-17
+us,United States 🇺🇸,POLARIS INC,piiususd,"May 13, 2022",2022-05-13
+mexico,Mexico 🇲🇽,Promotora Y Operadora DE INF,pinframxmxn,"Oct 13, 2022",2022-10-13
+us,United States 🇺🇸,PACKAGING CORP OF AMERICA,pkgususd,"May 13, 2022",2022-05-13
+us,United States 🇺🇸,ANAPLAN INC,planususd,"May 13, 2022",2022-05-13
+fx_crosses,Forex currencies 💱,Polish zÅ‚oty vs. United Arab Emirates dirham,plnaed,"Sep 17, 2024",2024-09-17
+fx_crosses,Forex currencies 💱,Polish zÅ‚oty vs. Renminbi (offshore),plncnh,"Sep 17, 2024",2024-09-17
+fx_crosses,Forex currencies 💱,Polish zÅ‚oty vs. Czech koruna,plnczk,"May 15, 2024",2024-05-15
+fx_crosses,Forex currencies 💱,Polish zÅ‚oty vs. Danish krone,plndkk,"Dec 28, 2001",2001-12-28
+fx_crosses,Forex currencies 💱,Polish zÅ‚oty vs. Hong Kong dollar,plnhkd,"May 15, 2024",2024-05-15
+fx_crosses,Forex currencies 💱,Polish zÅ‚oty vs. Hungarian forint,plnhuf,"May 15, 2024",2024-05-15
+idx_europe,Europe 🇪🇺,Poland 20 Index,plnidxpln,"Dec 1, 2017",2017-12-01
+fx_crosses,Forex currencies 💱,Polish zÅ‚oty vs. Israeli new shekel,plnils,"Sep 17, 2024",2024-09-17
+fx_crosses,Forex currencies 💱,Polish zÅ‚oty vs. Japanese yen,plnjpy,"May 15, 2024",2024-05-15
+fx_crosses,Forex currencies 💱,Polish zÅ‚oty vs. Mexican peso,plnmxn,"May 15, 2024",2024-05-15
+fx_crosses,Forex currencies 💱,Polish zÅ‚oty vs. Norwegian krone,plnnok,"May 15, 2024",2024-05-15
+fx_crosses,Forex currencies 💱,Polish zÅ‚oty vs. Romanian leu,plnron,"Sep 17, 2024",2024-09-17
+fx_crosses,Forex currencies 💱,Polish zÅ‚oty vs. Saudi riyal,plnsar,"Sep 17, 2024",2024-09-17
+fx_crosses,Forex currencies 💱,Polish zÅ‚oty vs. Swedish krona,plnsek,"May 15, 2024",2024-05-15
+fx_crosses,Forex currencies 💱,Polish zÅ‚oty vs. Thai baht,plnthb,"Sep 17, 2024",2024-09-17
+fx_crosses,Forex currencies 💱,Polish zÅ‚oty vs. Turkish lira,plntry,"May 15, 2024",2024-05-15
+us,United States 🇺🇸,PLANET FITNESS INC - CL A,plntususd,"May 13, 2022",2022-05-13
+fx_crosses,Forex currencies 💱,Polish zÅ‚oty vs. South African rand,plnzar,"May 15, 2024",2024-05-15
+us,United States 🇺🇸,Palantir Tech Inc A,pltrususd,"Oct 1, 2020",2020-10-01
+us,United States 🇺🇸,Plug Power Inc,plugususd,"Oct 2, 2020",2020-10-02
+us,United States 🇺🇸,PHILIP MORRIS INTERNATIONAL,pmususd,"Nov 2, 2017",2017-11-02
+us,United States 🇺🇸,PNC FINANCIAL SERVICES GROUP,pncususd,"Nov 2, 2017",2017-11-02
+denmark,Denmark 🇩🇰,Pandora A/S,pndoradkdkk,"Jan 3, 2011",2011-01-03
+us,United States 🇺🇸,PENTAIR PLC,pnrususd,"May 13, 2022",2022-05-13
+us,United States 🇺🇸,INSULET CORP,poddususd,"May 16, 2022",2022-05-16
+us,United States 🇺🇸,POOL CORP,poolususd,"May 13, 2022",2022-05-13
+etf_cfd_us,United States ETFs 🇺🇸📈,Invesco Aerospace & Defense ETF,ppaususd,"Mar 24, 2020",2020-03-24
+us,United States 🇺🇸,PPG INDUSTRIES INC,ppgususd,"Feb 2, 2018",2018-02-02
+us,United States 🇺🇸,PERRIGO CO PLC,prgoususd,"May 13, 2022",2022-05-13
+uk,United Kingdom 🇬🇧,Prudential PLC,prugbgbx,"Jan 4, 2011",2011-01-04
+us,United States 🇺🇸,PRUDENTIAL FINANCIAL INC,pruususd,"Feb 1, 2018",2018-02-01
+italy,Italy 🇮🇹,Prysmian Spa,pryiteur,"Dec 17, 2020",2020-12-17
+us,United States 🇺🇸,PUBLIC STORAGE,psaususd,"Feb 1, 2018",2018-02-01
+germany,Germany 🇩🇪,ProSiebenSat.1 Media AG,psmdeeur,"Aug 19, 2013",2013-08-19
+uk,United Kingdom 🇬🇧,Persimmon PLC,psngbgbx,"Jan 4, 2011",2011-01-04
+uk,United Kingdom 🇬🇧,Pearson PLC,psongbgbx,"Jan 4, 2011",2011-01-04
+us,United States 🇺🇸,PURE STORAGE INC - CLASS A,pstgususd,"May 13, 2022",2022-05-13
+us,United States 🇺🇸,PHILLIPS 66,psxususd,"Feb 1, 2018",2018-02-01
+us,United States 🇺🇸,PTC INC,ptcususd,"May 13, 2022",2022-05-13
+us,United States 🇺🇸,PATTERSON-UTI ENERGY INC,ptenususd,"May 13, 2022",2022-05-13
+us,United States 🇺🇸,Peloton Interactive Inc,ptonususd,"Oct 1, 2020",2020-10-01
+france,France 🇫🇷,Publicis Groupe SA,pubfreur,"Jan 3, 2011",2011-01-03
+germany,Germany 🇩🇪,PUMA SE,pumdeeur,"May 12, 2022",2022-05-12
+us,United States 🇺🇸,PVH CORP,pvhususd,"May 13, 2022",2022-05-13
+us,United States 🇺🇸,PIONEER NATURAL RESOURCES CO,pxdususd,"Nov 2, 2017",2017-11-02
+us,United States 🇺🇸,PAYPAL HOLDINGS INC,pyplususd,"Nov 2, 2017",2017-11-02
+us,United States 🇺🇸,QUALCOMM INC,qcomususd,"Nov 2, 2017",2017-11-02
+netherlands,Netherlands 🇳🇱,QIAGEN N.V.,qianleur,"May 12, 2022",2022-05-12
+mexico,Mexico 🇲🇽,Qualitas Controladora SAB,qmxmxn,"Oct 13, 2022",2022-10-13
+etf_cfd_us,United States ETFs 🇺🇸📈,PowerShares QQQ ETF,qqqususd,"Jan 26, 2017",2017-01-26
+us,United States 🇺🇸,QORVO INC,qrvoususd,"May 13, 2022",2022-05-13
+italy,Italy 🇮🇹,Ferrari NV,raceiteur,"Dec 17, 2020",2020-12-17
+mexico,Mexico 🇲🇽,Regional Sab De CV,ramxmxn,"Oct 13, 2022",2022-10-13
+netherlands,Netherlands 🇳🇱,Randstad Holding NV,randnleur,"Jan 3, 2011",2011-01-03
+uk,United Kingdom 🇬🇧,Reckitt Benckiser Group PLC,rbgbgbx,"Jan 4, 2011",2011-01-04
+austria,Austria 🇦🇹,Raiffeisen Bank International AG,rbiateur,"Jan 3, 2011",2011-01-03
+uk,United Kingdom 🇬🇧,Royal Bank of Scotland Group PLC,rbsgbgbx,"Jan 4, 2011",2011-01-04
+us,United States 🇺🇸,ROYAL CARIBBEAN CRUISES LTD,rclususd,"May 13, 2022",2022-05-13
+netherlands,Netherlands 🇳🇱,Royal Dutch Shell PLC,rdsanleur,"Jan 3, 2011",2011-01-03
+uk,United Kingdom 🇬🇧,Royal Dutch Shell PLC,rdsbgbgbx,"Jan 4, 2011",2011-01-04
+italy,Italy 🇮🇹,Recordati Industria Chimica e Farma Spa,reciteur,"Dec 17, 2020",2020-12-17
+spain,Spain 🇪🇸,Red Electrica Corp SA,reeeseur,"Jan 3, 2011",2011-01-03
+us,United States 🇺🇸,REGENERON PHARMACEUTICALS,regnususd,"Nov 2, 2017",2017-11-02
+us,United States 🇺🇸,REGENCY CENTERS CORP,regususd,"May 13, 2022",2022-05-13
+uk,United Kingdom 🇬🇧,Reed Elsevier PLC,relgbgbx,"Jan 4, 2011",2011-01-04
+netherlands,Netherlands 🇳🇱,RELX NV,rennleur,"Jul 20, 2015",2015-07-20
+spain,Spain 🇪🇸,Repsol SA,repeseur,"Jan 3, 2011",2011-01-03
+us,United States 🇺🇸,EVEREST RE GROUP LTD,reususd,"May 13, 2022",2022-05-13
+us,United States 🇺🇸,REGIONS FINANCIAL CORP,rfususd,"Feb 1, 2018",2018-02-01
+us,United States 🇺🇸,REINSURANCE GROUP OF AMERICA,rgaususd,"May 23, 2022",2022-05-23
+us,United States 🇺🇸,ROYAL GOLD INC,rgldususd,"May 13, 2022",2022-05-13
+france,France 🇫🇷,Pernod-Ricard SA,rifreur,"Jan 3, 2011",2011-01-03
+uk,United Kingdom 🇬🇧,Rio Tinto PLC,riogbgbx,"Jan 4, 2011",2011-01-04
+us,United States 🇺🇸,RAYMOND JAMES FINANCIAL INC,rjfususd,"May 13, 2022",2022-05-13
+us,United States 🇺🇸,RESMED INC,rmdususd,"May 13, 2022",2022-05-13
+uk,United Kingdom 🇬🇧,Royal Mail PLC,rmggbgbx,"Oct 11, 2013",2013-10-11
+france,France 🇫🇷,HERMES INTERNATIONAL,rmsfreur,"May 12, 2022",2022-05-12
+uk,United Kingdom 🇬🇧,RIGHTMOVE PLC,rmvgbgbx,"May 12, 2022",2022-05-12
+us,United States 🇺🇸,RINGCENTRAL INC-CLASS A,rngususd,"May 16, 2022",2022-05-16
+france,France 🇫🇷,Renault SA,rnofreur,"Jan 3, 2011",2011-01-03
+us,United States 🇺🇸,RENAISSANCERE HOLDINGS LTD,rnrususd,"Jun 15, 2022",2022-06-15
+etf_cfd_us,United States ETFs 🇺🇸📈,ROBO Global Robotics & Automation Index ETF,roboususd,"Oct 3, 2022",2022-10-03
+switzerland,Switzerland 🇨🇭,Roche Holding AG,rogchchf,"Jan 3, 2011",2011-01-03
+us,United States 🇺🇸,Roku Inc,rokuususd,"Nov 23, 2020",2020-11-23
+us,United States 🇺🇸,ROLLINS INC,rolususd,"May 13, 2022",2022-05-13
+fx_crosses,Forex currencies 💱,Romanian leu vs. Renminbi (offshore),roncnh,"Sep 17, 2024",2024-09-17
+fx_crosses,Forex currencies 💱,Romanian leu vs. Czech koruna,ronczk,"Sep 17, 2024",2024-09-17
+fx_crosses,Forex currencies 💱,Romanian leu vs. Hong Kong dollar,ronhkd,"Sep 17, 2024",2024-09-17
+fx_crosses,Forex currencies 💱,Romanian leu vs. Hungarian forint,ronhuf,"Sep 17, 2024",2024-09-17
+fx_crosses,Forex currencies 💱,Romanian leu vs. Japanese yen,ronjpy,"Sep 17, 2024",2024-09-17
+fx_crosses,Forex currencies 💱,Romanian leu vs. Mexican peso,ronmxn,"Sep 17, 2024",2024-09-17
+fx_crosses,Forex currencies 💱,Romanian leu vs. Thai baht,ronthb,"Sep 17, 2024",2024-09-17
+fx_crosses,Forex currencies 💱,Romanian leu vs. Turkish lira,rontry,"Sep 17, 2024",2024-09-17
+fx_crosses,Forex currencies 💱,Romanian leu vs. South African rand,ronzar,"Sep 17, 2024",2024-09-17
+us,United States 🇺🇸,ROSS STORES INC,rostususd,"Feb 1, 2018",2018-02-01
+us,United States 🇺🇸,RPM INTERNATIONAL INC,rpmususd,"May 13, 2022",2022-05-13
+us,United States 🇺🇸,RANGE RESOURCES CORP,rrcususd,"Feb 1, 2018",2018-02-01
+uk,United Kingdom 🇬🇧,Rolls-Royce Holdings PLC,rrgbgbx,"Jan 4, 2011",2011-01-04
+us,United States 🇺🇸,REGAL REXNORD CORP,rrxususd,"May 13, 2022",2022-05-13
+uk,United Kingdom 🇬🇧,RSA Insurance Group PLC,rsagbgbx,"Jan 4, 2011",2011-01-04
+us,United States 🇺🇸,RELIANCE STEEL & ALUMINUM,rsususd,"May 16, 2022",2022-05-16
+uk,United Kingdom 🇬🇧,RENTOKIL INITIAL PLC,rtogbgbx,"May 12, 2022",2022-05-12
+us,United States 🇺🇸,RAYTHEON TECHNOLOGIES CORP,rtxususd,"Jun 15, 2022",2022-06-15
+germany,Germany 🇩🇪,RWE AG,rwedeeur,"Jan 3, 2011",2011-01-03
+ireland,Ireland 🇮🇪,Ryanair Holdings Plc,ry4cieeur,"Oct 1, 2020",2020-10-01
+us,United States 🇺🇸,SABRE CORP,sabrususd,"May 13, 2022",2022-05-13
+france,France 🇫🇷,Safran SA,saffreur,"Jan 3, 2011",2011-01-03
+sweden,Sweden 🇸🇪,Sandvik AB,sandsesek,"Jan 3, 2011",2011-01-03
+spain,Spain 🇪🇸,Banco Santander SA,saneseur,"Jan 3, 2011",2011-01-03
+france,France 🇫🇷,Sanofi,sanfreur,"Jan 3, 2011",2011-01-03
+germany,Germany 🇩🇪,SAP AG,sapdeeur,"Jan 3, 2011",2011-01-03
+fx_crosses,Forex currencies 💱,Saudi riyal vs. Renminbi (offshore),sarcnh,"Sep 17, 2024",2024-09-17
+fx_crosses,Forex currencies 💱,Saudi riyal vs. Czech koruna,sarczk,"Sep 17, 2024",2024-09-17
+fx_crosses,Forex currencies 💱,Saudi riyal vs. Hong Kong dollar,sarhkd,"Sep 17, 2024",2024-09-17
+fx_crosses,Forex currencies 💱,Saudi riyal vs. Hungarian forint,sarhuf,"Sep 17, 2024",2024-09-17
+fx_crosses,Forex currencies 💱,Saudi riyal vs. Japanese yen,sarjpy,"Sep 17, 2024",2024-09-17
+fx_crosses,Forex currencies 💱,Saudi riyal vs. Mexican peso,sarmxn,"Sep 17, 2024",2024-09-17
+fx_crosses,Forex currencies 💱,Saudi riyal vs. Romanian leu,sarron,"Sep 17, 2024",2024-09-17
+fx_crosses,Forex currencies 💱,Saudi riyal vs. Thai baht,sarthb,"Sep 17, 2024",2024-09-17
+fx_crosses,Forex currencies 💱,Saudi riyal vs. Turkish lira,sartry,"Sep 17, 2024",2024-09-17
+fx_crosses,Forex currencies 💱,Saudi riyal vs. South African rand,sarzar,"Sep 17, 2024",2024-09-17
+us,United States 🇺🇸,SIGNATURE BANK,sbnyususd,"May 16, 2022",2022-05-16
+uk,United Kingdom 🇬🇧,J Sainsbury PLC,sbrygbgbx,"Jan 4, 2011",2011-01-04
+us,United States 🇺🇸,STARBUCKS CORP,sbuxususd,"Nov 2, 2017",2017-11-02
+sweden,Sweden 🇸🇪,Svenska Cellulosa AB,scabsesek,"Jan 3, 2011",2011-01-03
+us,United States 🇺🇸,SOUTHERN COPPER CORP,sccoususd,"May 13, 2022",2022-05-13
+us,United States 🇺🇸,SCHWAB (CHARLES) CORP,schwususd,"Nov 2, 2017",2017-11-02
+us,United States 🇺🇸,SERVICE CORP INTERNATIONAL,sciususd,"May 13, 2022",2022-05-13
+switzerland,Switzerland 🇨🇭,Swisscom AG,scmnchchf,"Jan 3, 2011",2011-01-03
+germany,Germany 🇩🇪,K+S AG,sdfdeeur,"Aug 8, 2011",2011-08-08
+uk,United Kingdom 🇬🇧,Schroders PLC,sdrgbgbx,"Jan 4, 2011",2011-01-04
+sweden,Sweden 🇸🇪,Skandinaviska Enskilda Banken AB,sebasesek,"Jan 3, 2011",2011-01-03
+sweden,Sweden 🇸🇪,Securitas AB,secubsesek,"Jan 3, 2011",2011-01-03
+us,United States 🇺🇸,SOLAREDGE TECHNOLOGIES INC,sedgususd,"May 13, 2022",2022-05-13
+us,United States 🇺🇸,SEI INVESTMENTS COMPANY,seicususd,"May 13, 2022",2022-05-13
+fx_crosses,Forex currencies 💱,Swedish krona vs. United Arab Emirates dirham,sekaed,"Sep 17, 2024",2024-09-17
+fx_crosses,Forex currencies 💱,Swedish krona vs. Renminbi (offshore),sekcnh,"Sep 17, 2024",2024-09-17
+fx_crosses,Forex currencies 💱,Swedish krona vs. Czech koruna,sekczk,"May 15, 2024",2024-05-15
+fx_crosses,Forex currencies 💱,Swedish krona vs. Danish krone,sekdkk,"May 15, 2024",2024-05-15
+fx_crosses,Forex currencies 💱,Swedish krona vs. Hong Kong dollar,sekhkd,"May 15, 2024",2024-05-15
+fx_crosses,Forex currencies 💱,Swedish krona vs. Hungarian forint,sekhuf,"May 15, 2024",2024-05-15
+fx_crosses,Forex currencies 💱,Swedish krona vs. Israeli new shekel,sekils,"Sep 17, 2024",2024-09-17
+fx_crosses,Forex currencies 💱,Swedish krona vs. Japanese yen,sekjpy,"May 15, 2024",2024-05-15
+fx_crosses,Forex currencies 💱,Swedish krona vs. Mexican peso,sekmxn,"May 15, 2024",2024-05-15
+fx_crosses,Forex currencies 💱,Swedish krona vs. Romanian leu,sekron,"Sep 17, 2024",2024-09-17
+fx_crosses,Forex currencies 💱,Swedish krona vs. Saudi riyal,seksar,"Sep 17, 2024",2024-09-17
+fx_crosses,Forex currencies 💱,Swedish krona vs. Thai baht,sekthb,"Sep 17, 2024",2024-09-17
+fx_crosses,Forex currencies 💱,Swedish krona vs. Turkish lira,sektry,"May 15, 2024",2024-05-15
+fx_crosses,Forex currencies 💱,Swedish krona vs. South African rand,sekzar,"May 15, 2024",2024-05-15
+etf_cfd,ETFs 📈,iShares MSCI Global Semiconductors UCITS ETF,semigbgbx,"Oct 21, 2024",2024-10-21
+italy,Italy 🇮🇹,Salvat Ferragamo Spa,sferiteur,"Dec 17, 2020",2020-12-17
+us,United States 🇺🇸,SPROUTS FARMERS MARKET INC,sfmususd,"May 13, 2022",2022-05-13
+fx_crosses,Forex currencies 💱,Singapore dollar vs. United Arab Emirates dirham,sgdaed,"Sep 17, 2024",2024-09-17
+fx_crosses,Forex currencies 💱,Singapore dollar vs. Renminbi (offshore),sgdcnh,"Sep 17, 2024",2024-09-17
+fx_crosses,Forex currencies 💱,Singapore dollar vs. Czech koruna,sgdczk,"May 15, 2024",2024-05-15
+fx_crosses,Forex currencies 💱,Singapore dollar vs. Danish krone,sgddkk,"May 15, 2024",2024-05-15
+fx_crosses,Forex currencies 💱,Singapore dollar vs. Hong Kong dollar,sgdhkd,"May 15, 2024",2024-05-15
+fx_crosses,Forex currencies 💱,Singapore dollar vs. Hungarian forint,sgdhuf,"May 15, 2024",2024-05-15
+idx_asia,Asia 🌏,Singapore Blue Chip Cash Index,sgdidxsgd,"Dec 1, 2017",2017-12-01
+fx_crosses,Forex currencies 💱,Singapore dollar vs. Israeli new shekel,sgdils,"Sep 17, 2024",2024-09-17
+fx_crosses,Forex currencies 💱,Singapore Dollar vs Japanese Yen,sgdjpy,"May 31, 1999",1999-05-31
+fx_crosses,Forex currencies 💱,Singapore dollar vs. Mexican peso,sgdmxn,"May 15, 2024",2024-05-15
+fx_crosses,Forex currencies 💱,Singapore dollar vs. Norwegian krone,sgdnok,"May 15, 2024",2024-05-15
+fx_crosses,Forex currencies 💱,Singapore dollar vs. Polish zÅ‚oty,sgdpln,"May 15, 2024",2024-05-15
+fx_crosses,Forex currencies 💱,Singapore dollar vs. Romanian leu,sgdron,"Sep 17, 2024",2024-09-17
+fx_crosses,Forex currencies 💱,Singapore dollar vs. Saudi riyal,sgdsar,"Sep 17, 2024",2024-09-17
+fx_crosses,Forex currencies 💱,Singapore dollar vs. Swedish krona,sgdsek,"May 15, 2024",2024-05-15
+fx_crosses,Forex currencies 💱,Singapore dollar vs. Thai baht,sgdthb,"Sep 17, 2024",2024-09-17
+fx_crosses,Forex currencies 💱,Singapore dollar vs. Turkish lira,sgdtry,"May 15, 2024",2024-05-15
+fx_crosses,Forex currencies 💱,Singapore dollar vs. South African rand,sgdzar,"May 15, 2024",2024-05-15
+uk,United Kingdom 🇬🇧,Sage Group PLC/The,sgegbgbx,"Jan 4, 2011",2011-01-04
+us,United States 🇺🇸,SEAGEN INC,sgenususd,"May 13, 2022",2022-05-13
+etf_cfd,ETFs 📈,Invesco Physical Gold ETC Fund,sgldususd,"Mar 20, 2020",2020-03-20
+france,France 🇫🇷,Cie de St-Gobain,sgofreur,"Jan 3, 2011",2011-01-03
+uk,United Kingdom 🇬🇧,SEGRO PLC,sgrogbgbx,"May 12, 2022",2022-05-12
+switzerland,Switzerland 🇨🇭,SGS SA,sgsnchchf,"Jan 3, 2011",2011-01-03
+us,United States 🇺🇸,SHERWIN-WILLIAMS COMPANY,shwususd,"Feb 1, 2018",2018-02-01
+germany,Germany 🇩🇪,Siemens AG,siedeeur,"Jan 3, 2011",2011-01-03
+us,United States 🇺🇸,SVB FINANCIAL GROUP,sivbususd,"May 13, 2022",2022-05-13
+us,United States 🇺🇸,JM SMUCKER COMPANY,sjmususd,"Feb 1, 2018",2018-02-01
+sweden,Sweden 🇸🇪,Skanska AB,skabsesek,"Jan 3, 2011",2011-01-03
+sweden,Sweden 🇸🇪,SKF AB,skfbsesek,"Jan 3, 2011",2011-01-03
+uk,United Kingdom 🇬🇧,Sky Plc,skygbgbx,"Nov 14, 2014",2014-11-14
+uk,United Kingdom 🇬🇧,Standard Life Aberdeen Plc,slagbgbx,"Sep 5, 2017",2017-09-05
+us,United States 🇺🇸,SCHLUMBERGER LTD,slbususd,"May 13, 2022",2022-05-13
+switzerland,Switzerland 🇨🇭,Swiss Life Holding AG,slhnchchf,"Jan 3, 2011",2011-01-03
+us,United States 🇺🇸,SLM CORP,slmususd,"May 13, 2022",2022-05-13
+etf_cfd_us,United States ETFs 🇺🇸📈,iShares Silver Trust ETF,slvususd,"Feb 1, 2018",2018-02-01
+uk,United Kingdom 🇬🇧,DS SMITH PLC,smdsgbgbx,"May 12, 2022",2022-05-12
+etf_cfd,ETFs 📈,VanEck Semiconductor ETF Fund,smhususd,"Dec 9, 2020",2020-12-09
+uk,United Kingdom 🇬🇧,Smiths Group PLC,smingbgbx,"Jan 4, 2011",2011-01-04
+etf_cfd,ETFs 📈,Lyxor Smart Overnight Return - UCITS ETF C-USD,smtcususd,"Jan 4, 2023",2023-01-04
+uk,United Kingdom 🇬🇧,SCOTTISH MORTGAGE INV TR PLC,smtgbgbx,"May 12, 2022",2022-05-12
+us,United States 🇺🇸,SNAP Inc,snapususd,"Nov 2, 2017",2017-11-02
+uk,United Kingdom 🇬🇧,Smith & Nephew PLC,sngbgbx,"Jan 4, 2011",2011-01-04
+us,United States 🇺🇸,Snowflake Inc Class A,snowususd,"Sep 22, 2020",2020-09-22
+us,United States 🇺🇸,SYNOPSYS INC,snpsususd,"May 13, 2022",2022-05-13
+idx_africa,Africa 🌍,South Africa 40 Index,soaidxzar,"Oct 5, 2022",2022-10-05
+belgium,Belgium 🇧🇪,Solvay SA,solbbeeur,"Jan 3, 2011",2011-01-03
+switzerland,Switzerland 🇨🇭,Sonova Holding AG,soonchchf,"Jan 3, 2011",2011-01-03
+us,United States 🇺🇸,SOUTHERN CO/THE,soususd,"Nov 2, 2017",2017-11-02
+cmd_agricultural,Agricultural commodities ☕,Soybean,soybeancmdusx,"Dec 1, 2017",2017-12-01
+us,United States 🇺🇸,S&P GLOBAL INC,spgiususd,"May 13, 2022",2022-05-13
+us,United States 🇺🇸,SIMON PROPERTY GROUP INC,spgususd,"Nov 2, 2017",2017-11-02
+us,United States 🇺🇸,SPLUNK INC,splkususd,"May 16, 2022",2022-05-16
+italy,Italy 🇮🇹,SAIPEM Spa,spmiteur,"Dec 17, 2020",2020-12-17
+us,United States 🇺🇸,SPOTIFY TECHNOLOGY SA,spotususd,"May 13, 2022",2022-05-13
+us,United States 🇺🇸,SPIRIT AEROSYSTEMS HOLD-CL A,sprususd,"May 13, 2022",2022-05-13
+uk,United Kingdom 🇬🇧,SPIRAX-SARCO ENGINEERING PLC,spxgbgbx,"May 12, 2022",2022-05-12
+etf_cfd_us,United States ETFs 🇺🇸📈,SPDR S&P 500 ETF,spyususd,"Feb 16, 2017",2017-02-16
+us,United States 🇺🇸,Square Inc,sqususd,"Oct 23, 2020",2020-10-23
+switzerland,Switzerland 🇨🇭,Swiss Re AG,srenchchf,"May 23, 2011",2011-05-23
+italy,Italy 🇮🇹,Snam Spa,srgiteur,"Dec 17, 2020",2020-12-17
+us,United States 🇺🇸,SAREPTA THERAPEUTICS INC,srptususd,"May 13, 2022",2022-05-13
+italy,Italy 🇮🇹,Saras Spa,srsiteur,"Dec 17, 2020",2020-12-17
+germany,Germany 🇩🇪,Sartorius AG - Vorzug,srtdeeur,"May 12, 2022",2022-05-12
+uk,United Kingdom 🇬🇧,SSE PLC,ssegbgbx,"Jan 4, 2011",2011-01-04
+us,United States 🇺🇸,SS&C TECHNOLOGIES HOLDINGS,ssncususd,"May 13, 2022",2022-05-13
+uk,United Kingdom 🇬🇧,Standard Chartered PLC,stangbgbx,"Jan 4, 2011",2011-01-04
+finland,Finland 🇫🇮,Stora Enso OYJ,stervfieur,"Jan 3, 2011",2011-01-03
+us,United States 🇺🇸,STERIS PLC,steususd,"May 13, 2022",2022-05-13
+uk,United Kingdom 🇬🇧,ST JAMES'S PLACE PLC,stjgbgbx,"May 12, 2022",2022-05-12
+norway,Norway 🇳🇴,Statoil ASA,stlnonok,"Jan 3, 2011",2011-01-03
+italy,Italy 🇮🇹,STMicroelectronics NV,stmiteur,"Dec 17, 2020",2020-12-17
+us,United States 🇺🇸,STATE STREET CORP,sttususd,"Feb 1, 2018",2018-02-01
+us,United States 🇺🇸,CONSTELLATION BRANDS INC-A,stzususd,"Feb 1, 2018",2018-02-01
+etf_cfd,ETFs 📈,iShares MSCI USA SRI UCITS ETF,suasgbusd,"Feb 28, 2020",2020-02-28
+france,France 🇫🇷,Schneider Electric SA,sufreur,"Jan 3, 2011",2011-01-03
+cmd_agricultural,Agricultural commodities ☕,London Sugar No.5,sugarcmdusd,"Oct 2, 2017",2017-10-02
+us,United States 🇺🇸,SUN COMMUNITIES INC,suiususd,"May 13, 2022",2022-05-13
+etf_cfd,ETFs 📈,iShares MSCI EM SRI UCITS ETF USD (Acc),susmgbusd,"Feb 28, 2020",2020-02-28
+etf_cfd,ETFs 📈,iShares MSCI USA SRI UCITS ETF USD (Acc),suusgbgbx,"Feb 28, 2020",2020-02-28
+uk,United Kingdom 🇬🇧,Severn Trent PLC,svtgbgbx,"Jan 4, 2011",2011-01-04
+sweden,Sweden 🇸🇪,Swedbank AB,swedasesek,"Jan 3, 2011",2011-01-03
+france,France 🇫🇷,SODEXO SA,swfreur,"May 12, 2022",2022-05-12
+us,United States 🇺🇸,SKYWORKS SOLUTIONS INC,swksususd,"May 13, 2022",2022-05-13
+us,United States 🇺🇸,STANLEY BLACK & DECKER INC,swkususd,"Feb 1, 2018",2018-02-01
+sweden,Sweden 🇸🇪,Swedish Match AB,swmasesek,"Jan 3, 2011",2011-01-03
+etf_cfd,ETFs 📈,SPDR S&P U.S. Utilities Select Sector UCITS ETF,sxlugbusd,"Jan 2, 2020",2020-01-02
+germany,Germany 🇩🇪,SYMRISE AG,sy1deeur,"May 12, 2022",2022-05-12
+us,United States 🇺🇸,SYNCHRONY FINANCIAL,syfususd,"May 13, 2022",2022-05-13
+us,United States 🇺🇸,STRYKER CORP,sykususd,"Feb 1, 2018",2018-02-01
+us,United States 🇺🇸,SYSCO CORP,syyususd,"Feb 1, 2018",2018-02-01
+us,United States 🇺🇸,MOLSON COORS BREWING CO -B,tapususd,"Feb 1, 2018",2018-02-01
+uk,United Kingdom 🇬🇧,Tate & Lyle PLC,tategbgbx,"Jan 4, 2011",2011-01-04
+us,United States 🇺🇸,TRANSDIGM GROUP INC,tdgususd,"May 13, 2022",2022-05-13
+us,United States 🇺🇸,TELEDYNE TECHNOLOGIES INC,tdyususd,"May 16, 2022",2022-05-16
+us,United States 🇺🇸,ATLASSIAN CORP PLC-CLASS A,teamususd,"May 13, 2022",2022-05-13
+etf_cfd_de,Germany ETFs 🇩🇪📈,iShares TecDAX UCITS DE ETF,tecdaxedeeur,"Sep 22, 2020",2020-09-22
+us,United States 🇺🇸,BIO-TECHNE CORP,techususd,"Jun 15, 2022",2022-06-15
+spain,Spain 🇪🇸,Telefonica SA,tefeseur,"Jan 3, 2011",2011-01-03
+sweden,Sweden 🇸🇪,Tele2 AB,tel2bsesek,"Jan 3, 2011",2011-01-03
+norway,Norway 🇳🇴,Telenor ASA,telnonok,"Jan 3, 2011",2011-01-03
+us,United States 🇺🇸,TE CONNECTIVITY LTD,telususd,"May 13, 2022",2022-05-13
+switzerland,Switzerland 🇨🇭,Temenos Group AG,temnchchf,"Jan 3, 2011",2011-01-03
+italy,Italy 🇮🇹,Tenaris SA,teniteur,"Dec 17, 2020",2020-12-17
+us,United States 🇺🇸,TEVA PHARMACEUTICAL-SP ADR,tevaususd,"Nov 2, 2017",2017-11-02
+us,United States 🇺🇸,TRUIST FINANCIAL CORP,tfcususd,"Jun 15, 2022",2022-06-15
+us,United States 🇺🇸,TELEFLEX INC,tfxususd,"May 13, 2022",2022-05-13
+us,United States 🇺🇸,TARGET CORP,tgtususd,"Nov 2, 2017",2017-11-02
+fx_crosses,Forex currencies 💱,Thai baht vs. Hungarian forint,thbhuf,"Sep 17, 2024",2024-09-17
+fx_crosses,Forex currencies 💱,Thai baht vs. Japanese yen,thbjpy,"Sep 17, 2024",2024-09-17
+italy,Italy 🇮🇹,Tiscali Spa,tisiteur,"Dec 17, 2020",2020-12-17
+italy,Italy 🇮🇹,Telecom Italia Spa,tititeur,"Dec 17, 2020",2020-12-17
+us,United States 🇺🇸,TJX COMPANIES INC,tjxususd,"Nov 2, 2017",2017-11-02
+germany,Germany 🇩🇪,ThyssenKrupp AG,tkadeeur,"Jan 3, 2011",2011-01-03
+finland,Finland 🇫🇮,Telia Company AB,tls1vfieur,"Apr 18, 2016",2016-04-18
+sweden,Sweden 🇸🇪,Telia Company AB,tlsnsesek,"Apr 18, 2016",2016-04-18
+etf_cfd_us,United States ETFs 🇺🇸📈,iShares 20+ Year Treasury Bond ETF,tltususd,"Jan 26, 2017",2017-01-26
+uk,United Kingdom 🇬🇧,Tullow Oil PLC,tlwgbgbx,"Jan 4, 2011",2011-01-04
+us,United States 🇺🇸,THERMO FISHER SCIENTIFIC INC,tmoususd,"Nov 2, 2017",2017-11-02
+us,United States 🇺🇸,T-MOBILE US INC,tmusususd,"May 13, 2022",2022-05-13
+italy,Italy 🇮🇹,Tods Spa,toditeur,"Dec 17, 2020",2020-12-17
+us,United States 🇺🇸,TOLL BROTHERS INC,tolususd,"May 13, 2022",2022-05-13
+uk,United Kingdom 🇬🇧,Travis Perkins PLC,tpkgbgbx,"Jan 4, 2011",2011-01-04
+us,United States 🇺🇸,TAPESTRY INC,tprususd,"May 13, 2022",2022-05-13
+us,United States 🇺🇸,TEMPUR SEALY INTERNATIONAL I,tpxususd,"May 13, 2022",2022-05-13
+us,United States 🇺🇸,TARGA RESOURCES CORP,trgpususd,"May 13, 2022",2022-05-13
+us,United States 🇺🇸,TRIMBLE INC,trmbususd,"May 13, 2022",2022-05-13
+italy,Italy 🇮🇹,Terna Spa,trniteur,"Dec 17, 2020",2020-12-17
+us,United States 🇺🇸,T ROWE PRICE GROUP INC,trowususd,"Feb 1, 2018",2018-02-01
+us,United States 🇺🇸,TRANSUNION,truususd,"May 13, 2022",2022-05-13
+us,United States 🇺🇸,TRAVELERS COS INC/THE,trvususd,"Nov 2, 2017",2017-11-02
+vccy,Crypto assets ₿,TRON vs US Dollar,trxusd,"Aug 4, 2019",2019-08-04
+fx_crosses,Forex currencies 💱,Turkish lira vs. Hungarian forint,tryhuf,"May 15, 2024",2024-05-15
+fx_crosses,Forex currencies 💱,Turkish Lira vs Japanese Yen,tryjpy,"May 9, 2010",2010-05-09
+fx_crosses,Forex currencies 💱,Turkish lira vs. Thai baht,trythb,"Sep 16, 2024",2024-09-16
+uk,United Kingdom 🇬🇧,Tesco PLC,tscogbgbx,"Jan 4, 2011",2011-01-04
+us,United States 🇺🇸,TESLA MOTORS INC,tslaususd,"Jan 26, 2017",2017-01-26
+us,United States 🇺🇸,Taiwan Semiconductor Manufacturing Company Limited,tsmususd,"Feb 1, 2018",2018-02-01
+us,United States 🇺🇸,TYSON FOODS INC-CL A,tsnususd,"Feb 1, 2018",2018-02-01
+us,United States 🇺🇸,TRADE DESK INC/THE -CLASS A,ttdususd,"May 13, 2022",2022-05-13
+us,United States 🇺🇸,TRANE TECHNOLOGIES PLC,ttususd,"May 13, 2022",2022-05-13
+us,United States 🇺🇸,TAKE-TWO INTERACTIVE SOFTWRE,ttwoususd,"May 13, 2022",2022-05-13
+germany,Germany 🇩🇪,TUI AG,tui1deeur,"Jan 3, 2011",2011-01-03
+us,United States 🇺🇸,AT&T INC,tususd,"Jan 26, 2017",2017-01-26
+uk,United Kingdom 🇬🇧,TAYLOR WIMPEY PLC,twgbgbx,"Jun 14, 2022",2022-06-14
+us,United States 🇺🇸,TWILIO INC - A,twloususd,"May 13, 2022",2022-05-13
+us,United States 🇺🇸,TWITTER INC,twtrususd,"Nov 2, 2017",2017-11-02
+us,United States 🇺🇸,TEXAS INSTRUMENTS INC,txnususd,"Nov 2, 2017",2017-11-02
+us,United States 🇺🇸,TYLER TECHNOLOGIES INC,tylususd,"May 13, 2022",2022-05-13
+us,United States 🇺🇸,UNDER ARMOUR INC-CLASS A,uaaususd,"May 13, 2022",2022-05-13
+us,United States 🇺🇸,VIATRIS INC,ualususd,"May 13, 2022",2022-05-13
+us,United States 🇺🇸,UNDER ARMOUR INC-CLASS C,uaususd,"May 13, 2022",2022-05-13
+us,United States 🇺🇸,Uber Inc,uberususd,"Oct 1, 2020",2020-10-01
+switzerland,Switzerland 🇨🇭,UBS Group AG,ubsgchchf,"Nov 28, 2014",2014-11-28
+belgium,Belgium 🇧🇪,UCB SA,ucbbeeur,"Jan 3, 2011",2011-01-03
+italy,Italy 🇮🇹,UniCredit Spa,ucgiteur,"Dec 17, 2020",2020-12-17
+us,United States 🇺🇸,UDR INC,udrususd,"May 19, 2022",2022-05-19
+france,France 🇫🇷,Peugeot SA,ugfreur,"Jan 3, 2011",2011-01-03
+us,United States 🇺🇸,UGI CORP,ugiususd,"May 13, 2022",2022-05-13
+switzerland,Switzerland 🇨🇭,Swatch Group AG/The,uhrchchf,"Jan 3, 2011",2011-01-03
+switzerland,Switzerland 🇨🇭,Swatch Group AG (The Registered),uhrnchchf,"Jun 14, 2022",2022-06-14
+us,United States 🇺🇸,UNIVERSAL HEALTH SERVICES-B,uhsususd,"May 13, 2022",2022-05-13
+bnd_cfd,Bonds 📊,UK Long Gilt,ukgilttrgbp,"Dec 26, 2017",2017-12-26
+us,United States 🇺🇸,ULTA SALON COSMETICS & FRAGR,ultaususd,"Nov 2, 2017",2017-11-02
+uk,United Kingdom 🇬🇧,Unilever PLC,ulvrgbgbx,"Jan 4, 2011",2011-01-04
+belgium,Belgium 🇧🇪,Umicore SA,umibeeur,"Jan 3, 2011",2011-01-03
+netherlands,Netherlands 🇳🇱,Unilever NV,unanleur,"Jan 3, 2011",2011-01-03
+us,United States 🇺🇸,UNITEDHEALTH GROUP INC,unhususd,"Nov 2, 2017",2017-11-02
+vccy,Crypto assets ₿,Uniswap vs US Dollar,uniusd,"Oct 1, 2021",2021-10-01
+us,United States 🇺🇸,UNION PACIFIC CORP,unpususd,"Nov 15, 2017",2017-11-15
+us,United States 🇺🇸,UNITED PARCEL SERVICE-CL B,upsususd,"Nov 15, 2017",2017-11-15
+us,United States 🇺🇸,UNITED RENTALS INC,uriususd,"May 13, 2022",2022-05-13
+idx_america,America 🌎,USA 30 Index,usa30idxusd,"Jan 1, 2013",2013-01-01
+idx_america,America 🌎,USA 500 Index,usa500idxusd,"Jan 2, 1980",1980-01-02
+idx_america,America 🌎,USA 100 Technical Index,usatechidxusd,"Nov 7, 1990",1990-11-07
+us,United States 🇺🇸,US BANCORP,usbususd,"Nov 15, 2017",2017-11-15
+fx_crosses,Forex currencies 💱,US Dollar vs United Arab Emirates Dirham,usdaed,"Mar 22, 2024",2024-03-22
+fx_majors,Forex major currencies 💶,US Dollar vs Canadian Dollar,usdcad,"Feb 10, 1986",1986-02-10
+fx_majors,Forex major currencies 💶,US Dollar vs Swiss Franc,usdchf,"Feb 10, 1986",1986-02-10
+fx_crosses,Forex currencies 💱,US Dollar vs Offshore Chinese Renminbi,usdcnh,"Jan 2, 2012",2012-01-02
+fx_crosses,Forex currencies 💱,US Dollar vs Czech Koruna,usdczk,"Jan 3, 2016",2016-01-03
+fx_crosses,Forex currencies 💱,US Dollar vs Danish Krone,usddkk,"Apr 12, 1990",1990-04-12
+fx_crosses,Forex currencies 💱,US Dollar vs Hong Kong Dollar,usdhkd,"Mar 17, 1986",1986-03-17
+fx_crosses,Forex currencies 💱,US Dollar vs Hungarian Forint,usdhuf,"Jul 14, 1998",1998-07-14
+fx_crosses,Forex currencies 💱,US Dollar vs Israeli Shekel,usdils,"Dec 15, 2016",2016-12-15
+fx_majors,Forex major currencies 💶,US Dollar vs Japanese Yen,usdjpy,"Feb 10, 1986",1986-02-10
+fx_crosses,Forex currencies 💱,US Dollar vs Mexican Peso,usdmxn,"Mar 31, 1995",1995-03-31
+fx_crosses,Forex currencies 💱,US Dollar vs Norwegian Krone,usdnok,"Mar 27, 1991",1991-03-27
+fx_crosses,Forex currencies 💱,US Dollar vs Polish Zloty,usdpln,"Mar 22, 1999",1999-03-22
+fx_crosses,Forex currencies 💱,US Dollar vs Romanian Leu,usdron,"Dec 19, 2016",2016-12-19
+fx_crosses,Forex currencies 💱,US Dollar vs Saudi Riyal,usdsar,"Mar 25, 2024",2024-03-25
+fx_crosses,Forex currencies 💱,US Dollar vs Swedish Krona,usdsek,"Jul 16, 1991",1991-07-16
+fx_crosses,Forex currencies 💱,US Dollar vs Singapore Dollar,usdsgd,"Jan 21, 1991",1991-01-21
+fx_crosses,Forex currencies 💱,US Dollar vs Thai Baht,usdthb,"Feb 13, 2017",2017-02-13
+fx_crosses,Forex currencies 💱,US Dollar vs Turkish Lira,usdtry,"Oct 18, 2001",2001-10-18
+fx_crosses,Forex currencies 💱,US Dollar vs South African Rand,usdzar,"Nov 25, 1991",1991-11-25
+us,United States 🇺🇸,US FOODS HOLDING CORP,usfdususd,"May 13, 2022",2022-05-13
+italy,Italy 🇮🇹,Unipolsai Assicurazioni Spa,usiteur,"Dec 17, 2020",2020-12-17
+etf_cfd_us,United States ETFs 🇺🇸📈,United States Oil Fund,usoususd,"Jan 26, 2017",2017-01-26
+idx_america,America 🌎,US Small Cap 2000,ussc2000idxusd,"Aug 8, 2018",2018-08-08
+bnd_cfd,Bonds 📊,US T-Bond,ustbondtrusd,"Dec 18, 2018",2018-12-18
+us,United States 🇺🇸,UNITED THERAPEUTICS CORP,uthrususd,"May 13, 2022",2022-05-13
+uk,United Kingdom 🇬🇧,United Utilities Group PLC,uugbgbx,"Jan 4, 2011",2011-01-04
+us,United States 🇺🇸,Vale S.A.,valeususd,"Jan 26, 2017",2017-01-26
+etf_cfd_us,United States ETFs 🇺🇸📈,Vanguard Energy ETF,vdeususd,"Mar 23, 2020",2020-03-23
+etf_cfd_us,United States ETFs 🇺🇸📈,Vanguard FTSE Developed Markets ETF,veaususd,"Nov 15, 2017",2017-11-15
+us,United States 🇺🇸,VEEVA SYSTEMS INC-CLASS A,veevususd,"May 13, 2022",2022-05-13
+us,United States 🇺🇸,VF CORP,vfcususd,"Feb 1, 2018",2018-02-01
+etf_cfd_us,United States ETFs 🇺🇸📈,Vanguard FTSE Europe ETF,vgkususd,"Feb 1, 2018",2018-02-01
+us,United States 🇺🇸,VICI PROPERTIES INC,viciususd,"May 13, 2022",2022-05-13
+france,France 🇫🇷,Veolia Environnement SA,viefreur,"Jan 3, 2011",2011-01-03
+switzerland,Switzerland 🇨🇭,Vifor Pharma,vifnchchf,"Jun 14, 2022",2022-06-14
+us,United States 🇺🇸,VIRTU FINANCIAL INC-CLASS A,virtususd,"May 13, 2022",2022-05-13
+spain,Spain 🇪🇸,Viscofan SA,viseseur,"May 11, 2022",2022-05-11
+france,France 🇫🇷,Vivendi SA,vivfreur,"Jan 3, 2011",2011-01-03
+france,France 🇫🇷,Vallourec SA,vkfreur,"Jan 3, 2011",2011-01-03
+us,United States 🇺🇸,VALERO ENERGY CORP,vloususd,"Nov 15, 2017",2017-11-15
+us,United States 🇺🇸,VULCAN MATERIALS CO,vmcususd,"Feb 1, 2018",2018-02-01
+us,United States 🇺🇸,VMWARE INC-CLASS A,vmwususd,"May 13, 2022",2022-05-13
+germany,Germany 🇩🇪,Vonovia SE,vnadeeur,"Apr 14, 2015",2015-04-14
+etf_cfd_us,United States ETFs 🇺🇸📈,Vanguard REIT ETF,vnqususd,"Nov 15, 2017",2017-11-15
+uk,United Kingdom 🇬🇧,Vodafone Group PLC,vodgbgbx,"Jan 4, 2011",2011-01-04
+austria,Austria 🇦🇹,Voestalpine AG,voeateur,"Jan 3, 2011",2011-01-03
+mexico,Mexico 🇲🇽,Controladora Vuela Comp de Aviacion,volaramxmxn,"Oct 13, 2022",2022-10-13
+idx_america,America 🌎,Volatility Index,volidxusd,"Oct 5, 2022",2022-10-05
+sweden,Sweden 🇸🇪,Volvo AB,volvbsesek,"Jan 3, 2011",2011-01-03
+germany,Germany 🇩🇪,Volkswagen AG,vow3deeur,"Jan 3, 2011",2011-01-03
+us,United States 🇺🇸,VOYA FINANCIAL INC,voyaususd,"May 13, 2022",2022-05-13
+netherlands,Netherlands 🇳🇱,Koninklijke Vopak NV,vpknleur,"Jan 3, 2011",2011-01-03
+us,United States 🇺🇸,VERTEX PHARMACEUTICALS INC,vrtxususd,"Nov 15, 2017",2017-11-15
+us,United States 🇺🇸,VISTRA CORP,vstususd,"May 13, 2022",2022-05-13
+etf_cfd,ETFs 📈,Vanguard FTSE 100 UCITS ETF GBP Acc,vukggbgbp,"Feb 28, 2020",2020-02-28
+us,United States 🇺🇸,VISA INC-CLASS A SHARES,vususd,"Jan 26, 2017",2017-01-26
+etf_cfd,ETFs 📈,VWRP VANGUARD FTSE ALL-WORLD UCITS ETF,vwrpgbgbp,"Feb 28, 2020",2020-02-28
+denmark,Denmark 🇩🇰,Vestas Wind Systems A/S,vwsdkdkk,"Jan 3, 2011",2011-01-03
+etf_cfd_us,United States ETFs 🇺🇸📈,iPath S&P 500 VIX ST Futures ETN,vxxususd,"Jan 26, 2017",2017-01-26
+us,United States 🇺🇸,VERIZON COMMUNICATIONS INC,vzususd,"Nov 15, 2017",2017-11-15
+us,United States 🇺🇸,WABTEC CORP,wabususd,"May 13, 2022",2022-05-13
+mexico,Mexico 🇲🇽,Walmart De Mexico SAB,walmexmxmxn,"Oct 13, 2022",2022-10-13
+us,United States 🇺🇸,WESTERN ALLIANCE BANCORP,walususd,"May 13, 2022",2022-05-13
+us,United States 🇺🇸,WALGREENS BOOTS ALLIANCE INC,wbaususd,"Nov 15, 2017",2017-11-15
+italy,Italy 🇮🇹,WeBuild Spa,wbditeur,"Dec 17, 2020",2020-12-17
+us,United States 🇺🇸,WEBSTER FINANCIAL CORP,wbsususd,"May 16, 2022",2022-05-16
+us,United States 🇺🇸,WORKDAY INC-CLASS A,wdayususd,"May 13, 2022",2022-05-13
+us,United States 🇺🇸,WESTERN DIGITAL CORP,wdcususd,"Nov 15, 2017",2017-11-15
+uk,United Kingdom 🇬🇧,Weir Group PLC/The,weirgbgbx,"Jan 4, 2011",2011-01-04
+us,United States 🇺🇸,WENDY'S CO/THE,wenususd,"May 13, 2022",2022-05-13
+us,United States 🇺🇸,WEX INC,wexususd,"Jun 15, 2022",2022-06-15
+us,United States 🇺🇸,WELLS FARGO & CO,wfcususd,"Jan 26, 2017",2017-01-26
+us,United States 🇺🇸,WHIRLPOOL CORP,whrususd,"Feb 1, 2018",2018-02-01
+us,United States 🇺🇸,WYNDHAM HOTELS & RESORTS INC,whususd,"May 13, 2022",2022-05-13
+netherlands,Netherlands 🇳🇱,Wolters Kluwer NV,wklnleur,"Jan 3, 2011",2011-01-03
+us,United States 🇺🇸,WESTLAKE CORP,wlkususd,"May 13, 2022",2022-05-13
+us,United States 🇺🇸,WAL-MART STORES INC,wmtususd,"Nov 15, 2017",2017-11-15
+uk,United Kingdom 🇬🇧,Wolseley PLC,wosgbgbx,"Jan 4, 2011",2011-01-04
+us,United States 🇺🇸,WP CAREY INC,wpcususd,"May 13, 2022",2022-05-13
+uk,United Kingdom 🇬🇧,WPP PLC,wppgbgbx,"Jan 4, 2011",2011-01-04
+us,United States 🇺🇸,WR BERKLEY CORP,wrbususd,"May 13, 2022",2022-05-13
+us,United States 🇺🇸,WESTROCK CO,wrkususd,"May 13, 2022",2022-05-13
+etf_cfd,ETFs 📈,iShares MSCI World Small Cap UCITS ETF USD (Acc),wsmlgbusd,"Feb 28, 2020",2020-02-28
+us,United States 🇺🇸,WILLIAMS-SONOMA INC,wsmususd,"May 13, 2022",2022-05-13
+us,United States 🇺🇸,WATSCO INC,wsoususd,"May 13, 2022",2022-05-13
+us,United States 🇺🇸,WEST PHARMACEUTICAL SERVICES,wstususd,"May 13, 2022",2022-05-13
+etf_cfd,ETFs 📈,Wisdomtree Artificial Intelligence And Innovation Fund,wtaiususd,"Mar 18, 2020",2020-03-18
+uk,United Kingdom 🇬🇧,Whitbread PLC,wtbgbgbx,"Jan 4, 2011",2011-01-04
+us,United States 🇺🇸,ESSENTIAL UTILITIES INC,wtrgususd,"May 13, 2022",2022-05-13
+us,United States 🇺🇸,WILLIS TOWERS WATSON PLC,wtwususd,"May 13, 2022",2022-05-13
+us,United States 🇺🇸,WAYFAIR INC- CLASS A,wususd,"May 13, 2022",2022-05-13
+us,United States 🇺🇸,WOODWARD INC,wwdususd,"May 16, 2022",2022-05-16
+us,United States 🇺🇸,WYNN RESORTS LTD,wynnususd,"Nov 15, 2017",2017-11-15
+fx_metals,Forex metals 🥇,Silver (troy oz) vs. United Arab Emirates dirham,xagaed,"Sep 17, 2024",2024-09-17
+fx_metals,Forex metals 🥇,Silver (troy oz) vs. Australian dollar,xagaud,"Sep 19, 2011",2011-09-19
+fx_metals,Forex metals 🥇,Silver (troy oz) vs. Canadian dollar,xagcad,"May 15, 2024",2024-05-15
+fx_metals,Forex metals 🥇,Silver (troy oz) vs. Swiss franc,xagchf,"Mar 14, 2023",2023-03-14
+fx_metals,Forex metals 🥇,Silver (troy oz) vs. Renminbi (offshore),xagcnh,"Sep 17, 2024",2024-09-17
+fx_metals,Forex metals 🥇,Silver (troy oz) vs. Czech koruna,xagczk,"May 15, 2024",2024-05-15
+fx_metals,Forex metals 🥇,Silver (troy oz) vs. Danish krone,xagdkk,"Sep 19, 2011",2011-09-19
+fx_metals,Forex metals 🥇,Silver (troy oz) vs. Euro,xageur,"Jan 2, 1985",1985-01-02
+fx_metals,Forex metals 🥇,Silver (troy oz) vs. Pound sterling,xaggbp,"Oct 1, 1986",1986-10-01
+fx_metals,Forex metals 🥇,Silver (troy oz) vs. Hong Kong dollar,xaghkd,"Jan 2, 1990",1990-01-02
+fx_metals,Forex metals 🥇,Silver (troy oz) vs. Hungarian forint,xaghuf,"May 15, 2024",2024-05-15
+fx_metals,Forex metals 🥇,Silver (troy oz) vs. Israeli new shekel,xagils,"Sep 17, 2024",2024-09-17
+fx_metals,Forex metals 🥇,Silver (troy oz) vs. Japanese yen,xagjpy,"Sep 17, 2024",2024-09-17
+fx_metals,Forex metals 🥇,Silver (troy oz) vs. Mexican peso,xagmxn,"Nov 7, 1990",1990-11-07
+fx_metals,Forex metals 🥇,Silver (troy oz) vs. Norwegian krone,xagnok,"May 15, 2024",2024-05-15
+fx_metals,Forex metals 🥇,Silver (troy oz) vs. New Zealand dollar,xagnzd,"Jan 9, 2003",2003-01-09
+fx_metals,Forex metals 🥇,Silver (troy oz) vs. Polish zÅ‚oty,xagpln,"May 15, 2024",2024-05-15
+fx_metals,Forex metals 🥇,Silver (troy oz) vs. Romanian leu,xagron,"Sep 17, 2024",2024-09-17
+fx_metals,Forex metals 🥇,Silver (troy oz) vs. Saudi riyal,xagsar,"Sep 17, 2024",2024-09-17
+fx_metals,Forex metals 🥇,Silver (troy oz) vs. Swedish krona,xagsek,"Apr 1, 1977",1977-04-01
+fx_metals,Forex metals 🥇,Silver (troy oz) vs. Singapore dollar,xagsgd,"Jan 2, 1980",1980-01-02
+fx_metals,Forex metals 🥇,Silver (troy oz) vs. Thai baht,xagthb,"Sep 17, 2024",2024-09-17
+fx_metals,Forex metals 🥇,Silver (troy oz) vs. Turkish lira,xagtry,"Dec 31, 1987",1987-12-31
+fx_metals,Forex metals 🥇,Spot silver,xagusd,"Jun 3, 1999",1999-06-03
+fx_metals,Forex metals 🥇,Silver(troy oz) vs. South African rand,xagzar,"Sep 17, 2024",2024-09-17
+fx_metals,Forex metals 🥇,Gold (troy oz) vs. United Arab Emirates dirham,xauaed,"Sep 17, 2024",2024-09-17
+fx_metals,Forex metals 🥇,Gold (troy oz) vs. Australian dollar,xauaud,"May 15, 2024",2024-05-15
+fx_metals,Forex metals 🥇,Gold (troy oz) vs. Canadian dollar,xaucad,"May 15, 2024",2024-05-15
+fx_metals,Forex metals 🥇,Gold (troy oz) vs. Swiss franc,xauchf,"Mar 14, 2023",2023-03-14
+fx_metals,Forex metals 🥇,Gold (troy oz) vs. Renminbi (offshore),xaucnh,"Sep 17, 2024",2024-09-17
+fx_metals,Forex metals 🥇,Gold (troy oz) vs. Czech koruna,xauczk,"May 15, 2024",2024-05-15
+fx_metals,Forex metals 🥇,Gold (troy oz) vs. Danish krone,xaudkk,"May 15, 2024",2024-05-15
+fx_metals,Forex metals 🥇,Gold (troy oz) vs. Euro,xaueur,"Mar 14, 2023",2023-03-14
+fx_metals,Forex metals 🥇,Gold (troy oz) vs. Pound sterling,xaugbp,"Mar 14, 2023",2023-03-14
+fx_metals,Forex metals 🥇,Gold (troy oz) vs. Hong Kong dollar,xauhkd,"May 15, 2024",2024-05-15
+fx_metals,Forex metals 🥇,Gold (troy oz) vs. Hungarian forint,xauhuf,"May 15, 2024",2024-05-15
+fx_metals,Forex metals 🥇,Gold (troy oz) vs. Israeli new shekel,xauils,"Sep 17, 2024",2024-09-17
+fx_metals,Forex metals 🥇,Gold (troy oz) vs. Japanese yen,xaujpy,"Sep 17, 2024",2024-09-17
+fx_metals,Forex metals 🥇,Gold (troy oz) vs. Mexican peso,xaumxn,"May 15, 2024",2024-05-15
+fx_metals,Forex metals 🥇,Gold (troy oz) vs. Norwegian krone,xaunok,"May 15, 2024",2024-05-15
+fx_metals,Forex metals 🥇,Gold (troy oz) vs. New Zealand dollar,xaunzd,"May 15, 2024",2024-05-15
+fx_metals,Forex metals 🥇,Gold (troy oz) vs. Polish zÅ‚oty,xaupln,"May 15, 2024",2024-05-15
+fx_metals,Forex metals 🥇,Gold (troy oz) vs. Romanian leu,xauron,"Sep 17, 2024",2024-09-17
+fx_metals,Forex metals 🥇,Gold (troy oz) vs. Saudi riyal,xausar,"Sep 17, 2024",2024-09-17
+fx_metals,Forex metals 🥇,Gold (troy oz) vs. Swedish krona,xausek,"May 15, 2024",2024-05-15
+fx_metals,Forex metals 🥇,Gold (troy oz) vs. Singapore dollar,xausgd,"May 15, 2024",2024-05-15
+fx_metals,Forex metals 🥇,Gold (troy oz) vs. Thai baht,xauthb,"Sep 17, 2024",2024-09-17
+fx_metals,Forex metals 🥇,Gold (troy oz) vs. Turkish lira,xautry,"May 15, 2024",2024-05-15
+fx_metals,Forex metals 🥇,Spot gold,xauusd,"Jun 3, 1999",1999-06-03
+fx_metals,Forex metals 🥇,Gold (troy oz) vs. Silver (troy oz),xauxag,"Sep 17, 2024",2024-09-17
+fx_metals,Forex metals 🥇,Gold (troy oz) vs. South African rand,xauzar,"Sep 17, 2024",2024-09-17
+etf_cfd,ETFs 📈,Xtrackers FTSE Developed Europe Real Estate UCITS ETF,xdergbgbx,"Jan 4, 2016",2016-01-04
+etf_cfd,ETFs 📈,Xtrackers MSCI World Health Care UCITS ETF Fund,xdwhususd,"Mar 20, 2020",2020-03-20
+etf_cfd,ETFs 📈,Xtrackers MSCI World Information Technology UCITS ETF,xdwtususd,"Mar 24, 2020",2020-03-24
+etf_cfd_us,United States ETFs 🇺🇸📈,Energy Select Sector SPDR Fund,xleususd,"Nov 15, 2017",2017-11-15
+etf_cfd_us,United States ETFs 🇺🇸📈,Financial Select Sector SPDR Fund,xlfususd,"Jan 26, 2017",2017-01-26
+etf_cfd_us,United States ETFs 🇺🇸📈,Industrial Select Sector SPDR Fund,xliususd,"Jan 26, 2017",2017-01-26
+etf_cfd_us,United States ETFs 🇺🇸📈,Technology Select Sector SPDR Fund,xlkususd,"Nov 15, 2017",2017-11-15
+vccy,Crypto assets ₿,Stellar vs. Swiss franc,xlmchf,"Mar 14, 2023",2023-03-14
+vccy,Crypto assets ₿,Stellar vs. Euro,xlmeur,"Mar 14, 2023",2023-03-14
+vccy,Crypto assets ₿,Stellar vs. Pound sterling,xlmgbp,"Mar 14, 2023",2023-03-14
+vccy,Crypto assets ₿,Stellar vs US Dollar,xlmusd,"May 25, 2021",2021-05-25
+us,United States 🇺🇸,XILINX INC,xlnxususd,"Feb 1, 2018",2018-02-01
+etf_cfd_us,United States ETFs 🇺🇸📈,Consumer Staples Select Sector SPDR Fund,xlpususd,"Jan 26, 2017",2017-01-26
+etf_cfd_us,United States ETFs 🇺🇸📈,Utilities Select Sector SPDR Fund,xluususd,"Nov 15, 2017",2017-11-15
+etf_cfd_us,United States ETFs 🇺🇸📈,Health Care Select Sector SPDR Fund,xlvususd,"Nov 15, 2017",2017-11-15
+etf_cfd_us,United States ETFs 🇺🇸📈,Consumer Discretionary Select Sector SPDR Fund,xlyususd,"Nov 15, 2017",2017-11-15
+etf_cfd,ETFs 📈,Xtrackers NASDAQ 100 UCITS ETF 1C (GBP),xnaqgbgbp,"Feb 16, 2021",2021-02-16
+us,United States 🇺🇸,EXXON MOBIL CORP,xomususd,"Jan 26, 2017",2017-01-26
+etf_cfd_us,United States ETFs 🇺🇸📈,SPDR S&P Oil & Gas Explor & Prodtn ETF,xopususd,"Jan 26, 2017",2017-01-26
+cmd_metals,Metals commodities ⚙️,Palladium,xpdcmdusd,"Jul 4, 2021",2021-07-04
+us,United States 🇺🇸,Xpeng Inc ADR,xpevususd,"Dec 23, 2020",2020-12-23
+us,United States 🇺🇸,XPO LOGISTICS INC,xpoususd,"May 13, 2022",2022-05-13
+cmd_metals,Metals commodities ⚙️,Platinum,xptcmdusd,"Nov 1, 2021",2021-11-01
+etf_cfd_us,United States ETFs 🇺🇸📈,Invesco Real Estate S&P US Select Sector UCITS ETF Acc,xresususd,"Jan 2, 2018",2018-01-02
+etf_cfd,ETFs 📈,Xtrackers MSCI Europe Utilities Screened UCITS ETF 1C,xs6rgbgbx,"Feb 3, 2020",2020-02-03
+us,United States 🇺🇸,UNITED STATES STEEL CORP,xususd,"Nov 15, 2017",2017-11-15
+us,United States 🇺🇸,XYLEM INC,xylususd,"May 13, 2022",2022-05-13
+vccy,Crypto assets ₿,Yearn.finance vs US Dollar,yfiusd,"Sep 25, 2021",2021-09-25
+us,United States 🇺🇸,YUM CHINA HOLDINGS INC,yumcususd,"May 13, 2022",2022-05-13
+us,United States 🇺🇸,YUM! BRANDS INC,yumususd,"Feb 1, 2018",2018-02-01
+us,United States 🇺🇸,ALLEGHANY CORP,yususd,"May 13, 2022",2022-05-13
+fx_crosses,Forex currencies 💱,South African rand vs. Czech koruna,zarczk,"May 15, 2024",2024-05-15
+fx_crosses,Forex currencies 💱,South African rand vs. Hungarian forint,zarhuf,"May 15, 2024",2024-05-15
+fx_crosses,Forex currencies 💱,South African Rand vs Japanese Yen,zarjpy,"Jun 7, 1999",1999-06-07
+fx_crosses,Forex currencies 💱,South African rand vs. Mexican peso,zarmxn,"May 15, 2024",2024-05-15
+fx_crosses,Forex currencies 💱,South African rand vs. Thai baht,zarthb,"Sep 17, 2024",2024-09-17
+fx_crosses,Forex currencies 💱,South African rand vs. Turkish lira,zartry,"May 15, 2024",2024-05-15
+us,United States 🇺🇸,ZIMMER BIOMET HOLDINGS INC,zbhususd,"Feb 1, 2018",2018-02-01
+us,United States 🇺🇸,ZEBRA TECHNOLOGIES CORP-CL A,zbraususd,"May 13, 2022",2022-05-13
+us,United States 🇺🇸,ZEN.US/USD,zenususd,"May 13, 2022",2022-05-13
+us,United States 🇺🇸,Zoom Video Communications (A Class),zmususd,"Sep 30, 2020",2020-09-30
+us,United States 🇺🇸,ZSCALER INC,zsususd,"May 13, 2022",2022-05-13
+us,United States 🇺🇸,ZOETIS INC,ztsususd,"May 16, 2022",2022-05-16
+switzerland,Switzerland 🇨🇭,Zurich Insurance Group AG,zurnchchf,"Jan 3, 2011",2011-01-03
+us,United States 🇺🇸,ZILLOW GROUP INC - C,zususd,"May 13, 2022",2022-05-13
