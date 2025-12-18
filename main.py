@@ -29,7 +29,7 @@ from utils.synthetic import (
 
 
 PROJECT_PATH = Path(__file__).resolve().parents[0]
-DATA_PATH = PROJECT_PATH / "data" / "raw"
+BASE_DATA_PATH = PROJECT_PATH / "data" / "raw"
 
 
 # ============================================================
@@ -38,7 +38,16 @@ DATA_PATH = PROJECT_PATH / "data" / "raw"
 st.set_page_config(page_title="StatArb Terminal", layout="wide")
 
 # Tous les tickers disponibles
-raw_data_list = sorted([file.stem for file in DATA_PATH.glob("*.csv")])
+def list_assets(base_path: Path) -> list[str]:
+    assets = set()
+    for tf_dir in ["d1", "h1"]:
+        p = base_path / tf_dir
+        if p.exists():
+            assets |= {f.stem for f in p.glob("*.csv")}
+    return sorted(assets)
+
+raw_data_list = list_assets(BASE_DATA_PATH)
+
 
 
 # ============================================================
@@ -96,8 +105,8 @@ with st.sidebar:
 # ============================================================
 # TABS
 # ============================================================
-tab_monitor, tab_scanner, tab_backtest, tab_synth, tab_opt = st.tabs([
-    "Pair Monitor", "Scanner", "Backtest Pair", "Synthetic Paths", "Optimization"
+tab_monitor, tab_scanner, tab_backtest, tab_opt, tab_pf = st.tabs([
+    "Pair Monitor", "Scanner", "Backtest Pair", "Optimization", "Portfolio"
 ])
 
 
@@ -117,8 +126,10 @@ with tab_monitor:
     with st.spinner("Loading data & computing metrics..."):
 
         # Load data
-        df1 = cached_load_price(asset1, DATA_PATH)
-        df2 = cached_load_price(asset2, DATA_PATH)
+        data_path = BASE_DATA_PATH / ("d1" if timeframe == "Daily" else "h1")
+
+        df1 = cached_load_price(asset1, data_path)
+        df2 = cached_load_price(asset2, data_path)
 
         df1 = df1.iloc[-lb:].copy()
         df2 = df2.iloc[-lb:].copy()
@@ -146,7 +157,7 @@ with tab_monitor:
 
         beta = compute_hedge_ratio(series_y, series_x)
         spread = compute_spread(series_y, series_x, beta)
-        adf_t, adf_p, _ = compute_adf(spread.dropna())
+        adf_t, adf_p, _ = compute_adf(spread)
         corr = compute_corr(series_y, series_x)
         eg_t, eg_p, _ = compute_coint(series_y, series_x)
         half_life = compute_half_life(spread)
@@ -158,8 +169,8 @@ with tab_monitor:
             theta_ou = 0
 
         mu_ou = float(spread.mean())
-        sigma_ou = float(np.std(spread.diff().dropna()))
-        s0_ou = float(spread.iloc[-1])
+        sigma_ou = float(pd.Series(spread, dtype=float).diff().std(ddof=0))
+        s0_ou = float(pd.Series(spread, dtype=float).iloc[-1])
 
         # Stockage pour l'onglet Synthetic Paths
         st.session_state["ou_mu"] = mu_ou
@@ -319,6 +330,13 @@ with tab_scanner:
 
     min_corr = st.slider("Min absolute correlation", 0.0, 1.0, 0.5, 0.05)
     max_half_life = st.slider("Max half-life (bars)", 5, 500, 150, 5)
+    z_window_scan = st.slider(
+        "Z-score window (scanner)",
+        min_value=20,
+        max_value=200,
+        value=60,
+        step=10,
+    )
 
     run = st.button("Run scan")
 
@@ -367,7 +385,7 @@ with tab_scanner:
                 if abs(corr_s) < min_corr or hl_s > max_half_life:
                     continue
 
-                z_s = compute_zscore(spread_s)
+                z_s = compute_zscore(spread_s, window=z_window_scan)
                 z_std = float(np.nanstd(z_s))
 
                 ou_score = (1 - min(adf_p_s, 1.0)) / np.log1p(hl_s)
@@ -476,7 +494,8 @@ with tab_backtest:
             zscore_bt,
             merged[f"norm_{asset1}"],
             merged[f"norm_{asset2}"],
-            beta,
+            beta=beta,
+            beta_series=beta_wf,
             z_entry=z_entry,
             z_exit=z_exit,
             z_stop=z_stop,
@@ -770,140 +789,59 @@ with tab_backtest:
             st.plotly_chart(fig_heat, use_container_width=True)
 
 
-# ============================================================
-# TAB 4 : SYNTHETIC TRAJECTORIES
-# ============================================================
-
-# ============================================================
-# TAB 4 : SYNTHETIC TRAJECTORIES
-# ============================================================
-
-with tab_synth:
-    st.subheader("Visualiser les trajectoires synthétiques")
-
-    st.markdown("## Paramètres de génération")
-
-    c1, c2 = st.columns(2)
-    n_paths = c1.slider("Nombre de trajectoires", 5, 200, 20, 5)
-    n_steps = c2.slider("Nombre de pas", 50, 2000, 500, 50)
-
-    model = st.selectbox("Modèle", ["GBM", "OU", "Cointegrated PRO"])
-
-    st.markdown("---")
-
-    # Pré-init
-    paths = None
-    A = B = S = None
-
-    # =============== GBM ===============
-    if model == "GBM":
-        c3, c4, c5 = st.columns(3)
-        mu = c3.number_input("Drift μ", value=0.0002, format="%.6f")
-        sigma = c4.number_input("Volatilité σ", value=0.01, format="%.6f")
-        s0 = c5.number_input("Prix initial S₀", value=100.0)
-
-    # =============== OU simple ===============
-    elif model == "OU":
-        st.markdown("### Paramètres OU estimés depuis la paire sélectionnée")
-
-        mu_ou = st.session_state.get("ou_mu", 0.0)
-        theta_ou = st.session_state.get("ou_theta", 0.0)
-        sigma_ou = st.session_state.get("ou_sigma", 0.0)
-        s0_ou = st.session_state.get("ou_s0", 0.0)
-
-        c3, c4, c5, c6 = st.columns(4)
-        mu_ou = c3.number_input("μ (mean reversion)", value=float(mu_ou), format="%.6f")
-        theta_ou = c4.number_input("θ (speed)", value=float(theta_ou), format="%.6f")
-        sigma_ou = c5.number_input("σ (vol résiduelle)", value=float(sigma_ou), format="%.6f")
-        s0_ou = c6.number_input("S₀ (spread initial)", value=float(s0_ou), format="%.6f")
-
-    # =============== Cointegrated PRO ===============
-    else:
-        st.markdown("### Paramètres calibrés automatiquement (Heston + OU)")
-
-        params = calibrate_params_from_pair(df1, df2, spread, beta)
-
-        c3, c4, c5 = st.columns(3)
-        mu_s = c3.number_input("OU mean (μ_s)", value=float(params["mu_s"]), format="%.6f")
-        theta_s = c4.number_input("OU speed (θ_s)", value=float(params["theta_s"]), format="%.6f")
-        sigma_s = c5.number_input("OU vol (σ_s)", value=float(params["sigma_s"]), format="%.6f")
-
-        c6, c7, c8 = st.columns(3)
-        mu_m = c6.number_input("Market drift μ", value=float(params["mu"]), format="%.6f")
-        v0 = c7.number_input("Initial variance v0", value=float(params["v0"]), format="%.6f")
-        rho = c8.number_input("Corr price-vol ρ", value=float(params["rho"]), format="%.3f")
-
-        beta_val = st.number_input("Hedge ratio β", value=float(params["beta"]), format="%.6f")
-
-    st.markdown("---")
-
-    run_syn = st.button("Générer")
-
-    if run_syn:
-        with st.spinner("Génération des trajectoires..."):
-
-            if model == "GBM":
-                paths = generate_synthetic_paths(
-                    n_paths=n_paths,
-                    n_steps=n_steps,
-                    mu=mu,
-                    sigma=sigma,
-                    s0=s0,
-                )
-
-            elif model == "OU":
-                paths = generate_ou_paths(
-                    n_paths=n_paths,
-                    n_steps=n_steps,
-                    mu=mu_ou,
-                    theta=theta_ou,
-                    sigma=sigma_ou,
-                    s0=s0_ou,
-                )
-
-            else:  # Cointegrated PRO
-                # on génère UNE paire A/B, pas n_paths (pour visualisation)
-                A, B, X, S, v = simulate_cointegrated_assets(
-                    n_steps,
-                    beta_val,
-                    X0=params["X0"], v0=v0, mu=mu_m,
-                    theta=params["theta"], kappa=params["kappa"],
-                    xi=params["xi"], rho=rho,
-                    mu_s=mu_s, theta_s=theta_s,
-                    sigma_s=sigma_s, S0=params["S0"],
-                )
-
-            st.markdown("### Trajectoires simulées")
-
-            if model == "Cointegrated PRO":
-                fig = go.Figure()
-                fig.add_scatter(x=np.arange(n_steps), y=A, name="Asset A", mode="lines", line=dict(width=2))
-                fig.add_scatter(x=np.arange(n_steps), y=B, name="Asset B", mode="lines", line=dict(width=2))
-                fig.add_scatter(x=np.arange(n_steps), y=S, name="Spread (OU)", mode="lines", line=dict(width=1))
-            else:
-                fig = go.Figure()
-                for i in range(min(n_paths, paths.shape[0])):
-                    fig.add_scatter(
-                        x=np.arange(n_steps),
-                        y=paths[i],
-                        mode="lines",
-                        line=dict(width=1),
-                        showlegend=False,
-                    )
-
-            fig.update_layout(
-                height=400,
-                template="plotly_dark",
-                margin=dict(l=20, r=20, t=40, b=20),
-                plot_bgcolor="rgba(0,0,0,0)",
-                paper_bgcolor="rgba(0,0,0,0)",
-            )
-            st.plotly_chart(fig, use_container_width=True)
-
-
 with tab_opt:
     st.subheader("Optimisation robuste (réel + synthétique)")
 
+    # -----------------------------
+    # Helper rerun compatible
+    # -----------------------------
+    def _rerun():
+        if hasattr(st, "rerun"):
+            st.rerun()
+        elif hasattr(st, "experimental_rerun"):
+            st.experimental_rerun()
+        else:
+            st.stop()
+
+    # -----------------------------
+    # Portfolio registry helpers
+    # -----------------------------
+    import json
+    from datetime import datetime
+
+    REGISTRY_PATH = PROJECT_PATH / "data" / "portfolio_registry.json"
+
+    def _load_registry(path: Path) -> list[dict]:
+        if not path.exists():
+            return []
+        try:
+            return json.loads(path.read_text(encoding="utf-8"))
+        except Exception:
+            return []
+
+    def _save_registry(path: Path, records: list[dict]) -> None:
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(json.dumps(records, indent=2, ensure_ascii=False), encoding="utf-8")
+
+    def _upsert_pair(records: list[dict], item: dict) -> list[dict]:
+        # clé stable : pair_id + timeframe + source
+        key = (item.get("pair_id"), item.get("timeframe"), item.get("source"))
+        out = []
+        replaced = False
+        for r in records:
+            rk = (r.get("pair_id"), r.get("timeframe"), r.get("source"))
+            if rk == key:
+                out.append(item)
+                replaced = True
+            else:
+                out.append(r)
+        if not replaced:
+            out.append(item)
+        return out
+
+    # -----------------------------
+    # Inputs
+    # -----------------------------
     c1, c2, c3 = st.columns(3)
     n_synth = c1.number_input("Nb trajectoires synthétiques", 10, 500, 50)
     n_param = c2.number_input("Nb de combinaisons de paramètres", 5, 200, 20)
@@ -917,10 +855,13 @@ with tab_opt:
     z_window_range = p3.slider("Z-window", 20, 200, (40, 80), 5)
     wf_train_range = p4.slider("WF-train", 50, 500, (100, 200), 10)
 
+    # -----------------------------
+    # Run optimization
+    # -----------------------------
     run_opt = st.button("Lancer optimisation")
 
     if run_opt:
-        with st.spinner("Optimisation en cours..."):
+        with st.spinner("Optimisation en cours."):
             df_opt = run_full_optimization(
                 merged,
                 asset1,
@@ -929,85 +870,667 @@ with tab_opt:
                 df2,
                 spread,
                 beta,
-                n_synth,
-                n_param,
+                int(n_synth),
+                int(n_param),
                 z_entry_range,
                 z_exit_range,
                 z_window_range,
                 wf_train_range,
-                seed,
+                int(seed),
             )
+
+            st.session_state["df_opt"] = df_opt.copy()
+            st.session_state["opt_done"] = True
+
+            if "selected_index" not in st.session_state:
+                st.session_state["selected_index"] = 0
+            if "selected_opt_params" not in st.session_state:
+                st.session_state["selected_opt_params"] = None
+
+            st.session_state.pop("diag_results", None)
+            st.session_state.pop("diag_param_key", None)
 
             st.success("Optimisation terminée !")
 
-            st.markdown("### Résultats")
-            st.dataframe(df_opt, use_container_width=True)
+    # -----------------------------
+    # Show results if available
+    # -----------------------------
+    if st.session_state.get("opt_done", False) and "df_opt" in st.session_state:
+        df_opt = st.session_state["df_opt"]
 
-            # Zone d'interaction
-            st.markdown("### Explorer une configuration")
+        st.markdown("### Résultats")
+        st.dataframe(df_opt, use_container_width=True)
 
-            selected_index = st.number_input(
-                "Index de la ligne à explorer",
-                min_value=0,
-                max_value=len(df_opt) - 1,
-                step=1,
-                value=0
-            )
+        st.markdown("### Explorer une configuration")
 
-            if st.button("Explorer cette configuration"):
-                st.session_state["selected_opt_params"] = df_opt.iloc[selected_index].to_dict()
-                st.experimental_rerun()
+        default_idx = int(st.session_state.get("selected_index", 0))
+        default_idx = max(0, min(default_idx, len(df_opt) - 1))
 
-            if "selected_opt_params" in st.session_state:
-                st.markdown("---")
-                st.markdown("## 🔎 Exploration de la configuration sélectionnée")
+        selected_index = st.number_input(
+            "Index de la ligne à explorer",
+            min_value=0,
+            max_value=len(df_opt) - 1,
+            step=1,
+            value=default_idx,
+        )
 
-                params = st.session_state["selected_opt_params"]
+        col_btn1, col_btn2 = st.columns([1, 1])
+        with col_btn1:
+            explore = st.button("Explorer cette configuration", key="explore_opt_config")
+        with col_btn2:
+            clear = st.button("Effacer la sélection", key="clear_opt_config")
 
-                # Affichage des paramètres
+        if clear:
+            st.session_state["selected_index"] = 0
+            st.session_state["selected_opt_params"] = None
+            st.session_state.pop("diag_results", None)
+            st.session_state.pop("diag_param_key", None)
+            _rerun()
+
+        if explore:
+            st.session_state["selected_index"] = int(selected_index)
+            st.session_state["selected_opt_params"] = df_opt.iloc[int(selected_index)].to_dict()
+            st.session_state.pop("diag_results", None)
+            st.session_state.pop("diag_param_key", None)
+            _rerun()
+
+        # -----------------------------
+        # Exploration
+        # -----------------------------
+        params = st.session_state.get("selected_opt_params", None)
+
+        if params is not None:
+            st.markdown("---")
+            st.markdown("## 🔎 Exploration de la configuration sélectionnée")
+
+            # Preview "lisible" (plus impactant que st.json brut)
+            k1, k2, k3, k4 = st.columns(4)
+            k1.metric("Sharpe (réel)", f"{params.get('Sharpe_real', np.nan):.3f}")
+            k2.metric("Sharpe médian (synth)", f"{params.get('Sharpe_median', np.nan):.3f}")
+            k3.metric("Robustness", f"{params.get('Robustness', np.nan):.3f}")
+            k4.metric("Sharpe min (synth)", f"{params.get('Sharpe_min', np.nan):.3f}")
+
+            with st.expander("Voir paramètres (JSON)", expanded=False):
                 st.json(params)
 
-                # Recalcul du backtest réel
-                spread_bt, zscore_bt, beta_wf = walk_forward_beta_spread_zscore(
-                    merged[f"norm_{asset1}"],
-                    merged[f"norm_{asset2}"],
-                    train=int(params["wf_train"]),
-                    test=int(params["wf_test"]),
-                    z_window=int(params["z_window"]),
-                )
+            # Recompute WF spread/zscore/beta (pipeline canonique)
+            spread_bt, zscore_bt, beta_wf = walk_forward_beta_spread_zscore(
+                merged[f"norm_{asset1}"],
+                merged[f"norm_{asset2}"],
+                train=int(params["wf_train"]),
+                test=int(params["wf_test"]),
+                z_window=int(params["z_window"]),
+            )
 
-                equity, trades, pnl_list = backtest_pair(
-                    spread_bt,
-                    zscore_bt,
-                    merged[f"norm_{asset1}"],
-                    merged[f"norm_{asset2}"],
-                    beta,
-                    z_entry=float(params["z_entry"]),
-                    z_exit=float(params["z_exit"]),
-                    z_stop=float(params["z_entry"]) * 2,
-                    fees=0.0002,
-                )
+            # Backtest (WF beta locked at entry)
+            FEES = 0.0002
+            Z_STOP_MULT = 2.0
 
-                # Figures
-                st.markdown("### 📈 Equity Curve")
-                fig_eq = go.Figure()
-                fig_eq.add_scatter(x=merged["datetime"], y=equity, mode="lines")
-                st.plotly_chart(fig_eq, use_container_width=True)
+            equity, trades, pnl_list = backtest_pair(
+                spread_bt,
+                zscore_bt,
+                merged[f"norm_{asset1}"],
+                merged[f"norm_{asset2}"],
+                beta=float(beta),                 # <- beta fallback EXACT (important)
+                beta_series=beta_wf,              # <- WF beta
+                z_entry=float(params["z_entry"]),
+                z_exit=float(params["z_exit"]),
+                z_stop=float(params["z_entry"]) * Z_STOP_MULT,
+                fees=FEES,
+            )
 
-                # Résumé métriques
-                st.markdown("### 📊 Metrics")
-                st.write({
-                    "Sharpe_real": params["Sharpe_real"],
-                    "Trades": len(trades),
-                    "Max DD": float(np.min(equity) / np.max(equity) - 1) if len(equity) > 1 else 0
+            # ---- Add to portfolio (freeze params + beta_ref + lookback)
+            add_c1, add_c2, add_c3 = st.columns([1.2, 2.8, 2.0])
+            with add_c1:
+                add_pf = st.button("Ajouter au portefeuille", key="add_to_pf_btn")
+            with add_c2:
+                st.caption(f"Enregistre la paire + paramètres dans {REGISTRY_PATH.name} (upsert).")
+            with add_c3:
+                note = st.text_input("Note (optionnel)", key="pf_note", placeholder="ex: robuste / à surveiller")
+
+            if add_pf:
+                records = _load_registry(REGISTRY_PATH)
+
+                item = {
+                    "pair_id": f"{asset1}-{asset2}",
+                    "asset1": asset1,
+                    "asset2": asset2,
+                    "timeframe": timeframe,
+                    "source": source,
+                    "lb_used": int(lb),  # <- lookback utilisé au moment de l'exploration (critique)
+                    "created_at": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+                    "notes": note or "",
+                    "params": {
+                        "z_entry": float(params["z_entry"]),
+                        "z_exit": float(params["z_exit"]),
+                        "z_window": int(params["z_window"]),
+                        "wf_train": int(params["wf_train"]),
+                        "wf_test": int(params["wf_test"]),
+                        "fees": float(FEES),
+                        "z_stop_mult": float(Z_STOP_MULT),
+                        "beta_ref": float(beta),  # <- pour reproduire EXACTEMENT l’exploration
+                    },
+                    "metrics": {
+                        "Sharpe_real": float(params.get("Sharpe_real", np.nan)),
+                        "Sharpe_median": float(params.get("Sharpe_median", np.nan)),
+                        "Sharpe_min": float(params.get("Sharpe_min", np.nan)),
+                        "Sharpe_std": float(params.get("Sharpe_std", np.nan)),
+                        "Robustness": float(params.get("Robustness", np.nan)),
+                    },
+                }
+
+                records = _upsert_pair(records, item)
+                _save_registry(REGISTRY_PATH, records)
+                st.success("Ajouté au portefeuille (upsert).")
+
+            # ---- Charts / tables
+            st.markdown("### Equity Curve")
+            fig_eq = go.Figure()
+            fig_eq.add_scatter(x=merged["datetime"], y=equity, mode="lines", name="Equity")
+            fig_eq.update_layout(template="plotly_dark", height=350, margin=dict(l=20, r=20, t=40, b=20))
+            st.plotly_chart(fig_eq, use_container_width=True)
+
+            st.markdown("### Trades")
+            if len(trades) > 0:
+                st.dataframe(pd.DataFrame(trades), use_container_width=True)
+            else:
+                st.info("Aucun trade pour cette configuration.")
+
+            # ============================================================
+            # Diagnostics: Real vs Synthetic (Z-score distribution + Half-life)
+            # ============================================================
+            st.markdown("---")
+            st.markdown("## 🧪 Diagnostics : Réel vs Synthétique")
+
+            d1, d2, d3 = st.columns(3)
+            diag_n = d1.slider("Nb paths synth (diagnostic)", 5, 200, 30, 5, key="diag_n")
+            diag_seed = d2.number_input("Seed (diagnostic)", 0, 999999, 123, key="diag_seed")
+            sample_per_path = d3.slider("Samples zscore / path", 200, 5000, 1500, 100, key="diag_sample_per_path")
+
+            run_diag = st.button("Run diagnostics", key="run_diag_btn")
+
+            diag_param_key = (
+                asset1, asset2,
+                int(params["wf_train"]), int(params["wf_test"]), int(params["z_window"]),
+                float(params["z_entry"]), float(params["z_exit"]),
+                int(diag_n), int(diag_seed), int(sample_per_path)
+            )
+
+            if run_diag:
+                with st.spinner("Diagnostics en cours (réel vs synth)."):
+                    rng = np.random.default_rng(int(diag_seed))
+
+                    real_spread = pd.Series(spread_bt).dropna()
+                    real_z = pd.Series(zscore_bt).dropna()
+
+                    real_hl = compute_half_life(real_spread)
+                    real_hl_val = float(real_hl) if (real_hl is not None and np.isfinite(real_hl)) else np.nan
+
+                    real_z_vals = real_z.to_numpy()
+                    real_z_vals = real_z_vals[np.isfinite(real_z_vals)]
+                    if len(real_z_vals) > sample_per_path:
+                        real_z_vals = rng.choice(real_z_vals, size=int(sample_per_path), replace=False)
+
+                    spread_ref = pd.Series(spread_bt).dropna()
+                    calib = calibrate_params_from_pair(df1, df2, spread_ref, float(beta))
+
+                    synth_hl = []
+                    synth_z_samples = []
+                    n_steps_diag = len(merged)
+
+                    for _ in range(int(diag_n)):
+                        A_s, B_s, *_ = simulate_cointegrated_assets(
+                            n_steps_diag,
+                            beta=float(beta),
+                            X0=calib["X0"], v0=calib["v0"], mu=calib["mu"],
+                            theta=calib["theta"], kappa=calib["kappa"],
+                            xi=calib["xi"], rho=calib["rho"],
+                            mu_s=calib["mu_s"], theta_s=calib["theta_s"],
+                            sigma_s=calib["sigma_s"], S0=calib["S0"],
+                        )
+
+                        spread_bt_s, zscore_bt_s, _beta_wf_s = walk_forward_beta_spread_zscore(
+                            pd.Series(A_s),
+                            pd.Series(B_s),
+                            train=int(params["wf_train"]),
+                            test=int(params["wf_test"]),
+                            z_window=int(params["z_window"]),
+                        )
+
+                        z_sim_vals = pd.Series(zscore_bt_s).to_numpy()
+                        z_sim_vals = z_sim_vals[np.isfinite(z_sim_vals)]
+                        if len(z_sim_vals) > 0:
+                            take = min(int(sample_per_path), len(z_sim_vals))
+                            synth_z_samples.append(rng.choice(z_sim_vals, size=take, replace=False))
+
+                        hl_sim = compute_half_life(pd.Series(spread_bt_s).dropna())
+                        hl_sim_val = float(hl_sim) if (hl_sim is not None and np.isfinite(hl_sim)) else np.nan
+                        synth_hl.append(hl_sim_val)
+
+                    synth_hl = np.array(synth_hl, dtype=float)
+                    synth_z_vals = np.concatenate(synth_z_samples) if len(synth_z_samples) else np.array([], dtype=float)
+
+                    def _zstats(arr: np.ndarray):
+                        arr = arr[np.isfinite(arr)]
+                        if arr.size == 0:
+                            return {"mean": np.nan, "std": np.nan, "q05": np.nan, "q50": np.nan, "q95": np.nan}
+                        return {
+                            "mean": float(np.mean(arr)),
+                            "std": float(np.std(arr)),
+                            "q05": float(np.quantile(arr, 0.05)),
+                            "q50": float(np.quantile(arr, 0.50)),
+                            "q95": float(np.quantile(arr, 0.95)),
+                        }
+
+                    real_z_stat = _zstats(real_z_vals)
+                    synth_z_stat = _zstats(synth_z_vals)
+
+                    diag_df = pd.DataFrame([
+                        {
+                            "Set": "Real (WF traded)",
+                            "Half-life": real_hl_val,
+                            **{f"Z_{k}": v for k, v in real_z_stat.items()},
+                            "Z_samples": int(len(real_z_vals)),
+                        },
+                        {
+                            "Set": f"Synth (n={int(diag_n)})",
+                            "Half-life_median": float(np.nanmedian(synth_hl)) if np.isfinite(np.nanmedian(synth_hl)) else np.nan,
+                            "Half-life_std": float(np.nanstd(synth_hl)) if np.isfinite(np.nanstd(synth_hl)) else np.nan,
+                            **{f"Z_{k}": v for k, v in synth_z_stat.items()},
+                            "Z_samples": int(len(synth_z_vals)),
+                        },
+                    ])
+
+                    st.session_state["diag_results"] = {
+                        "diag_df": diag_df,
+                        "real_z_vals": real_z_vals,
+                        "synth_z_vals": synth_z_vals,
+                        "synth_hl": synth_hl,
+                    }
+                    st.session_state["diag_param_key"] = diag_param_key
+
+            if st.session_state.get("diag_param_key", None) == diag_param_key and "diag_results" in st.session_state:
+                diag = st.session_state["diag_results"]
+                diag_df = diag["diag_df"]
+                real_z_vals = diag["real_z_vals"]
+                synth_z_vals = diag["synth_z_vals"]
+                synth_hl = diag["synth_hl"]
+
+                st.markdown("### Résumé (réel vs synth)")
+                st.dataframe(diag_df, use_container_width=True)
+
+                st.markdown("### Distribution des z-scores (échantillonnée)")
+                plot_df = pd.DataFrame({
+                    "zscore": np.concatenate([real_z_vals, synth_z_vals]) if (len(real_z_vals) and len(synth_z_vals)) else
+                              (real_z_vals if len(real_z_vals) else synth_z_vals),
+                    "source": (["Real"] * len(real_z_vals)) + (["Synth"] * len(synth_z_vals)),
                 })
 
-                # Liste trades
-                st.markdown("### 📋 Trade List")
-                if len(trades) > 0:
-                    st.dataframe(pd.DataFrame(trades), use_container_width=True)
+                if len(plot_df) > 0:
+                    fig_zdist = px.histogram(
+                        plot_df,
+                        x="zscore",
+                        color="source",
+                        barmode="overlay",
+                        histnorm="probability density",
+                        nbins=60,
+                        opacity=0.55,
+                    )
+                    fig_zdist.update_layout(template="plotly_dark", height=350, margin=dict(l=20, r=20, t=40, b=20))
+                    st.plotly_chart(fig_zdist, use_container_width=True)
                 else:
-                    st.info("Aucun trade pour cette configuration.")
+                    st.info("Pas assez de données z-score pour tracer la distribution.")
+
+                st.markdown("### Distribution des half-lives (synthétique)")
+                hl_df = pd.DataFrame({"half_life": synth_hl})
+                hl_df = hl_df[np.isfinite(hl_df["half_life"])]
+
+                if len(hl_df) > 0:
+                    fig_hl = px.histogram(hl_df, x="half_life", nbins=30)
+                    fig_hl.update_layout(template="plotly_dark", height=300, margin=dict(l=20, r=20, t=40, b=20))
+                    st.plotly_chart(fig_hl, use_container_width=True)
+                else:
+                    st.info("Half-life synth indisponible (NaN).")
+            else:
+                st.info("Clique sur 'Run diagnostics' pour comparer réel vs synth.")
+    else:
+        st.info("Lance une optimisation pour afficher les résultats et explorer une configuration.")
+    
+
+
+
+with tab_pf:
+    st.subheader("Portfolio (PF)")
+
+    # -----------------------------
+    # Helper rerun compatible
+    # -----------------------------
+    def _rerun():
+        if hasattr(st, "rerun"):
+            st.rerun()
+        elif hasattr(st, "experimental_rerun"):
+            st.experimental_rerun()
+        else:
+            st.stop()
+
+    # -----------------------------
+    # Imports (PF registry + backtest)
+    # -----------------------------
+    from utils.portfolio_registry import load_registry, remove_pair_config, REGISTRY_PATH
+    from utils.portfolio_backtest import (
+        backtest_single_pair_from_config,
+        backtest_portfolio_equal_weight,
+    )
+
+    # -----------------------------
+    # Top controls (impact + clean)
+    # -----------------------------
+    c1, c2, c3 = st.columns([3, 3, 1])
+    lb_pf = c1.number_input("Lookback bars (PF)", min_value=200, max_value=20000, value=3000, step=100)
+    pf_periods_per_year = c2.number_input("Periods/year (Sharpe PF)", min_value=1, max_value=200000, value=252, step=1)
+    c3.markdown("<div style='height: 28px;'></div>", unsafe_allow_html=True)
+    run_pf = c3.button("Backtester le PF", key="run_pf_btn", use_container_width=True)
+
+    st.caption(f"Registry: {REGISTRY_PATH}")
+
+    # -----------------------------
+    # Load registry
+    # -----------------------------
+    registry = load_registry(REGISTRY_PATH)
+    if len(registry) == 0:
+        st.info("Ton portefeuille est vide. Va dans Optimization > Explorer une config > Ajouter au portefeuille.")
+        st.stop()
+
+    reg_df = pd.DataFrame(registry)
+
+    # Flatten propre mais compact (on n’affiche pas 50 colonnes)
+    params_df = pd.json_normalize(reg_df["params"]).add_prefix("p_") if "params" in reg_df.columns else pd.DataFrame()
+    metrics_df = pd.json_normalize(reg_df["metrics"]).add_prefix("m_") if "metrics" in reg_df.columns else pd.DataFrame()
+    reg_flat = reg_df.drop(columns=[c for c in ["params", "metrics"] if c in reg_df.columns], errors="ignore")
+    reg_flat = pd.concat([reg_flat.reset_index(drop=True), params_df.reset_index(drop=True), metrics_df.reset_index(drop=True)], axis=1)
+
+    show_cols = [c for c in [
+        "pair_id", "asset1", "asset2", "timeframe", "created_at",
+        "m_Robustness", "m_Sharpe_real", "m_Sharpe_median", "m_Sharpe_min",
+        "p_z_entry", "p_z_exit", "p_z_window", "p_wf_train", "p_wf_test", "p_fees"
+    ] if c in reg_flat.columns]
+
+    # -----------------------------
+    # Internal helpers
+    # -----------------------------
+    def _compute_sharpe_from_returns(rets: pd.Series, periods_per_year: int) -> float:
+        r = rets.replace([np.inf, -np.inf], np.nan).dropna()
+        if len(r) < 3:
+            return 0.0
+        std = float(r.std(ddof=1))
+        if std == 0.0:
+            return 0.0
+        return float(r.mean() / std * np.sqrt(periods_per_year))
+
+    def _max_drawdown(eq: pd.Series) -> float:
+        eq = eq.replace([np.inf, -np.inf], np.nan).dropna()
+        if len(eq) < 3:
+            return 0.0
+        peak = eq.cummax()
+        dd = (eq / peak) - 1.0
+        return float(dd.min())
+
+    def _cagr_from_equity(eq: pd.Series) -> float:
+        eq = eq.replace([np.inf, -np.inf], np.nan).dropna()
+        if len(eq) < 3:
+            return np.nan
+        if not isinstance(eq.index, pd.DatetimeIndex):
+            return np.nan
+        years = (eq.index[-1] - eq.index[0]).total_seconds() / (365.25 * 24 * 3600)
+        if years <= 0:
+            return np.nan
+        return float((eq.iloc[-1] / eq.iloc[0]) ** (1 / years) - 1)
+
+    # -----------------------------
+    # PF tabs (impactant)
+    # -----------------------------
+    t_overview, t_pairs, t_adv = st.tabs(["Overview", "Paires", "Détails (optionnel)"])
+
+    # -----------------------------
+    # Run PF backtest
+    # -----------------------------
+    pf_key = (
+        tuple((it.get("pair_id"), it.get("timeframe")) for it in registry),
+        int(lb_pf),
+        int(pf_periods_per_year),
+    )
+
+    if run_pf:
+        with st.spinner("Backtest PF en cours..."):
+            per_pair_returns = {}
+            per_pair_equity = {}
+            per_pair_info = []
+
+            for it in registry:
+                pair_id = it["pair_id"]
+                a1 = it["asset1"]
+                a2 = it["asset2"]
+                cfg_params = it["params"]
+
+                # --- Load data (même pipeline que Pair Monitor)
+                df1_pf = cached_load_price(a1, DATA_PATH).iloc[-int(lb_pf):].copy()
+                df2_pf = cached_load_price(a2, DATA_PATH).iloc[-int(lb_pf):].copy()
+
+                # Log + norm
+                df1_pf["log"] = np.log(df1_pf["close"])
+                df2_pf["log"] = np.log(df2_pf["close"])
+
+                df1_pf["norm"] = df1_pf["log"] - df1_pf["log"].iloc[0]
+                df2_pf["norm"] = df2_pf["log"] - df2_pf["log"].iloc[0]
+
+                df1_pf["logret"] = df1_pf["log"].diff()
+                df2_pf["logret"] = df2_pf["log"].diff()
+
+                merged_pf = pd.merge(
+                    df1_pf[["datetime", "norm", "logret"]],
+                    df2_pf[["datetime", "norm", "logret"]],
+                    on="datetime",
+                    how="inner",
+                    suffixes=(f"_{a1}", f"_{a2}"),
+                )
+
+                series_y = merged_pf[f"norm_{a1}"]
+                series_x = merged_pf[f"norm_{a2}"]
+                beta_pf = compute_hedge_ratio(series_y, series_x)
+
+                # --- Backtest pair avec params figés
+                # IMPORTANT: cette fonction renvoie (equity, returns, trades)
+                eq_pair, rets_pair = backtest_single_pair_from_config(
+                    merged_pf,
+                    a1,
+                    a2,
+                    cfg_params=cfg_params,
+                )
+
+                # Stocker
+                per_pair_returns[pair_id] = rets_pair
+                per_pair_equity[pair_id] = eq_pair
+
+                per_pair_info.append({
+                    "pair_id": pair_id,
+                    "n_bars": int(len(rets_pair)),
+                    "sharpe": _compute_sharpe_from_returns(rets_pair, int(pf_periods_per_year)),
+                    "mdd": _max_drawdown(eq_pair),
+                    "final_equity": float(eq_pair.iloc[-1]) if len(eq_pair) else np.nan,
+                    "trades": int(len(rets_pair)) if rets_pair is not None else 0,
+                })
+
+            # --- Portfolio aggregation (equal-weight)
+            pf_equity, ret_mat = backtest_portfolio_equal_weight(registry, DATA_PATH)
+
+            st.session_state["pf_last_key"] = pf_key
+            st.session_state["pf_equity"] = pf_equity
+            st.session_state["pf_ret_mat"] = ret_mat
+            st.session_state["pf_pair_stats"] = pd.DataFrame(per_pair_info).sort_values("sharpe", ascending=False)
+            st.session_state["pf_pair_equity"] = per_pair_equity
+
+    has_pf = (st.session_state.get("pf_last_key", None) == pf_key and "pf_equity" in st.session_state)
+
+    # =============================
+    # TAB 1 — OVERVIEW (impact)
+    # =============================
+    with t_overview:
+        st.markdown("### Résumé portefeuille")
+
+        if not has_pf:
+            st.info("Clique sur 'Backtester le PF' pour calculer l’equity portefeuille.")
+        else:
+            pf_equity = st.session_state["pf_equity"]
+            ret_mat = st.session_state["pf_ret_mat"]
+            pair_stats = st.session_state["pf_pair_stats"]
+
+            pf_rets = pf_equity.pct_change().fillna(0.0)
+            pf_sharpe = _compute_sharpe_from_returns(pf_rets, int(pf_periods_per_year))
+            pf_mdd = _max_drawdown(pf_equity)
+            pf_final = float(pf_equity.iloc[-1]) if len(pf_equity) else np.nan
+            pf_cagr = _cagr_from_equity(pf_equity)
+
+            k1, k2, k3, k4 = st.columns(4)
+            k1.metric("Sharpe", f"{pf_sharpe:.3f}")
+            k2.metric("Max Drawdown", f"{pf_mdd:.2%}")
+            k3.metric("Final Equity", f"{pf_final:.3f}")
+            k4.metric("CAGR", f"{pf_cagr:.2%}" if np.isfinite(pf_cagr) else "n/a")
+
+            # Equity chart (main hero)
+            fig_pf = go.Figure()
+            fig_pf.add_scatter(x=pf_equity.index, y=pf_equity, mode="lines", name="Portfolio Equity")
+            fig_pf.update_layout(template="plotly_dark", height=420, margin=dict(l=20, r=20, t=40, b=20))
+            st.plotly_chart(fig_pf, use_container_width=True)
+
+            # “Top pairs” compact
+            st.markdown("### Top contributeurs (par Sharpe paire)")
+            st.dataframe(pair_stats[["pair_id", "sharpe", "mdd", "final_equity"]].head(10), use_container_width=True)
+
+            # Details regroupés en expanders
+            with st.expander("Voir les returns (en %)"):
+                pf_rets_pct = (pf_rets * 100.0).rename("PF_return_%")
+
+                a1, a2, a3, a4 = st.columns(4)
+                a1.metric("Mean / bar", f"{pf_rets_pct.mean():.4f}%")
+                a2.metric("Vol / bar", f"{pf_rets_pct.std(ddof=1):.4f}%")
+                a3.metric("Best bar", f"{pf_rets_pct.max():.2f}%")
+                a4.metric("Worst bar", f"{pf_rets_pct.min():.2f}%")
+
+                rets_table = pd.DataFrame({"return_%": pf_rets_pct.values}, index=pf_rets.index)
+                rets_table.index.name = "datetime"
+                st.dataframe(rets_table.tail(200), use_container_width=True)
+
+                fig_rets = px.histogram(rets_table.reset_index(), x="return_%", nbins=60)
+                fig_rets.update_layout(template="plotly_dark", height=320, margin=dict(l=20, r=20, t=40, b=20))
+                st.plotly_chart(fig_rets, use_container_width=True)
+
+            with st.expander("Voir les contributions (equal-weight)"):
+                n_pairs = max(1, ret_mat.shape[1])
+                contrib_pct = (ret_mat * (1.0 / n_pairs) * 100.0).copy()
+                cum_contrib_pct = contrib_pct.cumsum()
+
+                fig_contrib = go.Figure()
+                for col in cum_contrib_pct.columns:
+                    fig_contrib.add_scatter(
+                        x=cum_contrib_pct.index,
+                        y=cum_contrib_pct[col],
+                        mode="lines",
+                        name=str(col),
+                    )
+                fig_contrib.update_layout(template="plotly_dark", height=380, margin=dict(l=20, r=20, t=40, b=20))
+                st.plotly_chart(fig_contrib, use_container_width=True)
+
+    # =============================
+    # TAB 2 — PAIRES (gestion + drilldown)
+    # =============================
+    with t_pairs:
+        st.markdown("### Paires en portefeuille")
+        st.dataframe(reg_flat[show_cols], use_container_width=True)
+
+        st.markdown("### Drilldown paire")
+        pair_choices = [f"{it.get('pair_id')} | {it.get('timeframe','UNKNOWN')}" for it in registry]
+        chosen = st.selectbox("Choisir une paire", pair_choices, key="pf_detail_select")
+
+        # trouver l’item
+        item = None
+        if chosen:
+            pair_id = chosen.split("|")[0].strip()
+            timeframe = chosen.split("|")[1].strip() if "|" in chosen else "UNKNOWN"
+            for it in registry:
+                if it.get("pair_id") == pair_id and it.get("timeframe", "UNKNOWN") == timeframe:
+                    item = it
+                    break
+
+        if item is not None:
+            # Mini “cards” utiles
+            m1, m2, m3, m4 = st.columns(4)
+            m1.metric("Robustness", f"{float(item.get('metrics', {}).get('Robustness', np.nan)):.3f}" if item.get("metrics") else "n/a")
+            m2.metric("Sharpe real", f"{float(item.get('metrics', {}).get('Sharpe_real', np.nan)):.3f}" if item.get("metrics") else "n/a")
+            m3.metric("Z-entry", f"{float(item.get('params', {}).get('z_entry', np.nan)):.3f}" if item.get("params") else "n/a")
+            m4.metric("Z-exit", f"{float(item.get('params', {}).get('z_exit', np.nan)):.3f}" if item.get("params") else "n/a")
+
+            # Équity de la paire si PF déjà calculé
+            if has_pf and "pf_pair_equity" in st.session_state:
+                per_eq = st.session_state["pf_pair_equity"]
+                if item["pair_id"] in per_eq:
+                    st.markdown("#### Equity de la paire")
+                    eq_pair = per_eq[item["pair_id"]]
+                    fig_p = go.Figure()
+                    fig_p.add_scatter(x=eq_pair.index, y=eq_pair, mode="lines", name=item["pair_id"])
+                    fig_p.update_layout(template="plotly_dark", height=320, margin=dict(l=20, r=20, t=40, b=20))
+                    st.plotly_chart(fig_p, use_container_width=True)
+
+            with st.expander("Paramètres (JSON)"):
+                st.json(item.get("params", {}))
+            with st.expander("Métriques d’optimisation (JSON)"):
+                st.json(item.get("metrics", {}))
+
+        st.markdown("### Gestion")
+        r1, r2 = st.columns([5, 1])
+        selected_remove = r1.selectbox("Supprimer une paire", pair_choices, key="pf_remove_select")
+        r2.markdown("<div style='height: 28px;'></div>", unsafe_allow_html=True)
+        do_remove = r2.button("Supprimer", key="pf_remove_btn", use_container_width=True)
+
+        if do_remove and selected_remove:
+            pair_id = selected_remove.split("|")[0].strip()
+            timeframe = selected_remove.split("|")[1].strip() if "|" in selected_remove else "UNKNOWN"
+            remove_pair_config(pair_id, timeframe, REGISTRY_PATH)
+            st.success(f"Supprimé: {pair_id} ({timeframe})")
+            _rerun()
+
+    # =============================
+    # TAB 3 — DETAILS (OPTIONNEL)
+    # =============================
+    with t_adv:
+        st.markdown("### Détails (optionnel)")
+        st.caption("Réservé aux checks plus lourds. À garder fermé la plupart du temps.")
+
+        if not has_pf:
+            st.info("Lance d’abord le PF pour afficher les détails.")
+        else:
+            pf_equity = st.session_state["pf_equity"]
+            ret_mat = st.session_state["pf_ret_mat"]
+
+            show_heavy = st.toggle("Afficher les vues détaillées", value=False, key="pf_show_heavy")
+
+            if show_heavy:
+                st.markdown("#### Matrice de returns (alignée) – tail")
+                st.dataframe(ret_mat.tail(300), use_container_width=True)
+
+                st.markdown("#### Returns par paire (en %) – tail")
+                st.dataframe((ret_mat * 100.0).tail(300), use_container_width=True)
+
+                st.markdown("#### Perf cumulée (PF) – en %")
+                pf_cum_pct = ((pf_equity / pf_equity.iloc[0]) - 1.0) * 100.0
+                fig_cum = go.Figure()
+                fig_cum.add_scatter(x=pf_cum_pct.index, y=pf_cum_pct, mode="lines", name="Cumulative %")
+                fig_cum.update_layout(template="plotly_dark", height=320, margin=dict(l=20, r=20, t=40, b=20))
+                st.plotly_chart(fig_cum, use_container_width=True)
+            else:
+                st.info("Active le toggle pour afficher les tableaux et graphiques détaillés.")
+
+
+
 
 
 
