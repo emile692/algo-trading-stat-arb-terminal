@@ -111,81 +111,71 @@ def simulate_heston(
 
 
 
-def simulate_ou(n_steps, mu_s, theta_s, sigma_s, S0=0, dt=1/252):
+def simulate_ou(n_steps, mu_s, theta_s, sigma_s, S0=0, dt=1.0):
+    """
+    OU en unité 'bar' (dt=1.0 par défaut), cohérent avec compute_half_life()
+    et avec theta_s = log(2)/half_life (half_life en bars).
+    """
     S = np.zeros(n_steps)
     S[0] = S0
 
     for t in range(1, n_steps):
         dW = np.random.normal() * np.sqrt(dt)
-        S[t] = S[t-1] + theta_s*(mu_s - S[t-1])*dt + sigma_s*dW
+        S[t] = S[t-1] + theta_s * (mu_s - S[t-1]) * dt + sigma_s * dW
 
     return S
 
 
-def calibrate_params_from_pair(df1, df2, spread, beta):
+
+def calibrate_params_from_pair(df1, df2, spread, beta: float) -> dict:
     """
-    Calibration robuste des paramètres pour simulate_cointegrated_assets.
-    Corrige tous les NaN possibles dans mid, ret, vol, etc.
+    Calibre des paramètres simples pour la génération synthétique.
+    Robuste si spread est ndarray, et robuste aux NaN.
     """
+    spread_s = pd.Series(spread).astype(float).replace([np.inf, -np.inf], np.nan).dropna()
+    if len(spread_s) < 50:
+        # fallback très conservateur
+        return {
+            "X0": float(spread_s.iloc[-1]) if len(spread_s) else 0.0,
+            "v0": 0.0,
+            "mu": float(spread_s.mean()) if len(spread_s) else 0.0,
+            "theta": 0.05,
+            "kappa": 1.0,
+            "xi": 0.10,
+            "rho": 0.0,
+            "mu_s": 1.0,
+            "theta_s": 0.05,
+            "sigma_s": 0.01,
+            "S0": float(spread_s.iloc[-1]) if len(spread_s) else 0.0,
+        }
 
-    # --- 1) Fix spread
-    spread = spread.dropna()
-    S0 = float(spread.iloc[-1])
-    mu_s = float(spread.mean())
+    # Half-life => theta_s
+    hl = compute_half_life(spread_s)
+    theta_s = (np.log(2) / hl) if (hl is not None and np.isfinite(hl) and hl > 0) else 0.05
+    theta_s = float(np.clip(theta_s, 1e-4, 2.0))
 
-    sigma_s = float(np.std(spread.diff().dropna()))
-    hl = compute_half_life(spread)
-    theta_s = np.log(2) / hl if (hl is not None and hl > 0) else 0.05
+    # Vol résiduelle (sigma_s) : std des incréments
+    sigma_s = float(spread_s.diff().dropna().std())
+    if not np.isfinite(sigma_s) or sigma_s <= 0:
+        sigma_s = float(spread_s.std()) if np.isfinite(spread_s.std()) and spread_s.std() > 0 else 0.01
+    sigma_s = float(np.clip(sigma_s, 1e-6, 10.0))
 
-    # --- 2) Fix des séries df1 / df2
-    df1_norm = df1["norm"].ffill().bfill()
-    df2_norm = df2["norm"].ffill().bfill()
+    # Niveau moyen
+    mu_s = float(spread_s.mean())
 
-    # --- 3) mid robuste
-    mid = 0.5 * (df1_norm + df2_norm)
-    mid = mid.dropna()
+    # S0
+    S0 = float(spread_s.iloc[-1])
 
-    if len(mid) == 0:
-        print("WARNING: mid empty, fallback to spread")
-        mid = spread.dropna()
-
-    if len(mid) == 0:
-        print("CRITICAL: mid AND spread empty -> fallback to X0=1")
-        mid = pd.Series([1.0])
-
-    X0 = float(mid.iloc[-1])
-
-    # --- 4) returns robustes
-    ret = mid.diff().dropna()
-    if len(ret) == 0:
-        # fallback minimal
-        ret = pd.Series([0.0])
-
-    mu = float(ret.mean())
-    vol = float(ret.std())
-
-    # clamp vol pour éviter v0=0 ou NaN
-    if not np.isfinite(vol) or vol <= 0:
-        vol = 0.01      # vol fallback raisonnable
-
-    # --- 5) Heston params robustes
-    v0 = max(1e-4, vol**2)
-    theta = v0
-    kappa = 1.5
-    xi = 0.5
-    rho = -0.3
-
-    # DEBUG
-    print("DEBUG mid last:", X0)
-    print("DEBUG vol:", vol)
-    print("DEBUG v0:", v0)
+    # Partie cointegration “X/v” : on reste simple et stable
+    X0 = S0
+    v0 = 0.0
+    mu = mu_s
+    theta = 0.05
+    kappa = 1.0
+    xi = 0.10
+    rho = 0.0
 
     return {
-        "mu_s": mu_s,
-        "theta_s": theta_s,
-        "sigma_s": sigma_s,
-        "S0": S0,
-        "beta": beta,
         "X0": X0,
         "v0": v0,
         "mu": mu,
@@ -193,8 +183,11 @@ def calibrate_params_from_pair(df1, df2, spread, beta):
         "kappa": kappa,
         "xi": xi,
         "rho": rho,
+        "mu_s": mu_s,
+        "theta_s": theta_s,
+        "sigma_s": sigma_s,
+        "S0": S0,
     }
-
 
 
 
@@ -203,27 +196,37 @@ def simulate_cointegrated_assets(
     beta,
     # market factor (Heston)
     X0, v0, mu, theta, kappa, xi, rho,
-    # OU spread
+    # OU spread (déjà en unités de spread réel, donc en log-space)
     mu_s, theta_s, sigma_s, S0,
-    dt=1/252,
+    dt_mkt=1/252,
+    dt_ou=1.0,
 ):
-    # 1) marché (Heston)
-    X, v = simulate_heston(
+    """
+    Produit A, B dans le même espace que le backtest réel :
+      - X est simulé en PRIX via Heston, puis converti en log et normalisé
+      - spread tradé = A - beta*B = S (OU)
+    """
+
+    # 1) Heston -> prix
+    X_price, v = simulate_heston(
         n_steps, X0=X0, v0=v0, mu=mu,
         kappa=kappa, theta=theta,
-        xi=xi, rho=rho, dt=dt
+        xi=xi, rho=rho, dt=dt_mkt
     )
 
-    # 2) spread OU
+    # 2) Conversion en log + normalisation (comme df["norm"])
+    X_log = np.log(np.maximum(X_price, 1e-12))
+    X_norm = X_log - X_log[0]   # même convention que ton "norm" réel
+
+    # 3) OU spread en "bars"
     S = simulate_ou(
-        n_steps, mu_s, theta_s, sigma_s, S0, dt
+        n_steps, mu_s, theta_s, sigma_s, S0, dt=dt_ou
     )
 
-    # 3) reconstruction cointegrée
-    A = X + S
-    B = X - beta * S
-    print("DEBUG - spread simulated std:", np.std(S))
-    print("DEBUG - A std:", np.std(A))
-    print("DEBUG - B std:", np.std(B))
+    # 4) Reconstruction cointegrée dans le même espace (log-norm)
+    B = X_norm
+    A = beta * X_norm + S
 
-    return A, B, X, S, v
+    return A, B, X_norm, S, v
+
+
