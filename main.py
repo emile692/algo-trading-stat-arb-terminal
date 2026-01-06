@@ -30,35 +30,24 @@ from utils.synthetic import (
 
 PROJECT_PATH = Path(__file__).resolve().parents[0]
 BASE_DATA_PATH = PROJECT_PATH / "data" / "raw"
+SCANNER_DATA_PATH = BASE_DATA_PATH / "d1"
+DATA_PATH = PROJECT_PATH / "data" / "raw" / "d1"
 
 
 # ============================================================
 # PAGE CONFIG
 # ============================================================
 st.set_page_config(page_title="StatArb Terminal", layout="wide")
+st.set_page_config(page_title="StatArb Terminal", layout="wide")
 
 # Tous les tickers disponibles
 def list_assets(base_path: Path) -> list[str]:
-    assets = set()
-    for tf_dir in ["d1", "h1"]:
-        p = base_path / tf_dir
-        if p.exists():
-            assets |= {f.stem for f in p.glob("*.csv")}
-    return sorted(assets)
+    p = base_path / "d1"
+    if not p.exists():
+        return []
+    return sorted(f.stem.upper() for f in p.glob("*.csv"))
 
 raw_data_list = list_assets(BASE_DATA_PATH)
-
-
-
-# ============================================================
-# Définition des univers
-# ============================================================
-UNIVERSES = {
-    "BIG TECH": ["AAPL", "MSFT", "GOOGL", "AMZN", "META", "NVDA", "TSLA", "ADBE", "INTC", "CSCO"],
-    "FAANG": ["META", "AMZN", "AAPL", "NFLX", "GOOGL"],
-    "MEGA CAP TECH": ["AAPL", "MSFT", "GOOGL", "AMZN", "META", "NVDA", "TSLA"],
-    "ALL AVAILABLE": raw_data_list,
-}
 
 
 # ============================================================
@@ -96,7 +85,7 @@ with st.sidebar:
     asset2 = st.selectbox("Asset 2", raw_data_list,
                           index=raw_data_list.index(st.session_state["asset2"]))
 
-    timeframe = st.selectbox("Timeframe", ["Hourly", "Daily"])
+    timeframe = st.selectbox("Timeframe", ["Daily", "Hourly"])
 
     lookback = st.selectbox("Lookback", list(lookback_mapping.keys()))
     lb = lookback_mapping[lookback]
@@ -110,18 +99,18 @@ tab_monitor, tab_scanner, tab_backtest, tab_opt, tab_pf = st.tabs([
 ])
 
 
-
-# Force auto-navigation vers Pair Monitor après un "Load"
-if st.session_state["go_to_monitor"]:
-    st.session_state["go_to_monitor"] = False
-    tab_monitor.select()
-
-
 # ============================================================
 # TAB 1 : PAIR MONITOR
 # ============================================================
 with tab_monitor:
     st.subheader("Pair Monitor")
+
+    if st.session_state.get("go_to_monitor", False):
+        st.info(
+            f"Loaded pair: {st.session_state['asset1']} / {st.session_state['asset2']}",
+            icon="📈"
+        )
+        st.session_state["go_to_monitor"] = False
 
     with st.spinner("Loading data & computing metrics..."):
 
@@ -318,137 +307,230 @@ with tab_monitor:
     colB1.plotly_chart(fig_z, width='stretch')
     colB2.plotly_chart(fig_corr, width='stretch')
 
+
 # ============================================================
-# TAB 2 : PAIR SCREENER
+# TAB 2 : PAIR SCREENER (FINAL DESK-GRADE — MULTIPROC SAFE)
 # ============================================================
+
+# ---------- Session state init ----------
+if "scanner_df" not in st.session_state:
+    st.session_state["scanner_df"] = None
+
+if "scanner_view_df" not in st.session_state:
+    st.session_state["scanner_view_df"] = None
+
+
 with tab_scanner:
 
     st.subheader("Pair Screener")
 
-    universe_name = st.selectbox("Universe", list(UNIVERSES.keys()))
-    scan_lb = lookback_mapping[st.selectbox("Lookback (screener)", list(lookback_mapping.keys()), index=3)]
+    # -----------------------------
+    # Registry
+    # -----------------------------
+    @st.cache_data
+    def load_registry():
+        return pd.read_csv("data/asset_registry.csv")
 
-    min_corr = st.slider("Min absolute correlation", 0.0, 1.0, 0.5, 0.05)
-    max_half_life = st.slider("Max half-life (bars)", 5, 500, 150, 5)
-    z_window_scan = st.slider(
-        "Z-score window (scanner)",
-        min_value=20,
-        max_value=200,
-        value=60,
-        step=10,
+    registry = load_registry()
+    universes = sorted(registry["category_name"].unique())
+
+    # -----------------------------
+    # Controls
+    # -----------------------------
+    scan_mode = st.radio(
+        "Scan mode",
+        ["Single universe", "All universes"],
+        horizontal=True,
+        key="scanner_mode",
     )
 
-    run = st.button("Run scan")
+    universe = None
+    if scan_mode == "Single universe":
+        universe = st.selectbox(
+            "Universe",
+            universes,
+            key="scanner_universe",
+        )
 
+    run = st.button("Run scan", key="scanner_run_btn")
+
+    # -----------------------------
+    # Run scanner (multiprocessing)
+    # -----------------------------
     if run:
-        with st.spinner("Scanning..."):
+        from utils.scanner import scan_all_universes, scan_universe
+        import os
 
-            tickers = [t for t in UNIVERSES[universe_name] if t in raw_data_list]
+        with st.spinner("Scanning universes (multiprocessing)..."):
 
-            prepared = {}
-            for t in tickers:
-                df = cached_load_price(t, DATA_PATH).iloc[-scan_lb:].copy()
-                df["log"] = np.log(df["close"])
-                df["norm"] = df["log"] - df["log"].iloc[0]
-                prepared[t] = df[["datetime", "norm"]]
+            # ---------- Prepare prices per universe (SEQUENTIAL, FAST) ----------
+            universe_prices = {}
 
-            results = []
+            target_universes = (
+                [universe] if scan_mode == "Single universe" else universes
+            )
 
-            for a1, a2 in itertools.combinations(prepared.keys(), 2):
-                df1 = prepared[a1]
-                df2 = prepared[a2]
-
-                merged_s = pd.merge(
-                    df1, df2, on="datetime", how="inner",
-                    suffixes=(f"_{a1}", f"_{a2}")
+            for univ in target_universes:
+                tickers = (
+                    registry
+                    .loc[registry["category_name"] == univ, "asset"]
+                    .str.upper()
+                    .tolist()
                 )
-
-                if len(merged_s) < 50:
+                tickers = [t for t in tickers if t in raw_data_list]
+                if len(tickers) < 2:
                     continue
 
-                y = merged_s[f"norm_{a1}"]
-                x = merged_s[f"norm_{a2}"]
+                series = {}
+                for t in tickers:
+                    df = cached_load_price(t, SCANNER_DATA_PATH)
+                    df["log"] = np.log(df["close"])
+                    df["norm"] = df["log"] - df["log"].iloc[0]
+                    series[t] = df.set_index("datetime")["norm"]
 
-                try:
-                    beta_s = compute_hedge_ratio(y, x)
-                    spread_s = compute_spread(y, x, beta_s)
-                    adf_t_s, adf_p_s, _ = compute_adf(spread_s.dropna())
-                    corr_s = compute_corr(y, x)
-                    eg_t_s, eg_p_s, _ = compute_coint(y, x)
-                    hl_s = compute_half_life(spread_s)
-                except Exception:
-                    continue
+                prices = pd.DataFrame(series).dropna(how="all")
+                if prices.shape[1] >= 2:
+                    universe_prices[univ] = prices
 
-                if hl_s is None or hl_s <= 0:
-                    continue
-
-                if abs(corr_s) < min_corr or hl_s > max_half_life:
-                    continue
-
-                z_s = compute_zscore(spread_s, window=z_window_scan)
-                z_std = float(np.nanstd(z_s))
-
-                ou_score = (1 - min(adf_p_s, 1.0)) / np.log1p(hl_s)
-                score = corr_s * ou_score
-
-                results.append({
-                    "Asset1": a1,
-                    "Asset2": a2,
-                    "Corr": corr_s,
-                    "ADF_p": adf_p_s,
-                    "EG_p": eg_p_s,
-                    "Half life": hl_s,
-                    "Zscore std": z_std,
-                    "OU Score": ou_score,
-                    "Score": score
-                })
-
-            if not results:
-                st.info("No pairs matched your filters.")
+            if not universe_prices:
+                st.warning("No valid universes to scan.")
             else:
-                df_res = pd.DataFrame(results).sort_values("Score", ascending=False)
-
-                st.markdown("### Ranked pairs")
-
-                # ====== En-têtes de tableau ======
-                h1, h2, h3, h4, h5, h6, h7, h8, h9, h10 = st.columns(
-                    [2, 2, 1, 1, 1, 1, 1, 1, 1.2, 1]
+                # ---------- TRUE MULTIPROCESSING ----------
+                df_scan = scan_all_universes(
+                    universe_prices,
+                    max_workers=max(1, os.cpu_count() - 1),
                 )
 
-                h1.write("Asset 1")
-                h2.write("Asset 2")
-                h3.write("Corr")
-                h4.write("ADF p")
-                h5.write("EG p")
-                h6.write("HL")
-                h7.write("Zscore std")
-                h8.write("OU Score")
-                h9.write("Score")
-                h10.write("Load")
+                if df_scan.empty:
+                    st.warning("No pairs found.")
+                else:
+                    # ---------- Global ranking ----------
+                    elig_rank = {"ELIGIBLE": 0, "WATCH": 1, "OUT": 2}
+                    df_scan["_er"] = df_scan["eligibility"].map(elig_rank)
 
-                # ====== Lignes du tableau ======
-                for idx, row in df_res.iterrows():
-
-                    c1, c2, c3, c4, c5, c6, c7, c8, c9, c10 = st.columns(
-                        [2, 2, 1, 1, 1, 1, 1, 1, 1.2, 1]
+                    df_scan = (
+                        df_scan
+                        .sort_values(
+                            ["_er", "eligibility_score"],
+                            ascending=[True, False],
+                        )
+                        .drop(columns="_er")
+                        .reset_index(drop=True)
                     )
 
-                    c1.write(row["Asset1"])
-                    c2.write(row["Asset2"])
-                    c3.write(f"{row['Corr']:.3f}")
-                    c4.write(f"{row['ADF_p']:.4f}")
-                    c5.write(f"{row['EG_p']:.4f}")
-                    c6.write(f"{row['Half life']:.1f}")
-                    c7.write(f"{row['Zscore std']:.3f}")
-                    c8.write(f"{row['OU Score']:.3f}")
-                    c9.write(f"{row['Score']:.3f}")
+                    # ---------- Compact view ----------
+                    view_cols = [
+                        "asset_1",
+                        "asset_2",
+                        "universe",
+                        "eligibility",
+                        "eligibility_score",
+                        "n_valid_windows",
+                        "12m_corr",
+                        "6m_half_life",
+                        "beta_std",
+                    ]
 
-                    # ---- Bouton Load ----
-                    if c10.button("Load", key=f"load_{idx}"):
-                        st.session_state["asset1"] = row["Asset1"]
-                        st.session_state["asset2"] = row["Asset2"]
-                        st.session_state["go_to_monitor"] = True
-                        st.experimental_rerun()
+                    df_view = df_scan[view_cols].copy()
+                    df_view.rename(columns={
+                        "asset_1": "Asset 1",
+                        "asset_2": "Asset 2",
+                        "eligibility": "Status",
+                        "eligibility_score": "Score",
+                        "n_valid_windows": "Valid windows",
+                        "12m_corr": "Corr (12m)",
+                        "6m_half_life": "HL (6m)",
+                        "beta_std": "β std",
+                    }, inplace=True)
+
+                    # ---------- Rounding (display only) ----------
+                    ROUND = {
+                        "Score": 3,
+                        "Corr (12m)": 3,
+                        "HL (6m)": 2,
+                        "β std": 3,
+                    }
+                    for c, n in ROUND.items():
+                        if c in df_view.columns:
+                            df_view[c] = df_view[c].astype(float).round(n)
+
+                    # ---------- Persist ----------
+                    st.session_state["scanner_df"] = df_scan
+                    st.session_state["scanner_view_df"] = df_view
+
+    # -----------------------------
+    # Display persisted results
+    # -----------------------------
+    df_scan = st.session_state.get("scanner_df")
+    df_view = st.session_state.get("scanner_view_df")
+
+    if df_scan is not None and df_view is not None:
+
+        st.markdown("### Ranked pairs")
+        st.dataframe(df_view, width='stretch')
+
+        # -----------------------------
+        # Detailed diagnostics (eligible only)
+        # -----------------------------
+        show_details = st.toggle(
+            "Show detailed diagnostics (eligible only)",
+            key="scanner_show_details",
+        )
+
+        if show_details:
+            elig_df = df_scan[df_scan["eligibility"] == "ELIGIBLE"]
+
+            if elig_df.empty:
+                st.info("No eligible pairs.")
+            else:
+                labels = [
+                    f"{r.asset_1} / {r.asset_2} [{r.universe}]"
+                    for r in elig_df.itertuples()
+                ]
+
+                sel = st.selectbox(
+                    "Select pair",
+                    labels,
+                    key="scanner_detail_pair",
+                )
+
+                row = elig_df.iloc[labels.index(sel)]
+
+                diag_cols = [
+                    "3m_corr", "3m_adf_p", "3m_eg_p", "3m_half_life",
+                    "6m_corr", "6m_adf_p", "6m_eg_p", "6m_half_life",
+                    "12m_corr", "12m_adf_p", "12m_eg_p", "12m_half_life",
+                    "beta_std",
+                ]
+
+                diag = row[diag_cols].to_frame("value")
+                diag["value"] = diag["value"].astype(float).round(4)
+
+                st.markdown("#### Multi-window statistics")
+                st.dataframe(diag, width='stretch')
+
+        # -----------------------------
+        # Load pair into monitor
+        # -----------------------------
+        st.markdown("### Load pair")
+
+        idx = st.number_input(
+            "Row index",
+            min_value=0,
+            max_value=len(df_view) - 1,
+            step=1,
+            value=0,
+            key="scanner_load_idx",
+        )
+
+        if st.button("Load selected pair", key="scanner_load_btn"):
+            row = df_scan.iloc[int(idx)]
+            st.session_state["asset1"] = row["asset_1"]
+            st.session_state["asset2"] = row["asset_2"]
+            st.session_state["go_to_monitor"] = True
+            st.rerun()
+
+
 
 # ============================================================
 # TAB 3 : BACKTEST PAIR
@@ -528,7 +610,7 @@ with tab_backtest:
         paper_bgcolor="rgba(0,0,0,0)",
     )
 
-    st.plotly_chart(fig_eq, use_container_width=True)
+    st.plotly_chart(fig_eq, width='stretch')
 
     # ============================================================
     # METRICS
@@ -573,7 +655,7 @@ with tab_backtest:
         df_trades["PnL_X"] = df_trades["PnL_X"].round(5)
         df_trades["Duration"] = df_trades["Duration"].astype(int)
 
-        st.dataframe(df_trades, use_container_width=True)
+        st.dataframe(df_trades, width='stretch')
 
         # ============================================================
         # TRADE VISUALIZATION (Spread WF + classic spread background)
@@ -636,7 +718,7 @@ with tab_backtest:
             yaxis_title="Spread"
         )
 
-        st.plotly_chart(fig_trades, use_container_width=True)
+        st.plotly_chart(fig_trades, width='stretch')
 
         # ============================================================
         # Z-SCORE VISUALIZATION
@@ -693,7 +775,7 @@ with tab_backtest:
             yaxis_title="Z-score",
         )
 
-        st.plotly_chart(fig_ztrades, use_container_width=True)
+        st.plotly_chart(fig_ztrades, width='stretch')
 
         # ============================================================
         # Walk-Forward Hedge Ratio (β WF) - clean view
@@ -736,7 +818,7 @@ with tab_backtest:
             showlegend=True,
         )
 
-        st.plotly_chart(fig_wf, use_container_width=True)
+        st.plotly_chart(fig_wf, width='stretch')
 
         # ============================================================
         # WALK-FORWARD SEGMENT REPORT
@@ -786,7 +868,7 @@ with tab_backtest:
                 margin=dict(l=20, r=20, t=40, b=20)
             )
 
-            st.plotly_chart(fig_heat, use_container_width=True)
+            st.plotly_chart(fig_heat, width='stretch')
 
 
 with tab_opt:
@@ -899,7 +981,7 @@ with tab_opt:
         df_opt = st.session_state["df_opt"]
 
         st.markdown("### Résultats")
-        st.dataframe(df_opt, use_container_width=True)
+        st.dataframe(df_opt, width='stretch')
 
         st.markdown("### Explorer une configuration")
 
@@ -1028,11 +1110,11 @@ with tab_opt:
             fig_eq = go.Figure()
             fig_eq.add_scatter(x=merged["datetime"], y=equity, mode="lines", name="Equity")
             fig_eq.update_layout(template="plotly_dark", height=350, margin=dict(l=20, r=20, t=40, b=20))
-            st.plotly_chart(fig_eq, use_container_width=True)
+            st.plotly_chart(fig_eq, width='stretch')
 
             st.markdown("### Trades")
             if len(trades) > 0:
-                st.dataframe(pd.DataFrame(trades), use_container_width=True)
+                st.dataframe(pd.DataFrame(trades), width='stretch')
             else:
                 st.info("Aucun trade pour cette configuration.")
 
@@ -1157,7 +1239,7 @@ with tab_opt:
                 synth_hl = diag["synth_hl"]
 
                 st.markdown("### Résumé (réel vs synth)")
-                st.dataframe(diag_df, use_container_width=True)
+                st.dataframe(diag_df, width='stretch')
 
                 st.markdown("### Distribution des z-scores (échantillonnée)")
                 plot_df = pd.DataFrame({
@@ -1177,7 +1259,7 @@ with tab_opt:
                         opacity=0.55,
                     )
                     fig_zdist.update_layout(template="plotly_dark", height=350, margin=dict(l=20, r=20, t=40, b=20))
-                    st.plotly_chart(fig_zdist, use_container_width=True)
+                    st.plotly_chart(fig_zdist, width='stretch')
                 else:
                     st.info("Pas assez de données z-score pour tracer la distribution.")
 
@@ -1188,7 +1270,7 @@ with tab_opt:
                 if len(hl_df) > 0:
                     fig_hl = px.histogram(hl_df, x="half_life", nbins=30)
                     fig_hl.update_layout(template="plotly_dark", height=300, margin=dict(l=20, r=20, t=40, b=20))
-                    st.plotly_chart(fig_hl, use_container_width=True)
+                    st.plotly_chart(fig_hl, width='stretch')
                 else:
                     st.info("Half-life synth indisponible (NaN).")
             else:
@@ -1229,7 +1311,7 @@ with tab_pf:
     lb_pf = c1.number_input("Lookback bars (PF)", min_value=200, max_value=20000, value=3000, step=100)
     pf_periods_per_year = c2.number_input("Periods/year (Sharpe PF)", min_value=1, max_value=200000, value=252, step=1)
     c3.markdown("<div style='height: 28px;'></div>", unsafe_allow_html=True)
-    run_pf = c3.button("Backtester le PF", key="run_pf_btn", use_container_width=True)
+    run_pf = c3.button("Backtester le PF", key="run_pf_btn", width='stretch')
 
     st.caption(f"Registry: {REGISTRY_PATH}")
 
@@ -1400,11 +1482,11 @@ with tab_pf:
             fig_pf = go.Figure()
             fig_pf.add_scatter(x=pf_equity.index, y=pf_equity, mode="lines", name="Portfolio Equity")
             fig_pf.update_layout(template="plotly_dark", height=420, margin=dict(l=20, r=20, t=40, b=20))
-            st.plotly_chart(fig_pf, use_container_width=True)
+            st.plotly_chart(fig_pf, width='stretch')
 
             # “Top pairs” compact
             st.markdown("### Top contributeurs (par Sharpe paire)")
-            st.dataframe(pair_stats[["pair_id", "sharpe", "mdd", "final_equity"]].head(10), use_container_width=True)
+            st.dataframe(pair_stats[["pair_id", "sharpe", "mdd", "final_equity"]].head(10), width='stretch')
 
             # Details regroupés en expanders
             with st.expander("Voir les returns (en %)"):
@@ -1418,11 +1500,11 @@ with tab_pf:
 
                 rets_table = pd.DataFrame({"return_%": pf_rets_pct.values}, index=pf_rets.index)
                 rets_table.index.name = "datetime"
-                st.dataframe(rets_table.tail(200), use_container_width=True)
+                st.dataframe(rets_table.tail(200), width='stretch')
 
                 fig_rets = px.histogram(rets_table.reset_index(), x="return_%", nbins=60)
                 fig_rets.update_layout(template="plotly_dark", height=320, margin=dict(l=20, r=20, t=40, b=20))
-                st.plotly_chart(fig_rets, use_container_width=True)
+                st.plotly_chart(fig_rets, width='stretch')
 
             with st.expander("Voir les contributions (equal-weight)"):
                 n_pairs = max(1, ret_mat.shape[1])
@@ -1438,14 +1520,14 @@ with tab_pf:
                         name=str(col),
                     )
                 fig_contrib.update_layout(template="plotly_dark", height=380, margin=dict(l=20, r=20, t=40, b=20))
-                st.plotly_chart(fig_contrib, use_container_width=True)
+                st.plotly_chart(fig_contrib, width='stretch')
 
     # =============================
     # TAB 2 — PAIRES (gestion + drilldown)
     # =============================
     with t_pairs:
         st.markdown("### Paires en portefeuille")
-        st.dataframe(reg_flat[show_cols], use_container_width=True)
+        st.dataframe(reg_flat[show_cols], width='stretch')
 
         st.markdown("### Drilldown paire")
         pair_choices = [f"{it.get('pair_id')} | {it.get('timeframe','UNKNOWN')}" for it in registry]
@@ -1478,7 +1560,7 @@ with tab_pf:
                     fig_p = go.Figure()
                     fig_p.add_scatter(x=eq_pair.index, y=eq_pair, mode="lines", name=item["pair_id"])
                     fig_p.update_layout(template="plotly_dark", height=320, margin=dict(l=20, r=20, t=40, b=20))
-                    st.plotly_chart(fig_p, use_container_width=True)
+                    st.plotly_chart(fig_p, width='stretch')
 
             with st.expander("Paramètres (JSON)"):
                 st.json(item.get("params", {}))
@@ -1489,7 +1571,7 @@ with tab_pf:
         r1, r2 = st.columns([5, 1])
         selected_remove = r1.selectbox("Supprimer une paire", pair_choices, key="pf_remove_select")
         r2.markdown("<div style='height: 28px;'></div>", unsafe_allow_html=True)
-        do_remove = r2.button("Supprimer", key="pf_remove_btn", use_container_width=True)
+        do_remove = r2.button("Supprimer", key="pf_remove_btn", width='stretch')
 
         if do_remove and selected_remove:
             pair_id = selected_remove.split("|")[0].strip()
@@ -1515,17 +1597,17 @@ with tab_pf:
 
             if show_heavy:
                 st.markdown("#### Matrice de returns (alignée) – tail")
-                st.dataframe(ret_mat.tail(300), use_container_width=True)
+                st.dataframe(ret_mat.tail(300), width='stretch')
 
                 st.markdown("#### Returns par paire (en %) – tail")
-                st.dataframe((ret_mat * 100.0).tail(300), use_container_width=True)
+                st.dataframe((ret_mat * 100.0).tail(300), width='stretch')
 
                 st.markdown("#### Perf cumulée (PF) – en %")
                 pf_cum_pct = ((pf_equity / pf_equity.iloc[0]) - 1.0) * 100.0
                 fig_cum = go.Figure()
                 fig_cum.add_scatter(x=pf_cum_pct.index, y=pf_cum_pct, mode="lines", name="Cumulative %")
                 fig_cum.update_layout(template="plotly_dark", height=320, margin=dict(l=20, r=20, t=40, b=20))
-                st.plotly_chart(fig_cum, use_container_width=True)
+                st.plotly_chart(fig_cum, width='stretch')
             else:
                 st.info("Active le toggle pour afficher les tableaux et graphiques détaillés.")
 
