@@ -20,24 +20,32 @@ from utils.scanner import scan_universe
 
 
 # ============================================================
-# PATHS (alignés avec ton projet)
+# PATHS
 # ============================================================
 
-PROJECT_PATH = Path(__file__).resolve().parents[1]   # racine projet
+PROJECT_PATH = Path(__file__).resolve().parents[1]
 BASE_DATA_PATH = PROJECT_PATH / "data" / "raw"
 SCANNER_DATA_PATH = BASE_DATA_PATH / "d1"
 
 ASSET_REGISTRY_PATH = PROJECT_PATH / "data" / "asset_registry.csv"
-OUTPUT_PATH = PROJECT_PATH / "data" / "scanner" / "scanner_history.parquet"
+OUTPUT_DIR = PROJECT_PATH / "data" / "scanner"
 
 
 # ============================================================
 # CONFIG
 # ============================================================
 
-UNIVERSE_NAME = "uk"
-START_DATE = datetime.datetime(year = 2025, month=1, day=1)
-END_DATE = datetime.datetime(year = 2026, month=1, day=1)
+UNIVERSES = [
+    "france",
+    "germany",
+    "italy",
+    "uk",
+    "sweden",
+    # ajoute-en autant que tu veux
+]
+
+START_DATE = datetime.datetime(year=2025, month=1, day=1)
+END_DATE = datetime.datetime(year=2026, month=1, day=1)
 FREQ = "ME"
 
 
@@ -55,10 +63,6 @@ def load_universe_assets(universe: str) -> list[str]:
 
 
 def load_price_asof(asset: str, end_date: pd.Timestamp) -> pd.Series | None:
-    """
-    Charge les données Dukascopy d'un asset
-    et les coupe en as-of end_date (pas de fuite).
-    """
     try:
         df = load_price_csv(asset, SCANNER_DATA_PATH).copy()
     except Exception:
@@ -70,17 +74,12 @@ def load_price_asof(asset: str, end_date: pd.Timestamp) -> pd.Series | None:
     if len(df) < 100:
         return None
 
-    # log price
     df["log"] = np.log(df["close"])
 
-    # stale price check (anti Dukascopy flat series)
     price_diff = df["close"].diff().abs()
-
-    # if last 20 bars have no movement -> reject asset for this scan_date
     if price_diff.rolling(20).sum().iloc[-1] == 0:
         return None
 
-    # normalisation (stable)
     df["norm"] = df["log"] - df["log"].iloc[-1]
 
     return df.set_index("datetime")["norm"]
@@ -92,10 +91,7 @@ def load_price_asof(asset: str, end_date: pd.Timestamp) -> pd.Series | None:
 
 def run_historical_scan():
 
-    assets = sorted(set(load_universe_assets(UNIVERSE_NAME)))
-
-    print(f"Universe: {UNIVERSE_NAME}")
-    print(f"Assets in universe: {len(assets)}")
+    OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
     scan_dates = pd.date_range(
         start=START_DATE,
@@ -103,54 +99,62 @@ def run_historical_scan():
         freq=FREQ,
     )
 
-    all_scans: list[pd.DataFrame] = []
+    for universe in UNIVERSES:
 
-    for scan_date in scan_dates:
-        print(f"\n=== Scan @ {scan_date.date()} ===")
+        assets = sorted(set(load_universe_assets(universe)))
 
-        series: dict[str, pd.Series] = {}
+        print(f"\n==============================")
+        print(f"Universe: {universe}")
+        print(f"Assets in universe: {len(assets)}")
 
-        for asset in assets:
-            s = load_price_asof(asset, scan_date)
-            if s is not None:
-                series[asset] = s
+        all_scans: list[pd.DataFrame] = []
 
-        if len(series) < 2:
-            print("Not enough assets with data, skipping.")
+        for scan_date in scan_dates:
+            print(f"\n=== Scan @ {scan_date.date()} ===")
+
+            series: dict[str, pd.Series] = {}
+
+            for asset in assets:
+                s = load_price_asof(asset, scan_date)
+                if s is not None:
+                    series[asset] = s
+
+            if len(series) < 2:
+                print("Not enough assets with data, skipping.")
+                continue
+
+            prices = pd.DataFrame(series).dropna(how="all")
+
+            if prices.shape[1] < 2:
+                print("No aligned data, skipping.")
+                continue
+
+            df_scan = scan_universe(
+                price_df=prices,
+                universe_name=universe,
+            )
+
+            if df_scan.empty:
+                print("No pairs found.")
+                continue
+
+            df_scan["scan_date"] = scan_date.normalize()
+            all_scans.append(df_scan)
+
+            print(f"Pairs scanned: {len(df_scan)}")
+
+        if not all_scans:
+            print(f"No scans produced for {universe}.")
             continue
 
-        prices = pd.DataFrame(series).dropna(how="all")
+        df_all = pd.concat(all_scans, ignore_index=True)
 
-        if prices.shape[1] < 2:
-            print("No aligned data, skipping.")
-            continue
+        out_path = OUTPUT_DIR / f"{universe}.parquet"
+        df_all.to_parquet(out_path, index=False)
 
-        df_scan = scan_universe(
-            price_df=prices,
-            universe_name=UNIVERSE_NAME,
-        )
-
-        if df_scan.empty:
-            print("No pairs found.")
-            continue
-
-        df_scan["scan_date"] = scan_date.normalize()
-        all_scans.append(df_scan)
-
-        print(f"Pairs scanned: {len(df_scan)}")
-
-    if not all_scans:
-        print("No scans produced.")
-        return
-
-    df_all = pd.concat(all_scans, ignore_index=True)
-
-    OUTPUT_PATH.parent.mkdir(parents=True, exist_ok=True)
-    df_all.to_parquet(OUTPUT_PATH, index=False)
-
-    print("\n=== DONE ===")
-    print(f"Saved to: {OUTPUT_PATH}")
-    print(f"Total rows: {len(df_all)}")
+        print("\n=== DONE ===")
+        print(f"Saved to: {out_path}")
+        print(f"Total rows: {len(df_all)}")
 
 
 # ============================================================
