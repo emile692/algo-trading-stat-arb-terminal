@@ -1,56 +1,83 @@
 [
   {
-    "pair_id": "AMZN-TSLA",
-    "asset1": "AMZN",
-    "asset2": "TSLA",
-    "timeframe": "Hourly",
+    "pair_id": "CAP_GEMINI_SA-PUBLICIS_GROUPE_SA",
+    "asset1": "CAP_GEMINI_SA",
+    "asset2": "PUBLICIS_GROUPE_SA",
+    "timeframe": "Daily",
     "source": "FMP",
     "lb_used": 365,
-    "created_at": "2025-12-14 18:58:49",
+    "created_at": "2025-12-19 18:04:59",
     "notes": "",
     "params": {
-      "z_entry": 1.7133459736282406,
-      "z_exit": 0.3760929048308229,
-      "z_window": 50,
-      "wf_train": 187,
-      "wf_test": 56,
+      "z_entry": 1.676270396281799,
+      "z_exit": 0.4736419905302216,
+      "z_window": 42,
+      "wf_train": 159,
+      "wf_test": 47,
       "fees": 0.0002,
       "z_stop_mult": 2.0,
-      "beta_ref": 0.31168508871632755
+      "beta_ref": 1.1256665592921231
     },
     "metrics": {
-      "Sharpe_real": 1.3298957551654964,
-      "Sharpe_median": 2.3231562216735453,
-      "Sharpe_min": 0.7230014609714979,
-      "Sharpe_std": 0.5078926778986357,
-      "Robustness": 1.8152635437749096
+      "Sharpe_real": 1.973456390261791,
+      "Sharpe_median": 2.549442964792359,
+      "Sharpe_min": 1.21044232365061,
+      "Sharpe_std": 0.5054866606170646,
+      "Robustness": 2.0439563041752944
     }
   },
   {
-    "pair_id": "CSCO-META",
-    "asset1": "CSCO",
-    "asset2": "META",
-    "timeframe": "Hourly",
+    "pair_id": "AXA_SA-VINCI_SA",
+    "asset1": "AXA_SA",
+    "asset2": "VINCI_SA",
+    "timeframe": "Daily",
     "source": "FMP",
     "lb_used": 365,
-    "created_at": "2025-12-14 23:32:37",
+    "created_at": "2025-12-19 18:07:18",
     "notes": "",
     "params": {
-      "z_entry": 1.7052804765963265,
-      "z_exit": 0.3628094190643376,
-      "z_window": 63,
-      "wf_train": 184,
-      "wf_test": 55,
+      "z_entry": 1.8437299831446512,
+      "z_exit": 0.22063311266913105,
+      "z_window": 53,
+      "wf_train": 143,
+      "wf_test": 42,
       "fees": 0.0002,
       "z_stop_mult": 2.0,
-      "beta_ref": 0.8464460198415473
+      "beta_ref": 0.8094662170426744
     },
     "metrics": {
-      "Sharpe_real": 1.9714546856620527,
-      "Sharpe_median": 2.181280871972042,
-      "Sharpe_min": 1.1286400358953574,
-      "Sharpe_std": 0.3967963261866538,
-      "Robustness": 1.784484545785388
+      "Sharpe_real": 2.2000222191961925,
+      "Sharpe_median": 2.3044762588655017,
+      "Sharpe_min": 0.7620235597477751,
+      "Sharpe_std": 0.3760541828157833,
+      "Robustness": 1.9284220760497184
+    }
+  },
+  {
+    "pair_id": "LEGRAND_SA-SAFRAN_SA",
+    "asset1": "LEGRAND_SA",
+    "asset2": "SAFRAN_SA",
+    "timeframe": "Daily",
+    "source": "FMP",
+    "lb_used": 365,
+    "created_at": "2025-12-19 18:12:25",
+    "notes": "",
+    "params": {
+      "z_entry": 1.676270396281799,
+      "z_exit": 0.4736419905302216,
+      "z_window": 42,
+      "wf_train": 159,
+      "wf_test": 47,
+      "fees": 0.0002,
+      "z_stop_mult": 2.0,
+      "beta_ref": 1.210010623255101
+    },
+    "metrics": {
+      "Sharpe_real": 1.2472727340419574,
+      "Sharpe_median": 2.2490151016036366,
+      "Sharpe_min": 0.659121551678579,
+      "Sharpe_std": 0.5948484909515995,
+      "Robustness": 1.654166610652037
     }
   }
 ]
