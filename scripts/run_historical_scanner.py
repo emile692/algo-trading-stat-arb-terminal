@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import datetime
-from pathlib import Path
 import numpy as np
 import pandas as pd
 
@@ -36,7 +35,7 @@ OUTPUT_PATH = PROJECT_PATH / "data" / "scanner" / "scanner_history.parquet"
 # CONFIG
 # ============================================================
 
-UNIVERSE_NAME = "sweden"
+UNIVERSE_NAME = "uk"
 START_DATE = datetime.datetime(year = 2025, month=1, day=1)
 END_DATE = datetime.datetime(year = 2026, month=1, day=1)
 FREQ = "ME"
@@ -71,8 +70,18 @@ def load_price_asof(asset: str, end_date: pd.Timestamp) -> pd.Series | None:
     if len(df) < 100:
         return None
 
+    # log price
     df["log"] = np.log(df["close"])
-    df["norm"] = df["log"] - df["log"].iloc[0]
+
+    # stale price check (anti Dukascopy flat series)
+    price_diff = df["close"].diff().abs()
+
+    # if last 20 bars have no movement -> reject asset for this scan_date
+    if price_diff.rolling(20).sum().iloc[-1] == 0:
+        return None
+
+    # normalisation (stable)
+    df["norm"] = df["log"] - df["log"].iloc[-1]
 
     return df.set_index("datetime")["norm"]
 

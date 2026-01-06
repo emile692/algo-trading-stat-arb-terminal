@@ -85,6 +85,10 @@ def scan_pair_window(
     if hl is None or not np.isfinite(hl):
         raise ValueError("Invalid half-life")
 
+    # reject flat price windows
+    if yv.diff().abs().sum() < 1e-6 or xv.diff().abs().sum() < 1e-6:
+        raise ValueError("Flat price window")
+
     return {
         "beta": float(beta),
         "corr": float(corr),
@@ -132,6 +136,10 @@ def scan_pair_multi_window(
 
     valid_windows = [k for k, v in window_results.items() if window_is_valid(v)]
     n_valid = len(valid_windows)
+
+    # if no window usable, drop the pair entirely
+    if n_valid == 0:
+        raise ValueError("No valid window")
 
     if n_valid >= 2:
         eligibility = "ELIGIBLE"
@@ -203,7 +211,6 @@ def scan_universe(
         return pd.DataFrame()
 
     df = pd.DataFrame(results)
-    df["scan_date"] = pd.Timestamp.utcnow().normalize()
     return df
 
 
