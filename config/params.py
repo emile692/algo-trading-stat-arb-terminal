@@ -1,9 +1,27 @@
 # config/params.py
+import datetime
 
-# =========================
-# Lookback mapping UI / CLI
-# =========================
-lookback_mapping = {
+# ============================================================
+# UNIVERSES
+# ============================================================
+
+UNIVERSES = [
+    "france",
+    "germany",
+    "italy",
+    "uk",
+    "sweden",
+]
+
+START_DATE = datetime.datetime(year=2024, month=12, day=1)
+END_DATE = datetime.datetime(year=2026, month=1, day=1)
+FREQ = "ME"
+
+# ============================================================
+# LOOKBACK mapping UI / CLI
+# ============================================================
+
+LOOKBACK_MAPPING = {
     "1 Week": 7,
     "2 Weeks": 14,
     "1 Month": 31,
@@ -17,19 +35,16 @@ lookback_mapping = {
     "Max": 100_000,
 }
 
-# =========================
-# Scanner multi-fenêtres
-# (en nombre de barres)
-# =========================
+# ============================================================
+# SCANNER (pair eligibility)
+# ============================================================
+
 SCAN_LOOKBACKS = {
     "3m": 63,
     "6m": 126,
     "12m": 252,
 }
 
-# =========================
-# Seuils de validation
-# =========================
 SCANNER_THRESHOLDS = {
     "eg_p_max": 0.05,
     "adf_p_max": 0.05,
@@ -37,12 +52,24 @@ SCANNER_THRESHOLDS = {
     "corr_min": 0.3,
 }
 
-# =========================
-# Scoring
-# =========================
 SCANNER_WEIGHTS = {
     "n_valid": 1.0,
     "corr_12m": 0.5,
     "half_life_6m": -0.01,
     "beta_stability": -1.0,
+}
+
+# ============================================================
+# MONTHLY UNIVERSE CONSTRUCTION
+# ============================================================
+
+MONTHLY_UNIVERSE_CONFIG = {
+    # which scanner labels are allowed
+    "eligibility_allowed": ["ELIGIBLE"],   # or ["ELIGIBLE", "WATCH"]
+
+    # number of pairs kept per month
+    "top_k": 20,
+
+    # safety: skip month if too few candidates
+    "min_pairs_required": 3,
 }

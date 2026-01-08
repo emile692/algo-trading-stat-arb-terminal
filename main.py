@@ -6,7 +6,7 @@ from pathlib import Path
 import itertools
 import plotly.express as px
 
-from config.params import lookback_mapping
+from config.params import LOOKBACK_MAPPING
 from utils.backtest import backtest_pair, compute_metrics, walk_forward_beta_spread_zscore, walk_forward_segments, \
     compute_segment_metrics
 from utils.loader import load_price_csv
@@ -29,6 +29,11 @@ from utils.synthetic import (
 
 from utils.monthly_backtest import StrategyParams, BatchConfig, run_monthly_batch
 from utils.global_backtest import run_global_walkforward
+from utils.global_ranking_backtest import run_global_ranking_walkforward
+
+from config.params import (
+    UNIVERSES,
+)
 
 PROJECT_PATH = Path(__file__).resolve().parents[0]
 BASE_DATA_PATH = PROJECT_PATH / "data" / "raw"
@@ -40,6 +45,22 @@ DATA_PATH = PROJECT_PATH / "data" / "raw" / "d1"
 # ============================================================
 st.set_page_config(page_title="StatArb Terminal", layout="wide")
 st.set_page_config(page_title="StatArb Terminal", layout="wide")
+
+from pathlib import Path
+
+# --- Universe options: prefer config.params.UNIVERSES, fallback to scanning parquet files
+try:
+    from config.params import UNIVERSES as PARAM_UNIVERSES
+except Exception:
+    PARAM_UNIVERSES = None
+
+def get_universe_options(project_path: Path) -> list[str]:
+    if PARAM_UNIVERSES:
+        return list(PARAM_UNIVERSES)
+    udir = project_path / "data" / "universe"
+    if udir.exists():
+        return sorted([p.stem for p in udir.glob("*.parquet")])
+    return []
 
 
 # Tous les tickers disponibles
@@ -105,14 +126,15 @@ with st.sidebar:
 
     timeframe = st.selectbox("Timeframe", ["Daily", "Hourly"])
 
-    lookback = st.selectbox("Lookback", list(lookback_mapping.keys()))
-    lb = lookback_mapping[lookback]
+    lookback = st.selectbox("Lookback", list(LOOKBACK_MAPPING.keys()))
+    lb = LOOKBACK_MAPPING[lookback]
 
 # ============================================================
 # TABS
 # ============================================================
-tab_monitor, tab_scanner, tab_universe, tab_mbt, tab_global, tab_backtest, tab_opt, tab_pf = st.tabs([
-    "Pair Monitor", "Scanner", "Monthly Universe", "Monthly Backtest", "Backtest Global (WF)", "Backtest Pair",
+tab_monitor, tab_scanner, tab_universe, tab_mbt, tab_global, tab_global_ranking, tab_backtest, tab_opt, tab_pf = st.tabs([
+    "Pair Monitor", "Scanner", "Monthly Universe", "Monthly Backtest", "Backtest Global (WF)", "Global Ranking Backtest",
+    "Backtest Pair",
     "Optimization", "Portfolio"
 ])
 
@@ -719,153 +741,305 @@ with tab_mbt:
                     st.session_state["go_to_monitor"] = True
                     st.rerun()
 
-# ============================================================
-# TAB — GLOBAL WALK-FORWARD BACKTEST
-# ============================================================
 with tab_global:
-    st.subheader("Backtest Global (WF)")
+    st.title("Backtest Global (WF)")
+
+    # ----------------------------
+    # Universe selector (robuste)
+    # ----------------------------
+    universe_options = get_universe_options(PROJECT_PATH)
+    if not universe_options:
+        st.error("No universe files found in data/universe and no UNIVERSES in config/params.py.")
+        st.stop()
+
+    selected_universe = st.selectbox(
+        "Universe",
+        options=universe_options,
+        index=0,
+        key="gwf_universe_select",
+        help="Universe utilisé pour charger data/universe/<UNIVERSE>.parquet",
+    )
 
     st.markdown("### Strategy parameters (GLOBAL, fixed)")
-
     c1, c2, c3, c4, c5 = st.columns(5)
-    g_z_entry = c1.slider("z_entry", 1.0, 4.0, 2.0, 0.1, key="g_z_entry")
-    g_z_exit = c2.slider("z_exit", 0.0, 2.0, 0.4, 0.05, key="g_z_exit")
-    g_z_stop = c3.slider("z_stop", 2.0, 8.0, 4.0, 0.1, key="g_z_stop")
-    g_z_window = c4.slider("z_window", 20, 200, 60, 10, key="g_z_window")
-    g_fees = c5.number_input("fees (round-trip)", value=0.0002, format="%.6f", key="g_fees")
+    z_entry = c1.slider("z_entry", 1.0, 4.0, 2.0, 0.1, key="gwf_z_entry")
+    z_exit  = c2.slider("z_exit", 0.0, 2.0, 0.4, 0.05, key="gwf_z_exit")
+    z_stop  = c3.slider("z_stop", 2.0, 8.0, 4.0, 0.1, key="gwf_z_stop")
+    z_window = c4.slider("z_window", 20, 200, 60, 10, key="gwf_z_window")
+    fees = c5.number_input("fees (round-trip)", value=0.0002, format="%.6f", key="gwf_fees")
 
     st.markdown("### Estimation regime")
-
     beta_mode = st.selectbox(
         "beta_mode",
         ["monthly", "wf"],
-        index=0,  # monthly par défaut
-        help='monthly: beta estimé à scan_date et figé sur le mois. wf: beta recalculé en walk-forward.',
-        key="g_beta_mode",
+        index=0,
+        key="gwf_beta_mode",
+        help="monthly: beta recalculé au début de chaque mois | wf: recalcul en walk-forward (train/test).",
     )
 
     w1, w2 = st.columns(2)
-    g_wf_train = w1.slider("wf_train (beta lookback)", 50, 500, 120, 10, key="g_wf_train")
-
+    wf_train = w1.slider("wf_train (beta lookback)", 50, 500, 120, 10, key="gwf_wf_train")
     if beta_mode == "wf":
-        g_wf_test = w2.slider("wf_test (re-hedge freq)", 10, 200, 30, 10, key="g_wf_test")
+        wf_test = w2.slider("wf_test (re-hedge freq)", 10, 200, 30, 10, key="gwf_wf_test")
     else:
-        g_wf_test = 30
+        wf_test = 30
         w2.info("wf_test non utilisé en beta_mode=monthly")
 
-    run_global = st.button("Run GLOBAL walk-forward backtest", key="g_run")
+    # ----------------------------
+    # Run button (clé unique)
+    # ----------------------------
+    run_btn = st.button("Run GLOBAL walk-forward backtest", key="gwf_run_btn")
 
-    if run_global:
+    # Reset results automatically when universe changes (évite affichage stale)
+    # On compare au dernier contexte stocké
+    current_ctx = {
+        "universe": selected_universe,
+        "z_entry": float(z_entry),
+        "z_exit": float(z_exit),
+        "z_stop": float(z_stop),
+        "z_window": int(z_window),
+        "fees": float(fees),
+        "beta_mode": str(beta_mode),
+        "wf_train": int(wf_train),
+        "wf_test": int(wf_test),
+    }
+    last_ctx = st.session_state.get("global_wf_ctx", None)
+    if last_ctx is not None and last_ctx.get("universe") != selected_universe:
+        # purge si l'utilisateur a changé d'univers
+        st.session_state.pop("global_wf_res", None)
+        st.session_state["global_wf_ctx"] = None
+
+    if run_btn:
         with st.spinner("Running global walk-forward backtest..."):
             cfg = BatchConfig(
                 data_path=PROJECT_PATH / "data" / "raw" / "d1",
-                monthly_universe_path=PROJECT_PATH / "data" / "universe" / "monthly_universe.parquet",
-                out_dir=PROJECT_PATH / "data" / "backtests" / "global",
-                universe_name=None,  # ou "sweden" si tu veux restreindre
+                monthly_universe_path=PROJECT_PATH / "data" / "universe" / f"{selected_universe}.parquet",
+                out_dir=PROJECT_PATH / "data" / "backtests" / "global_wf",
+                universe_name=selected_universe,
+            )
+
+            params = StrategyParams(
+                z_entry=float(z_entry),
+                z_exit=float(z_exit),
+                z_stop=float(z_stop),
+                z_window=int(z_window),
+                wf_train=int(wf_train),
+                wf_test=int(wf_test),
+                fees=float(fees),
+                beta_mode=str(beta_mode),
+            )
+
+            res = run_global_walkforward(
+                cfg,
+                params,
+                universes=[selected_universe],
+            )
+
+            # Sécurité anti “cross-universe”: si res contient une colonne universe -> filtre
+            for k in ("monthly", "trades", "pairs_metrics"):
+                if isinstance(res, dict) and k in res and isinstance(res[k], pd.DataFrame) and not res[k].empty:
+                    if "universe" in res[k].columns:
+                        res[k] = res[k].loc[res[k]["universe"] == selected_universe].reset_index(drop=True)
+
+            st.session_state["global_wf_res"] = res
+            st.session_state["global_wf_ctx"] = current_ctx
+            st.success("Global backtest completed.")
+
+    # ----------------------------
+    # Display results (avec check contexte)
+    # ----------------------------
+    res = st.session_state.get("global_wf_res", None)
+    ctx = st.session_state.get("global_wf_ctx", None)
+
+    if not res:
+        st.info("Run the global backtest to display results.")
+        st.stop()
+
+    if ctx is None or ctx.get("universe") != selected_universe:
+        st.warning(
+            f"Displayed results do not match current universe selection ({selected_universe}). "
+            "Please click 'Run GLOBAL walk-forward backtest' again."
+        )
+        st.stop()
+
+    eq = res.get("equity", pd.DataFrame())
+    stats = res.get("stats", {}) or {}
+    monthly = res.get("monthly", pd.DataFrame())
+    trades = res.get("trades", pd.DataFrame())
+
+    st.markdown("### Global Equity Curve")
+    if eq is not None and not eq.empty:
+        eq = eq.copy()
+        eq["datetime"] = pd.to_datetime(eq["datetime"])
+        eq = eq.sort_values("datetime")
+        fig = px.line(eq, x="datetime", y="equity")
+        fig.update_layout(template="plotly_dark", height=420)
+        st.plotly_chart(fig, use_container_width=True)
+    else:
+        st.warning("No equity produced.")
+
+    st.markdown("### Performance Metrics")
+    m1, m2, m3, m4, m5 = st.columns(5)
+    m1.metric("Final Equity", f"{stats.get('Final Equity', np.nan):.2f}" if "Final Equity" in stats else "—")
+    m2.metric("CAGR", f"{100*stats.get('CAGR', 0.0):.1f}%" if "CAGR" in stats else "—")
+    m3.metric("Sharpe", f"{stats.get('Sharpe', 0.0):.2f}" if "Sharpe" in stats else "—")
+    m4.metric("Max Drawdown", f"{100*stats.get('Max Drawdown', 0.0):.1f}%" if "Max Drawdown" in stats else "—")
+    # nb trades si dispo
+    nb_trades = stats.get("Nb Trades", None)
+    if nb_trades is None and isinstance(trades, pd.DataFrame) and not trades.empty:
+        nb_trades = len(trades)
+    m5.metric("Nb Trades", f"{int(nb_trades)}" if nb_trades is not None else "—")
+
+    st.markdown("### Monthly returns")
+    if isinstance(monthly, pd.DataFrame) and not monthly.empty:
+        st.dataframe(monthly, use_container_width=True, height=260)
+    else:
+        st.info("No monthly breakdown returned.")
+
+    st.markdown("### Trades")
+    if isinstance(trades, pd.DataFrame) and not trades.empty:
+        st.dataframe(trades, use_container_width=True, height=360)
+        csv = trades.to_csv(index=False).encode("utf-8")
+        st.download_button(
+            "Download trades CSV",
+            data=csv,
+            file_name=f"global_wf_trades_{selected_universe}.csv",
+            mime="text/csv",
+            key="gwf_dl_trades_btn",
+        )
+    else:
+        st.info("No trades returned by this backtest function.")
+
+with tab_global_ranking:
+
+    st.title("Global Ranking Backtest (Cross-Universes)")
+
+    st.markdown(
+        """
+**Design**
+- Pool mensuel : Top **N** paires éligibles (tous univers)
+- Sélection journalière : score = **|z-score|** (simple baseline)
+- Max positions simultanées = **K**
+- Beta/hedge ratio : régime `beta_mode` (par défaut **monthly**)
+        """.strip()
+    )
+
+    # ----------------------------
+    # UI Parameters
+    # ----------------------------
+    c1, c2, c3, c4, c5 = st.columns([1, 1, 1, 1, 1])
+    with c1:
+        z_entry = st.slider("z_entry", 0.5, 4.0, 2.0, 0.1)
+    with c2:
+        z_exit = st.slider("z_exit", 0.1, 2.0, 0.4, 0.1)
+    with c3:
+        z_stop = st.slider("z_stop", 1.0, 10.0, 4.0, 0.5)
+    with c4:
+        z_window = st.slider("z_window", 10, 252, 60, 5)
+    with c5:
+        fees = st.number_input("fees (round-trip)", min_value=0.0, max_value=0.01, value=0.0002, step=0.0001, format="%.6f")
+
+    st.subheader("Ranking parameters")
+    r1, r2 = st.columns([1, 1])
+    with r1:
+        N = st.number_input("N (monthly pool)", min_value=1, max_value=200, value=20, step=1)
+    with r2:
+        K = st.number_input("K (max concurrent positions)", min_value=1, max_value=50, value=5, step=1)
+
+    st.subheader("Hedge ratio regime")
+    beta_mode = st.selectbox("beta_mode", ["monthly", "wf"], index=0)
+    wf_train = st.slider("wf_train (beta lookback)", 20, 400, 120, 10)
+
+    if beta_mode == "wf":
+        st.info("Le mode wf n'est pas câblé dans le ranking engine pour l'instant (mensuel recommandé).")
+
+    st.subheader("Universes")
+    universes = st.multiselect("Universes", options=UNIVERSES, default=UNIVERSES)
+
+    # ----------------------------
+    # Run backtest
+    # ----------------------------
+    run_btn = st.button("Run Global Ranking Backtest", key="gr_run_btn")
+
+    if run_btn:
+        if not universes:
+            st.error("Sélectionne au moins un univers.")
+        else:
+            project_root = Path(__file__).resolve().parents[0]
+
+            cfg = BatchConfig(
+                data_path=project_root / "data" / "raw" / "d1",
+                monthly_universe_path=project_root / "data" / "universe" / f"{universes[0]}.parquet",  # used for parent dir
+                out_dir=project_root / "data" / "backtests" / "global_ranking",
+                universe_name="GLOBAL",
                 timeframe="Daily",
                 warmup_extra=50,
                 equal_weight=True,
             )
 
             params = StrategyParams(
-                z_entry=float(g_z_entry),
-                z_exit=float(g_z_exit),
-                z_stop=float(g_z_stop),
-                z_window=int(g_z_window),
-                wf_train=int(g_wf_train),
-                wf_test=int(g_wf_test),
-                fees=float(g_fees),
+                z_entry=float(z_entry),
+                z_exit=float(z_exit),
+                z_stop=float(z_stop),
+                z_window=int(z_window),
+                wf_train=int(wf_train),
+                wf_test=0,
+                fees=float(fees),
                 beta_mode=str(beta_mode),
             )
 
-            res = run_global_walkforward(cfg, params)
-            st.session_state["global_res"] = res
-            st.success("Global backtest completed.")
+            res = run_global_ranking_walkforward(
+                cfg=cfg,
+                params=params,
+                universes=list(universes),
+                top_n_candidates=int(N),
+                max_positions=int(K),
+            )
 
-    res = st.session_state.get("global_res", None)
-    if res is None or not res:
-        st.info("Run the global backtest to display results.")
+            st.session_state["global_ranking_res"] = res
+            st.success("Global ranking backtest completed.")
+
+    # ----------------------------
+    # Display results
+    # ----------------------------
+    res = st.session_state.get("global_ranking_res", None)
+    if not res:
+        st.info("Run the global ranking backtest to display results.")
     else:
-        eq = res.get("equity", pd.DataFrame())
-        stats = res.get("stats", {})
-        monthly = res.get("monthly", pd.DataFrame())
+        eq = res["equity"].copy()
+        stats = res["stats"]
+        monthly = res["monthly"].copy()
+        trades = res["trades"].copy()
 
-        if eq is None or eq.empty:
-            st.warning("No equity produced (check monthly_universe / data availability).")
+        st.subheader("Equity Curve")
+        fig = px.line(eq, x="datetime", y="equity")
+        st.plotly_chart(fig, use_container_width=True)
+
+        m1, m2, m3, m4, m5 = st.columns(5)
+        m1.metric("Final Equity", f"{stats['Final Equity']:.2f}")
+        m2.metric("CAGR", f"{stats['CAGR']*100:.1f}%")
+        m3.metric("Sharpe", f"{stats['Sharpe']:.2f}")
+        m4.metric("Max Drawdown", f"{stats['Max Drawdown']*100:.1f}%")
+        m5.metric("Nb Trades", f"{int(stats['Nb Trades'])}")
+
+        st.subheader("Monthly returns")
+        st.dataframe(monthly, use_container_width=True)
+
+        st.subheader("Trades (détaillés)")
+        if trades.empty:
+            st.warning("Aucun trade.")
         else:
-            eq = eq.copy()
-            eq["datetime"] = pd.to_datetime(eq["datetime"])
-            eq = eq.sort_values("datetime")
+            trades = trades.sort_values(["entry_datetime", "exit_datetime"]).reset_index(drop=True)
+            st.dataframe(trades, use_container_width=True)
 
-            st.markdown("### Global Equity Curve")
-            fig = go.Figure()
-            fig.add_scatter(x=eq["datetime"], y=eq["equity"], mode="lines", name="Equity")
-            fig.update_layout(template="plotly_dark", height=420, margin=dict(l=20, r=20, t=40, b=20))
-            st.plotly_chart(fig, width="stretch")
-
-            c1, c2, c3, c4, c5 = st.columns(5)
-            c1.metric("Final Equity", f"{stats.get('Final Equity', float('nan')):.2f}")
-            c2.metric("CAGR", f"{stats.get('CAGR', 0.0)*100:.1f}%")
-            c3.metric("Sharpe", f"{stats.get('Sharpe', float('nan')):.2f}")
-            c4.metric("Max Drawdown", f"{stats.get('Max Drawdown', float('nan'))*100:.1f}%")
-            c5.metric("Nb Trade", f"{stats.get('Nb Trade', float('nan')):.0f}")
-
-            st.markdown("### Monthly returns")
-            if monthly is None or monthly.empty:
-                st.info("No monthly breakdown available.")
-            else:
-                st.dataframe(monthly, width="stretch")
-
-            st.markdown("### All trades (global)")
-
-            trades = res.get("trades", pd.DataFrame())
-            if trades is None or trades.empty:
-                st.info("No trades to display (run global backtest or check strategy thresholds).")
-            else:
-                # Filters
-                c1, c2, c3 = st.columns(3)
-
-                months = ["All"] + sorted(trades["trade_month"].astype(str).unique().tolist())
-                sel_m = c1.selectbox("Filter month", months, index=0, key="g_trades_month")
-
-                pairs = ["All"] + sorted(trades["pair_id"].astype(str).unique().tolist())
-                sel_p = c2.selectbox("Filter pair", pairs, index=0, key="g_trades_pair")
-
-                side_col = "Side" if "Side" in trades.columns else ("side" if "side" in trades.columns else None)
-                if side_col:
-                    sides = ["All"] + sorted(trades[side_col].astype(str).unique().tolist())
-                    sel_s = c3.selectbox("Filter side", sides, index=0, key="g_trades_side")
-                else:
-                    sel_s = "All"
-
-                df_t = trades.copy()
-                if sel_m != "All":
-                    df_t = df_t[df_t["trade_month"].astype(str) == sel_m]
-                if sel_p != "All":
-                    df_t = df_t[df_t["pair_id"].astype(str) == sel_p]
-                if side_col and sel_s != "All":
-                    df_t = df_t[df_t[side_col].astype(str) == sel_s]
-
-                # Useful column ordering (keep the rest too)
-                preferred = [
-                    "trade_month", "pair_id", "asset_1", "asset_2",
-                    "entry_datetime", "exit_datetime",
-                    "beta_mode", "beta_ref",
-                    "z_entry", "z_exit", "z_stop", "z_window", "fees",
-                ]
-                cols = [c for c in preferred if c in df_t.columns] + [c for c in df_t.columns if c not in preferred]
-
-                st.dataframe(df_t[cols], width="stretch", height=520)
-
-                # Export
-                csv = df_t.to_csv(index=False).encode("utf-8")
-                st.download_button(
-                    "Download trades CSV",
-                    data=csv,
-                    file_name="global_trades.csv",
-                    mime="text/csv",
-                    key="g_trades_csv",
-                )
+            # Optional: download
+            csv_bytes = trades.to_csv(index=False).encode("utf-8")
+            st.download_button(
+                "Download trades CSV",
+                data=csv_bytes,
+                file_name="global_ranking_trades.csv",
+                mime="text/csv",
+            )
 
 with tab_backtest:
     st.subheader("Backtest Pair Trading")

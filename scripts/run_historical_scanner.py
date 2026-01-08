@@ -18,6 +18,13 @@ if str(PROJECT_ROOT) not in sys.path:
 from utils.loader import load_price_csv
 from utils.scanner import scan_universe
 
+from config.params import (
+    UNIVERSES,
+    START_DATE,
+    END_DATE,
+    FREQ
+)
+
 
 # ============================================================
 # PATHS
@@ -29,25 +36,6 @@ SCANNER_DATA_PATH = BASE_DATA_PATH / "d1"
 
 ASSET_REGISTRY_PATH = PROJECT_PATH / "data" / "asset_registry.csv"
 OUTPUT_DIR = PROJECT_PATH / "data" / "scanner"
-
-
-# ============================================================
-# CONFIG
-# ============================================================
-
-UNIVERSES = [
-    "france",
-    "germany",
-    "italy",
-    "uk",
-    "sweden",
-    # ajoute-en autant que tu veux
-]
-
-START_DATE = datetime.datetime(year=2025, month=1, day=1)
-END_DATE = datetime.datetime(year=2026, month=1, day=1)
-FREQ = "ME"
-
 
 # ============================================================
 # UTILS
