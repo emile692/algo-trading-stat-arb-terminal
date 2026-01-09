@@ -911,135 +911,210 @@ with tab_global:
         st.info("No trades returned by this backtest function.")
 
 with tab_global_ranking:
-
     st.title("Global Ranking Backtest (Cross-Universes)")
 
-    st.markdown(
-        """
-**Design**
-- Pool mensuel : Top **N** paires éligibles (tous univers)
-- Sélection journalière : score = **|z-score|** (simple baseline)
-- Max positions simultanées = **K**
-- Beta/hedge ratio : régime `beta_mode` (par défaut **monthly**)
-        """.strip()
-    )
+    # ------------------------------------------------------------
+    # Safety / Debug helpers
+    # ------------------------------------------------------------
+    c0, c1 = st.columns([1, 4])
+    with c0:
+        if st.button("Clear ranking results", key="gr_clear_btn"):
+            st.session_state.pop("global_ranking_res", None)
+            st.session_state.pop("global_ranking_ctx", None)
+            st.rerun()
 
-    # ----------------------------
-    # UI Parameters
-    # ----------------------------
-    c1, c2, c3, c4, c5 = st.columns([1, 1, 1, 1, 1])
-    with c1:
-        z_entry = st.slider("z_entry", 0.5, 4.0, 2.0, 0.1)
-    with c2:
-        z_exit = st.slider("z_exit", 0.1, 2.0, 0.4, 0.1)
-    with c3:
-        z_stop = st.slider("z_stop", 1.0, 10.0, 4.0, 0.5)
-    with c4:
-        z_window = st.slider("z_window", 10, 252, 60, 5)
-    with c5:
-        fees = st.number_input("fees (round-trip)", min_value=0.0, max_value=0.01, value=0.0002, step=0.0001, format="%.6f")
+    show_debug = c1.toggle("Show debug (exceptions)", value=True, key="gr_show_debug")
 
-    st.subheader("Ranking parameters")
-    r1, r2 = st.columns([1, 1])
-    with r1:
-        N = st.number_input("N (monthly pool)", min_value=1, max_value=200, value=20, step=1)
-    with r2:
-        K = st.number_input("K (max concurrent positions)", min_value=1, max_value=50, value=5, step=1)
+    try:
+        # ------------------------------------------------------------
+        # UI Parameters (keys prefixed to avoid collisions)
+        # ------------------------------------------------------------
+        st.markdown("### Strategy parameters (GLOBAL, fixed)")
+        p1, p2, p3, p4, p5 = st.columns(5)
+        with p1:
+            gr_z_entry = st.slider("z_entry", 0.5, 4.0, 2.0, 0.1, key="gr_z_entry")
+        with p2:
+            gr_z_exit = st.slider("z_exit", 0.0, 2.0, 0.4, 0.05, key="gr_z_exit")
+        with p3:
+            gr_z_stop = st.slider("z_stop", 1.0, 10.0, 4.0, 0.5, key="gr_z_stop")
+        with p4:
+            gr_z_window = st.slider("z_window", 10, 252, 60, 5, key="gr_z_window")
+        with p5:
+            gr_fees = st.number_input(
+                "fees (round-trip)",
+                min_value=0.0,
+                max_value=0.01,
+                value=0.0002,
+                step=0.0001,
+                format="%.6f",
+                key="gr_fees",
+            )
 
-    st.subheader("Hedge ratio regime")
-    beta_mode = st.selectbox("beta_mode", ["monthly", "wf"], index=0)
-    wf_train = st.slider("wf_train (beta lookback)", 20, 400, 120, 10)
+        st.markdown("### Ranking parameters")
+        r1, r2 = st.columns(2)
+        with r1:
+            gr_N = st.number_input("N (monthly pool)", min_value=1, max_value=200, value=20, step=1, key="gr_N")
+        with r2:
+            gr_K = st.number_input("K (max concurrent positions)", min_value=1, max_value=50, value=5, step=1, key="gr_K")
 
-    if beta_mode == "wf":
-        st.info("Le mode wf n'est pas câblé dans le ranking engine pour l'instant (mensuel recommandé).")
+        st.markdown("### Hedge ratio regime")
+        gr_beta_mode = st.selectbox("beta_mode", ["monthly", "wf"], index=0, key="gr_beta_mode")
+        gr_wf_train = st.slider("wf_train (beta lookback)", 20, 400, 120, 10, key="gr_wf_train")
+        if gr_beta_mode == "wf":
+            st.info("Le mode wf n'est pas câblé dans le ranking engine pour l'instant (mensuel recommandé).")
 
-    st.subheader("Universes")
-    universes = st.multiselect("Universes", options=UNIVERSES, default=UNIVERSES)
+        st.markdown("### Universes")
+        # default safe: UNIVERSES (si tu veux focaliser Sweden: default=["sweden"] si existe)
+        default_univs = UNIVERSES
+        if "sweden" in UNIVERSES:
+            default_univs = ["sweden"]
+        gr_universes = st.multiselect("Universes", options=UNIVERSES, default=default_univs, key="gr_universes")
 
-    # ----------------------------
-    # Run backtest
-    # ----------------------------
-    run_btn = st.button("Run Global Ranking Backtest", key="gr_run_btn")
+        # ------------------------------------------------------------
+        # Run backtest
+        # ------------------------------------------------------------
+        run_btn = st.button("Run Global Ranking Backtest", key="gr_run_btn")
 
-    if run_btn:
-        if not universes:
-            st.error("Sélectionne au moins un univers.")
+        # Context (used to detect stale results)
+        current_ctx = {
+            "z_entry": float(gr_z_entry),
+            "z_exit": float(gr_z_exit),
+            "z_stop": float(gr_z_stop),
+            "z_window": int(gr_z_window),
+            "fees": float(gr_fees),
+            "beta_mode": str(gr_beta_mode),
+            "wf_train": int(gr_wf_train),
+            "N": int(gr_N),
+            "K": int(gr_K),
+            "universes": tuple(gr_universes),
+        }
+
+        last_ctx = st.session_state.get("global_ranking_ctx", None)
+        if last_ctx is not None and last_ctx.get("universes") != current_ctx["universes"]:
+            # purge results if universes selection changed
+            st.session_state.pop("global_ranking_res", None)
+            st.session_state["global_ranking_ctx"] = None
+
+        if run_btn:
+            if not gr_universes:
+                st.error("Sélectionne au moins un univers.")
+            else:
+                with st.spinner("Running global ranking backtest..."):
+                    # IMPORTANT: monthly_universe_path is used mainly for its parent dir in ranking engine
+                    cfg = BatchConfig(
+                        data_path=PROJECT_PATH / "data" / "raw" / "d1",
+                        monthly_universe_path=PROJECT_PATH / "data" / "universe" / f"{gr_universes[0]}.parquet",
+                        out_dir=PROJECT_PATH / "data" / "backtests" / "global_ranking",
+                        universe_name="GLOBAL",
+                        timeframe="Daily",
+                        warmup_extra=50,
+                        equal_weight=True,
+                    )
+
+                    params = StrategyParams(
+                        z_entry=float(gr_z_entry),
+                        z_exit=float(gr_z_exit),
+                        z_stop=float(gr_z_stop),
+                        z_window=int(gr_z_window),
+                        wf_train=int(gr_wf_train),
+                        wf_test=0,
+                        fees=float(gr_fees),
+                        beta_mode=str(gr_beta_mode),
+                    )
+
+                    res = run_global_ranking_walkforward(
+                        cfg=cfg,
+                        params=params,
+                        universes=list(gr_universes),
+                        top_n_candidates=int(gr_N),
+                        max_positions=int(gr_K),
+                    )
+
+                    st.session_state["global_ranking_res"] = res
+                    st.session_state["global_ranking_ctx"] = current_ctx
+                    st.success("Global ranking backtest completed.")
+
+        # ------------------------------------------------------------
+        # Display results (robust contract)
+        # ------------------------------------------------------------
+        res = st.session_state.get("global_ranking_res", None)
+        ctx = st.session_state.get("global_ranking_ctx", None)
+
+        if not res:
+            st.info("Run the global ranking backtest to display results.")
+            st.stop()
+
+        # If user changed params but didn't re-run, warn
+        if ctx is not None and ctx.get("universes") != current_ctx["universes"]:
+            st.warning("Displayed results do not match current universes selection. Please re-run.")
+            st.stop()
+
+        eq = res.get("equity", pd.DataFrame())
+        stats = res.get("stats", {}) or {}
+        monthly = res.get("monthly", pd.DataFrame())
+        trades = res.get("trades", pd.DataFrame())
+
+        st.markdown("### Equity Curve")
+        if isinstance(eq, pd.DataFrame) and not eq.empty:
+            eq = eq.copy()
+            eq["datetime"] = pd.to_datetime(eq["datetime"])
+            eq = eq.sort_values("datetime")
+            fig = px.line(eq, x="datetime", y="equity")
+            fig.update_layout(template="plotly_dark", height=420, margin=dict(l=20, r=20, t=40, b=20))
+            st.plotly_chart(fig, use_container_width=True)
         else:
-            project_root = Path(__file__).resolve().parents[0]
+            st.warning("No equity produced by ranking backtest (empty output).")
 
-            cfg = BatchConfig(
-                data_path=project_root / "data" / "raw" / "d1",
-                monthly_universe_path=project_root / "data" / "universe" / f"{universes[0]}.parquet",  # used for parent dir
-                out_dir=project_root / "data" / "backtests" / "global_ranking",
-                universe_name="GLOBAL",
-                timeframe="Daily",
-                warmup_extra=50,
-                equal_weight=True,
-            )
-
-            params = StrategyParams(
-                z_entry=float(z_entry),
-                z_exit=float(z_exit),
-                z_stop=float(z_stop),
-                z_window=int(z_window),
-                wf_train=int(wf_train),
-                wf_test=0,
-                fees=float(fees),
-                beta_mode=str(beta_mode),
-            )
-
-            res = run_global_ranking_walkforward(
-                cfg=cfg,
-                params=params,
-                universes=list(universes),
-                top_n_candidates=int(N),
-                max_positions=int(K),
-            )
-
-            st.session_state["global_ranking_res"] = res
-            st.success("Global ranking backtest completed.")
-
-    # ----------------------------
-    # Display results
-    # ----------------------------
-    res = st.session_state.get("global_ranking_res", None)
-    if not res:
-        st.info("Run the global ranking backtest to display results.")
-    else:
-        eq = res["equity"].copy()
-        stats = res["stats"]
-        monthly = res["monthly"].copy()
-        trades = res["trades"].copy()
-
-        st.subheader("Equity Curve")
-        fig = px.line(eq, x="datetime", y="equity")
-        st.plotly_chart(fig, use_container_width=True)
-
+        st.markdown("### Performance Metrics")
         m1, m2, m3, m4, m5 = st.columns(5)
-        m1.metric("Final Equity", f"{stats['Final Equity']:.2f}")
-        m2.metric("CAGR", f"{stats['CAGR']*100:.1f}%")
-        m3.metric("Sharpe", f"{stats['Sharpe']:.2f}")
-        m4.metric("Max Drawdown", f"{stats['Max Drawdown']*100:.1f}%")
-        m5.metric("Nb Trades", f"{int(stats['Nb Trades'])}")
 
-        st.subheader("Monthly returns")
-        st.dataframe(monthly, use_container_width=True)
+        final_eq = stats.get("Final Equity", np.nan)
+        cagr = stats.get("CAGR", np.nan)
+        sharpe = stats.get("Sharpe", np.nan)
+        mdd = stats.get("Max Drawdown", np.nan)
 
-        st.subheader("Trades (détaillés)")
-        if trades.empty:
-            st.warning("Aucun trade.")
+        nb_trades = stats.get("Nb Trades", None)
+        if nb_trades is None and isinstance(trades, pd.DataFrame) and not trades.empty:
+            nb_trades = int(len(trades))
+
+        m1.metric("Final Equity", f"{final_eq:.2f}" if np.isfinite(final_eq) else "—")
+        m2.metric("CAGR", f"{100*cagr:.1f}%" if np.isfinite(cagr) else "—")
+        m3.metric("Sharpe", f"{sharpe:.2f}" if np.isfinite(sharpe) else "—")
+        m4.metric("Max Drawdown", f"{100*mdd:.1f}%" if np.isfinite(mdd) else "—")
+        m5.metric("Nb Trades", f"{int(nb_trades)}" if nb_trades is not None else "—")
+
+        st.markdown("### Monthly returns")
+        if isinstance(monthly, pd.DataFrame) and not monthly.empty:
+            st.dataframe(monthly, use_container_width=True, height=260)
         else:
-            trades = trades.sort_values(["entry_datetime", "exit_datetime"]).reset_index(drop=True)
-            st.dataframe(trades, use_container_width=True)
+            st.info("No monthly breakdown returned (engine placeholder or not implemented yet).")
 
-            # Optional: download
+        st.markdown("### Trades (détaillés)")
+        if isinstance(trades, pd.DataFrame) and not trades.empty:
+            # sort if columns exist
+            sort_cols = [c for c in ["entry_datetime", "exit_datetime"] if c in trades.columns]
+            if sort_cols:
+                trades = trades.sort_values(sort_cols).reset_index(drop=True)
+
+            st.dataframe(trades, use_container_width=True, height=360)
+
             csv_bytes = trades.to_csv(index=False).encode("utf-8")
             st.download_button(
                 "Download trades CSV",
                 data=csv_bytes,
                 file_name="global_ranking_trades.csv",
                 mime="text/csv",
+                key="gr_dl_trades_btn",
             )
+        else:
+            st.info("Aucun trade (ou trade ledger non implémenté dans le moteur pour l’instant).")
+
+    except Exception as e:
+        # Never show a black tab again
+        if show_debug:
+            st.exception(e)
+        else:
+            st.error("Global Ranking Backtest crashed. Enable debug to see the exception.")
 
 with tab_backtest:
     st.subheader("Backtest Pair Trading")
