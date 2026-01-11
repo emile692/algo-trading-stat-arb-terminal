@@ -188,104 +188,179 @@ def precompute_pair_state_for_month(
 # ============================================================
 
 def backtest_month_global_ranking(
-    pair_state: Dict[str, pd.DataFrame],
+    pair_state: dict,
     candidates: pd.DataFrame,
     params: StrategyParams,
     trade_start: pd.Timestamp,
     trade_end: pd.Timestamp,
     K: int,
 ) -> dict:
+    """
+    Monthly global ranking backtest.
+    - Equal-weight capital allocation
+    - Max K concurrent positions
+    - Trades recorded explicitly
+    """
 
-    # === DAILY EVENT LOOP (SEQUENTIAL, NO LOOKAHEAD) ===
+    # ------------------------------------------------------------
+    # Dates
+    # ------------------------------------------------------------
     all_dates = sorted(set().union(*[df.index for df in pair_state.values()]))
     all_dates = [d for d in all_dates if trade_start <= d <= trade_end]
+
+    if not all_dates:
+        return {}
+
+    trade_month = str(candidates["trade_month"].iloc[0])
 
     equity = 1.0
     prev_dt = None
 
-    open_positions: Dict[str, Position] = {}
+    open_positions = {}
     equity_rows = []
     trades = []
 
+    # ------------------------------------------------------------
+    # Helper to find open trade row
+    # ------------------------------------------------------------
+    def _find_trade_idx(pair_id, entry_dt):
+        for i in range(len(trades) - 1, -1, -1):
+            if (
+                trades[i]["pair_id"] == pair_id
+                and trades[i]["entry_datetime"] == entry_dt
+            ):
+                return i
+        return None
+
+    # ------------------------------------------------------------
+    # Main event loop
+    # ------------------------------------------------------------
     for dt in all_dates:
 
-        # ------------------------------------------------------------
-        # 0) CAPITAL ENGINE — DAILY MTM (EQUAL-WEIGHT)
-        # ------------------------------------------------------------
+        # ========================================================
+        # 0) DAILY MTM (equal-weight)
+        # ========================================================
         if prev_dt and open_positions:
             rets = []
             for pid, pos in open_positions.items():
                 df = pair_state[pid]
                 if prev_dt not in df.index or dt not in df.index:
                     continue
+
                 dY = df.loc[dt, "y"] - df.loc[prev_dt, "y"]
                 dX = df.loc[dt, "x"] - df.loc[prev_dt, "x"]
                 sign = 1.0 if pos.side == "LONG_SPREAD" else -1.0
+
                 rets.append(sign * (dY - pos.beta * dX))
+
             if rets:
                 equity *= (1.0 + np.mean(rets))
 
-        assert equity > 0
-
-        # ------------------------------------------------------------
-        # 1) POSITION MANAGEMENT — EXITS (TP / SL / TIMEOUT)
-        # ------------------------------------------------------------
+        # ========================================================
+        # 1) EXITS
+        # ========================================================
         to_close = []
+
         for pid, pos in open_positions.items():
             df = pair_state[pid]
             if dt not in df.index:
                 continue
+
             z = df.loc[dt, "z"]
+
             exit_tp = (z > -params.z_exit) if pos.side == "LONG_SPREAD" else (z < params.z_exit)
             exit_sl = abs(z) >= params.z_stop
             exit_tm = dt >= trade_end
+
             if exit_tp or exit_sl or exit_tm:
+                reason = "TP" if exit_tp else ("SL" if exit_sl else "TIME")
+
+                idx = _find_trade_idx(pid, pos.entry_datetime)
+                if idx is not None:
+                    entry_spread = pos.entry_spread
+                    exit_spread = float(df.loc[dt, "spread"])
+                    sign = 1.0 if pos.side == "LONG_SPREAD" else -1.0
+
+                    trades[idx].update({
+                        "exit_datetime": dt,
+                        "exit_z": float(z),
+                        "exit_spread": exit_spread,
+                        "pnl_spread": sign * (exit_spread - entry_spread),
+                        "reason": reason,
+                        "duration_days": int((dt.normalize() - pos.entry_datetime.normalize()).days),
+                    })
+
                 to_close.append(pid)
 
         for pid in to_close:
             del open_positions[pid]
 
-        assert len(open_positions) <= K
-
-        # ------------------------------------------------------------
-        # 2) POSITION MANAGEMENT — ENTRIES (RANKING AS TIE-BREAKER)
-        # ------------------------------------------------------------
+        # ========================================================
+        # 2) ENTRIES (ranking-based)
+        # ========================================================
         slots = max(0, K - len(open_positions))
+
         if slots > 0:
             candidates_today = []
+
             for pid, df in pair_state.items():
                 if pid in open_positions or dt not in df.index:
                     continue
-                if not df.loc[dt, "eligible_today"]:
+                if not bool(df.loc[dt, "eligible_today"]):
                     continue
+
                 z = df.loc[dt, "z"]
+                if pd.isna(z):
+                    continue
+
                 if z <= -params.z_entry:
                     side = "LONG_SPREAD"
                 elif z >= params.z_entry:
                     side = "SHORT_SPREAD"
                 else:
                     continue
-                candidates_today.append((abs(z), pid, side))
+
+                candidates_today.append((abs(float(z)), pid, side))
 
             for _, pid, side in sorted(candidates_today, reverse=True)[:slots]:
                 df = pair_state[pid]
+
                 open_positions[pid] = Position(
                     pair_id=pid,
-                    asset_1=df.loc[dt, "asset_1"],
-                    asset_2=df.loc[dt, "asset_2"],
+                    asset_1=str(df.loc[dt, "asset_1"]),
+                    asset_2=str(df.loc[dt, "asset_2"]),
                     side=side,
-                    beta=df.loc[dt, "beta"],
+                    beta=float(df.loc[dt, "beta"]),
                     entry_datetime=dt,
-                    entry_spread=df.loc[dt, "spread"],
-                    entry_z=df.loc[dt, "z"],
-                    entry_y=df.loc[dt, "y"],
-                    entry_x=df.loc[dt, "x"],
+                    entry_spread=float(df.loc[dt, "spread"]),
+                    entry_z=float(df.loc[dt, "z"]),
+                    entry_y=float(df.loc[dt, "y"]),
+                    entry_x=float(df.loc[dt, "x"]),
                 )
 
-        # ------------------------------------------------------------
-        # 3) RECORD STATE
-        # ------------------------------------------------------------
+                trades.append({
+                    "trade_month": trade_month,
+                    "pair_id": pid,
+                    "asset_1": str(df.loc[dt, "asset_1"]),
+                    "asset_2": str(df.loc[dt, "asset_2"]),
+                    "side": side,
+                    "beta": float(df.loc[dt, "beta"]),
+                    "entry_datetime": dt,
+                    "entry_z": float(df.loc[dt, "z"]),
+                    "entry_spread": float(df.loc[dt, "spread"]),
+                    "exit_datetime": pd.NaT,
+                    "exit_z": np.nan,
+                    "exit_spread": np.nan,
+                    "pnl_spread": np.nan,
+                    "reason": None,
+                    "duration_days": np.nan,
+                })
+
+        # ========================================================
+        # 3) RECORD EQUITY
+        # ========================================================
         equity_rows.append({
+            "trade_month": trade_month,
             "datetime": dt,
             "equity": equity,
             "n_open_positions": len(open_positions),
@@ -323,7 +398,8 @@ def run_global_ranking_walkforward(
     if not months:
         return {}
 
-    eq_chunks, trades, summary = [], [], []
+    eq_chunks = []
+    trades_chunks = []
     last_equity = 1.0
 
     for m in months:
@@ -340,26 +416,62 @@ def run_global_ranking_walkforward(
         if not res:
             continue
 
-        eq = res["equity"]
-        eq["equity"] *= last_equity
-        last_equity = eq["equity"].iloc[-1]
+        eq_m = res["equity"].copy()
+        eq_m["equity"] *= last_equity
+        last_equity = float(eq_m["equity"].iloc[-1])
+        eq_chunks.append(eq_m)
 
-        eq_chunks.append(eq)
+        tr_m = res.get("trades", pd.DataFrame())
+        if isinstance(tr_m, pd.DataFrame) and not tr_m.empty:
+            trades_chunks.append(tr_m)
 
-    eq = pd.concat(eq_chunks).reset_index(drop=True)
+    if not eq_chunks:
+        return {}
+
+    eq = pd.concat(eq_chunks, ignore_index=True)
+
+    trades_df = pd.concat(trades_chunks, ignore_index=True) if trades_chunks else pd.DataFrame()
+
+    # ---- monthly breakdown
+    monthly = (
+        eq.groupby("trade_month", as_index=False)
+          .agg(
+              start_equity=("equity", "first"),
+              end_equity=("equity", "last"),
+              n_days=("equity", "size"),
+              max_open_positions=("n_open_positions", "max"),
+          )
+    )
+    monthly["month_return"] = monthly["end_equity"] / monthly["start_equity"] - 1.0
+
+    if not trades_df.empty:
+        tcount = trades_df.groupby("trade_month").size().rename("n_trades").reset_index()
+        monthly = monthly.merge(tcount, on="trade_month", how="left")
+    else:
+        monthly["n_trades"] = 0
+
+    # ---- stats
     rets = eq["equity"].pct_change().dropna()
+    final_eq = float(eq["equity"].iloc[-1]) if not eq.empty else np.nan
+    n = len(eq)
+    cagr = (final_eq ** (252 / n) - 1.0) if (n > 0 and np.isfinite(final_eq) and final_eq > 0) else np.nan
+    std = rets.std(ddof=1)
+    sharpe = (np.sqrt(252) * rets.mean() / std) if (std is not None and np.isfinite(std) and std > 0) else np.nan
+    mdd = (eq["equity"] / eq["equity"].cummax() - 1).min() if n > 0 else np.nan
 
     stats = {
-        "Final Equity": eq["equity"].iloc[-1],
-        "CAGR": eq["equity"].iloc[-1] ** (252 / len(eq)) - 1.0,
-        "Sharpe": np.sqrt(252) * rets.mean() / rets.std(ddof=1),
-        "Max Drawdown": (eq["equity"] / eq["equity"].cummax() - 1).min(),
+        "Final Equity": final_eq,
+        "CAGR": cagr,
+        "Sharpe": sharpe,
+        "Max Drawdown": mdd,
+        "Nb Trades": int(len(trades_df)) if isinstance(trades_df, pd.DataFrame) else 0,
     }
 
     return {
         "equity": eq,
         "stats": stats,
-        "monthly": pd.DataFrame(),  # placeholder contractuel
-        "trades": pd.DataFrame(),  # placeholder contractuel
+        "monthly": monthly,
+        "trades": trades_df,
     }
+
 
