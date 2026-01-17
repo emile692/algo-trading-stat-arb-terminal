@@ -3,15 +3,15 @@ from __future__ import annotations
 import argparse
 from pathlib import Path
 
+from backtesting.global_loop import run_global_ranking_walkforward
 from config.params import UNIVERSES
-from utils.monthly_backtest import BatchConfig, StrategyParams
-from utils.global_ranking_backtest import run_global_ranking_walkforward
+from object.class_file import BatchConfig, StrategyParams
 
 
 def main():
     p = argparse.ArgumentParser()
 
-    p.add_argument("--universes", type=str, default="all",
+    p.add_argument("--universes", type=str, default="sweden",
                    help='Comma-separated list (e.g. "france,sweden") or "all"')
     p.add_argument("--N", type=int, default=20)
     p.add_argument("--K", type=int, default=5)

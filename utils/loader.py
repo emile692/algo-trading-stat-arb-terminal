@@ -1,6 +1,11 @@
 from pathlib import Path
 import pandas as pd
 
+try:
+    from config.params import UNIVERSES as PARAM_UNIVERSES
+except Exception:
+    PARAM_UNIVERSES = None
+
 
 def load_price_csv(asset: str, data_path: Path) -> pd.DataFrame:
     file = data_path / f"{asset}.csv"
@@ -18,3 +23,10 @@ def load_price_csv(asset: str, data_path: Path) -> pd.DataFrame:
         raise ValueError(f"[DATA ERROR] Empty CSV file: {file}")
 
     return df
+
+# Tous les tickers disponibles
+def list_assets(base_path: Path) -> list[str]:
+    p = base_path / "d1"
+    if not p.exists():
+        return []
+    return sorted(f.stem.upper() for f in p.glob("*.csv"))

@@ -10,10 +10,10 @@ UNIVERSES = [
     "germany",
     "italy",
     "uk",
-    "sweden",
+    "sweden"
 ]
 
-START_DATE = datetime.datetime(year=2024, month=12, day=1)
+START_DATE = datetime.datetime(year=2020, month=12, day=1)
 END_DATE = datetime.datetime(year=2026, month=1, day=1)
 FREQ = "ME"
 

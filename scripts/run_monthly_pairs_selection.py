@@ -105,9 +105,5 @@ def build_all_monthly_universes():
         print("Total rows:", len(df_u))
 
 
-# ============================================================
-# ENTRY POINT
-# ============================================================
-
 if __name__ == "__main__":
     build_all_monthly_universes()
