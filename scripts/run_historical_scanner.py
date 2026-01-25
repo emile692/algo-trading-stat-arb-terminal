@@ -21,7 +21,7 @@ from config.params import (
     UNIVERSES,
     START_DATE,
     END_DATE,
-    FREQ
+    SCANNER_FREQ,
 )
 
 
@@ -29,12 +29,12 @@ from config.params import (
 # PATHS
 # ============================================================
 
-PROJECT_PATH = Path(__file__).resolve().parents[1]
-BASE_DATA_PATH = PROJECT_PATH / "data" / "raw"
-SCANNER_DATA_PATH = BASE_DATA_PATH / "d1"
+PROJECT_PATH = PROJECT_ROOT
+SCANNER_DATA_PATH = PROJECT_PATH / "data" / "raw" / "d1"
 
 ASSET_REGISTRY_PATH = PROJECT_PATH / "data" / "asset_registry.csv"
 OUTPUT_DIR = PROJECT_PATH / "data" / "scanner"
+
 
 # ============================================================
 # UTILS
@@ -63,17 +63,19 @@ def load_price_asof(asset: str, end_date: pd.Timestamp) -> pd.Series | None:
 
     df["log"] = np.log(df["close"])
 
+    # liquidity / activity filter
     price_diff = df["close"].diff().abs()
     if price_diff.rolling(20).sum().iloc[-1] == 0:
         return None
 
+    # normalized log-price (as-of scan_date)
     df["norm"] = df["log"] - df["log"].iloc[-1]
 
     return df.set_index("datetime")["norm"]
 
 
 # ============================================================
-# MAIN HISTORICAL SCAN
+# MAIN HISTORICAL SCAN (DAILY)
 # ============================================================
 
 def run_historical_scan():
@@ -83,7 +85,7 @@ def run_historical_scan():
     scan_dates = pd.date_range(
         start=START_DATE,
         end=END_DATE,
-        freq=FREQ,
+        freq=SCANNER_FREQ,   # DAILY scanner
     )
 
     for universe in UNIVERSES:
@@ -107,13 +109,11 @@ def run_historical_scan():
                     series[asset] = s
 
             if len(series) < 2:
-                print("Not enough assets with data, skipping.")
                 continue
 
             prices = pd.DataFrame(series).dropna(how="all")
 
             if prices.shape[1] < 2:
-                print("No aligned data, skipping.")
                 continue
 
             df_scan = scan_universe(
@@ -122,7 +122,6 @@ def run_historical_scan():
             )
 
             if df_scan.empty:
-                print("No pairs found.")
                 continue
 
             df_scan["scan_date"] = scan_date.normalize()

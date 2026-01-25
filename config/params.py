@@ -6,16 +6,11 @@ import datetime
 # ============================================================
 
 UNIVERSES = [
-    "france",
-    "germany",
-    "italy",
-    "uk",
     "sweden"
 ]
 
-START_DATE = datetime.datetime(year=2020, month=12, day=1)
-END_DATE = datetime.datetime(year=2026, month=1, day=1)
-FREQ = "ME"
+START_DATE = datetime.datetime(year=2024, month=12, day=1)
+END_DATE = datetime.datetime(year=2025, month=1, day=1)
 
 # ============================================================
 # LOOKBACK mapping UI / CLI
@@ -38,6 +33,8 @@ LOOKBACK_MAPPING = {
 # ============================================================
 # SCANNER (pair eligibility)
 # ============================================================
+
+SCANNER_FREQ = "B"
 
 SCAN_LOOKBACKS = {
     "3m": 63,

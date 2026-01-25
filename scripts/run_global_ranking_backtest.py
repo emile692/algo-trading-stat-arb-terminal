@@ -30,7 +30,7 @@ def main():
 
     cfg = BatchConfig(
         data_path=project_root / "data" / "raw" / "d1",
-        monthly_universe_path=project_root / "data" / "universe" / "france.parquet",  # just for parent dir
+        monthly_universe_path=project_root / "data" / "universe" / "sweden.parquet",  # just for parent dir
         out_dir=project_root / "data" / "backtests" / "global_ranking",
         universe_name="GLOBAL",
         timeframe="Daily",

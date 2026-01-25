@@ -34,6 +34,8 @@ class StrategyParams:
     top_n_candidates : int = 20
     max_positions : int = 5
 
+    rebalance_period:str ="monthly"
+
 
 @dataclass(frozen=True)
 class BatchConfig:
