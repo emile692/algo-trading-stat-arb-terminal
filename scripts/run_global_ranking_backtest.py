@@ -1,8 +1,11 @@
 from __future__ import annotations
+from pathlib import Path
+import sys
+
+PROJECT_PATH = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(PROJECT_PATH))
 
 import argparse
-from pathlib import Path
-
 from backtesting.global_loop import run_global_ranking_walkforward
 from config.params import UNIVERSES
 from object.class_file import BatchConfig, StrategyParams
@@ -57,10 +60,8 @@ def main():
     res = run_global_ranking_walkforward(
         cfg=cfg,
         params=params,
-        universes=universes,
-        top_n_candidates=args.N,
-        max_positions=args.K,
-    )
+        universes=universes)
+
 
     if not res:
         print("No results.")

@@ -666,14 +666,14 @@ with tab_global_ranking:
                         wf_test=0,
                         fees=float(gr_fees),
                         beta_mode=str(gr_beta_mode),
+                        top_n_candidates=int(gr_N),
+                        max_positions=int(gr_K),
                     )
 
                     res = run_global_ranking_walkforward(
                         cfg=cfg,
                         params=params,
-                        universes=list(gr_universes),
-                        top_n_candidates=int(gr_N),
-                        max_positions=int(gr_K),
+                        universes=list(gr_universes)
                     )
 
                     st.session_state["global_ranking_res"] = res

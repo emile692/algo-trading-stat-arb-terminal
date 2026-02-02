@@ -21,11 +21,9 @@ def run_global_ranking_walkforward(
     cfg: BatchConfig,
     params: StrategyParams,
     universes: List[str],
-    top_n_candidates: int,
-    max_positions: int,
 ) -> dict:
 
-    monthly_universe_dir = Path(cfg.monthly_universe_path).parent
+    monthly_universe_dir = Path(cfg.monthly_universe_path)
 
     months = set()
     for u in universes:
@@ -34,6 +32,9 @@ def run_global_ranking_walkforward(
             months |= set(pd.read_parquet(fp, columns=["trade_month"])["trade_month"])
 
     months = sorted(months)
+    # Filter months by start_date and end_date from cfg
+    months = [m for m in months if cfg.start_date <= pd.to_datetime(m) <= cfg.end_date]
+    
     if not months:
         return {}
 
@@ -42,14 +43,14 @@ def run_global_ranking_walkforward(
     last_equity = 1.0
 
     for m in months:
-        candidates = build_global_month_candidates(monthly_universe_dir, m, universes, top_n_candidates)
+        candidates = build_global_month_candidates(monthly_universe_dir, m, universes, params.top_n_candidates)
         if candidates.empty:
             continue
 
         trade_start, trade_end = _month_bounds(candidates)
         pair_state = precompute_pair_state_for_month(cfg, params, candidates, trade_start, trade_end)
 
-        res = backtest_month_global_ranking(pair_state, candidates, params, trade_start, trade_end, max_positions)
+        res = backtest_month_global_ranking(pair_state, candidates, params, trade_start, trade_end, params.max_positions)
         if not res:
             continue
 

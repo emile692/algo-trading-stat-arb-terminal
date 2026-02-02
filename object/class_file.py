@@ -33,6 +33,7 @@ class StrategyParams:
 
     top_n_candidates : int = 20
     max_positions : int = 5
+    rebalance_period: str = "daily"  # "daily" | "weekly" | "monthly"
 
     rebalance_period:str ="monthly"
 
@@ -46,6 +47,8 @@ class BatchConfig:
     timeframe: str = "Daily"
     warmup_extra: int = 50
     equal_weight: bool = True
+    start_date: pd.Timestamp = pd.Timestamp(year=2020, month=12, day=1)
+    end_date: pd.Timestamp = pd.Timestamp(year=2026, month=1, day=1)
 
 
 @dataclass

@@ -23,7 +23,7 @@ def backtest_month_global_ranking(
     """
 
     # ------------------------------------------------------------
-    # Dates
+    # Dates (data-driven calendar)
     # ------------------------------------------------------------
     all_dates = sorted(set().union(*[df.index for df in pair_state.values()]))
     all_dates = [d for d in all_dates if trade_start <= d <= trade_end]
@@ -31,6 +31,7 @@ def backtest_month_global_ranking(
     if not all_dates:
         return {}
 
+    last_dt = all_dates[-1]  # last available bar within [trade_start, trade_end]
     trade_month = str(candidates["trade_month"].iloc[0])
 
     equity = 1.0
@@ -45,10 +46,7 @@ def backtest_month_global_ranking(
     # ------------------------------------------------------------
     def _find_trade_idx(pair_id, entry_dt):
         for i in range(len(trades) - 1, -1, -1):
-            if (
-                trades[i]["pair_id"] == pair_id
-                and trades[i]["entry_datetime"] == entry_dt
-            ):
+            if trades[i]["pair_id"] == pair_id and trades[i]["entry_datetime"] == entry_dt:
                 return i
         return None
 
@@ -60,21 +58,21 @@ def backtest_month_global_ranking(
         # ========================================================
         # 0) DAILY MTM (equal-weight)
         # ========================================================
-        if prev_dt and open_positions:
+        if prev_dt is not None and open_positions:
             rets = []
             for pid, pos in open_positions.items():
                 df = pair_state[pid]
                 if prev_dt not in df.index or dt not in df.index:
                     continue
 
-                dY = df.loc[dt, "y"] - df.loc[prev_dt, "y"]
-                dX = df.loc[dt, "x"] - df.loc[prev_dt, "x"]
+                dY = float(df.loc[dt, "y"] - df.loc[prev_dt, "y"])
+                dX = float(df.loc[dt, "x"] - df.loc[prev_dt, "x"])
                 sign = 1.0 if pos.side == "LONG_SPREAD" else -1.0
 
                 rets.append(sign * (dY - pos.beta * dX))
 
             if rets:
-                equity *= (1.0 + np.mean(rets))
+                equity *= (1.0 + float(np.mean(rets)))
 
         # ========================================================
         # 1) EXITS
@@ -86,24 +84,26 @@ def backtest_month_global_ranking(
             if dt not in df.index:
                 continue
 
-            z = df.loc[dt, "z"]
+            z = float(df.loc[dt, "z"])
 
             exit_tp = (z > -params.z_exit) if pos.side == "LONG_SPREAD" else (z < params.z_exit)
             exit_sl = abs(z) >= params.z_stop
-            exit_tm = dt >= trade_end
+
+            # IMPORTANT: time exit must use the last available date, not trade_end
+            exit_tm = (dt == last_dt)
 
             if exit_tp or exit_sl or exit_tm:
                 reason = "TP" if exit_tp else ("SL" if exit_sl else "TIME")
 
                 idx = _find_trade_idx(pid, pos.entry_datetime)
                 if idx is not None:
-                    entry_spread = pos.entry_spread
+                    entry_spread = float(pos.entry_spread)
                     exit_spread = float(df.loc[dt, "spread"])
                     sign = 1.0 if pos.side == "LONG_SPREAD" else -1.0
 
                     trades[idx].update({
                         "exit_datetime": dt,
-                        "exit_z": float(z),
+                        "exit_z": z,
                         "exit_spread": exit_spread,
                         "pnl_spread": sign * (exit_spread - entry_spread),
                         "reason": reason,
@@ -116,11 +116,12 @@ def backtest_month_global_ranking(
             del open_positions[pid]
 
         # ========================================================
-        # 2) ENTRIES (ranking-based)
+        # 2) ENTRIES (ranking-based) — forbidden on last_dt
         # ========================================================
+        allow_entries = (dt < last_dt)
         slots = max(0, K - len(open_positions))
 
-        if slots > 0:
+        if allow_entries and slots > 0:
             candidates_today = []
 
             for pid, df in pair_state.items():
@@ -133,14 +134,16 @@ def backtest_month_global_ranking(
                 if pd.isna(z):
                     continue
 
-                if z <= -params.z_entry:
+                zf = float(z)
+
+                if zf <= -params.z_entry:
                     side = "LONG_SPREAD"
-                elif z >= params.z_entry:
+                elif zf >= params.z_entry:
                     side = "SHORT_SPREAD"
                 else:
                     continue
 
-                candidates_today.append((abs(float(z)), pid, side))
+                candidates_today.append((abs(zf), pid, side))
 
             for _, pid, side in sorted(candidates_today, reverse=True)[:slots]:
                 df = pair_state[pid]
@@ -177,7 +180,7 @@ def backtest_month_global_ranking(
                 })
 
         # ========================================================
-        # 3) RECORD EQUITY
+        # 3) RECORD EQUITY (do NOT skip last day)
         # ========================================================
         equity_rows.append({
             "trade_month": trade_month,
