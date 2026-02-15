@@ -19,8 +19,8 @@ from utils.scanner import scan_universe
 
 from config.params import (
     UNIVERSES,
-    START_DATE,
-    END_DATE,
+    SCANNER_START_DATE,
+    SCANNER_END_DATE,
     SCANNER_FREQ,
 )
 
@@ -83,9 +83,9 @@ def run_historical_scan():
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
     scan_dates = pd.date_range(
-        start=START_DATE,
-        end=END_DATE,
-        freq=SCANNER_FREQ,   # DAILY scanner
+        start=SCANNER_START_DATE,
+        end=SCANNER_END_DATE,
+        freq=SCANNER_FREQ,
     )
 
     for universe in UNIVERSES:

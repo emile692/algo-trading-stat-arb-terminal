@@ -1,114 +1,140 @@
 # backtesting/global_loop.py
 
-# ============================================================
-# WALK-FORWARD ORCHESTRATION
-# ============================================================
+from __future__ import annotations
 
 from pathlib import Path
-from typing import List
+from typing import Dict, List, Optional, Tuple
 
 import numpy as np
 import pandas as pd
+from pandas.tseries.offsets import BDay
 
-from backtesting.functions import precompute_pair_state_for_month
-from backtesting.helpers import _month_bounds
-from backtesting.monthly_loop import backtest_month_global_ranking
-from object.class_file import  BatchConfig, StrategyParams
-from utils.functions import build_global_month_candidates
+from object.class_file import BatchConfig, StrategyParams
+from backtesting.functions import precompute_pair_state_for_window
+from backtesting.engine import run_daily_portfolio_engine
 
 
-def run_global_ranking_walkforward(
+def _load_scans(cfg: BatchConfig, universes: List[str], scans: Optional[pd.DataFrame]) -> pd.DataFrame:
+    if scans is not None:
+        df = scans.copy()
+        df["scan_date"] = pd.to_datetime(df["scan_date"]).dt.normalize()
+        if "universe" not in df.columns:
+            df["universe"] = "INLINE"
+        return df
+
+    if cfg.scanner_path is None:
+        raise ValueError("scanner_path must be set if scans is None.")
+
+    scanner_dir = Path(cfg.scanner_path)
+    frames = []
+    for universe in universes:
+        fp = scanner_dir / f"{universe}.parquet"
+        if not fp.exists():
+            continue
+        d = pd.read_parquet(fp)
+        if d.empty:
+            continue
+        d["scan_date"] = pd.to_datetime(d["scan_date"]).dt.normalize()
+        d["universe"] = universe
+        frames.append(d)
+
+    if not frames:
+        return pd.DataFrame()
+
+    return pd.concat(frames, ignore_index=True)
+
+
+def run_global_ranking_daily_portfolio(
     cfg: BatchConfig,
     params: StrategyParams,
     universes: List[str],
-) -> dict:
+    scans: Optional[pd.DataFrame] = None,
+) -> Dict:
 
-    monthly_universe_dir = Path(cfg.monthly_universe_path)
-
-    months = set()
-    for u in universes:
-        fp = monthly_universe_dir / f"{u}.parquet"
-        if fp.exists():
-            months |= set(pd.read_parquet(fp, columns=["trade_month"])["trade_month"])
-
-    months = sorted(months)
-    # Filter months by start_date and end_date from cfg
-    months = [m for m in months if cfg.start_date <= pd.to_datetime(m) <= cfg.end_date]
-    
-    if not months:
+    scans_df = _load_scans(cfg, universes, scans)
+    if scans_df.empty:
         return {}
 
-    eq_chunks = []
-    trades_chunks = []
-    last_equity = 1.0
+    start = pd.to_datetime(cfg.start_date).normalize()
+    end = pd.to_datetime(cfg.end_date).normalize()
 
-    for m in months:
-        candidates = build_global_month_candidates(monthly_universe_dir, m, universes, params.top_n_candidates)
-        if candidates.empty:
-            continue
-
-        trade_start, trade_end = _month_bounds(candidates)
-        pair_state = precompute_pair_state_for_month(cfg, params, candidates, trade_start, trade_end)
-
-        res = backtest_month_global_ranking(pair_state, candidates, params, trade_start, trade_end, params.max_positions)
-        if not res:
-            continue
-
-        eq_m = res["equity"].copy()
-        eq_m["equity"] *= last_equity
-        last_equity = float(eq_m["equity"].iloc[-1])
-        eq_chunks.append(eq_m)
-
-        tr_m = res.get("trades", pd.DataFrame())
-        if isinstance(tr_m, pd.DataFrame) and not tr_m.empty:
-            trades_chunks.append(tr_m)
-
-    if not eq_chunks:
+    # keep a small buffer for exec_lag
+    scans_df = scans_df[(scans_df["scan_date"] >= start - BDay(5)) & (scans_df["scan_date"] <= end)].copy()
+    if scans_df.empty:
         return {}
 
-    eq = pd.concat(eq_chunks, ignore_index=True)
+    scans_by_date = {d: g for d, g in scans_df.groupby("scan_date", sort=True)}
 
-    trades_df = pd.concat(trades_chunks, ignore_index=True) if trades_chunks else pd.DataFrame()
+    def get_ranked_pairs(dt: pd.Timestamp) -> List[Tuple[str, str]]:
+        scan_date = (dt - BDay(params.exec_lag_days)).normalize()
+        df_day = scans_by_date.get(scan_date)
+        if df_day is None or df_day.empty:
+            return []
 
-    # ---- monthly breakdown
+        eligible = df_day[df_day["eligibility"] == "ELIGIBLE"]
+        if eligible.empty:
+            return []
+
+        ranked = (eligible.sort_values("eligibility_score", ascending=False)
+                         .head(params.top_n_candidates))
+
+        return list(zip(ranked["asset_1"].astype(str).str.upper(),
+                        ranked["asset_2"].astype(str).str.upper()))
+
+    def get_pair_state(dt: pd.Timestamp, pairs: List[Tuple[str, str]]) -> Dict[str, pd.DataFrame]:
+        cand_df = pd.DataFrame([{"asset_1": a1, "asset_2": a2} for (a1, a2) in pairs])
+        # state as-of dt (warmup inside function)
+        return precompute_pair_state_for_window(
+            cfg=cfg,
+            params=params,
+            candidates=cand_df,
+            start=dt,
+            end=dt,
+        )
+
+    res = run_daily_portfolio_engine(
+        params=params,
+        start=start,
+        end=end,
+        get_ranked_pairs=get_ranked_pairs,
+        get_pair_state=get_pair_state,
+    )
+
+    if not res:
+        return {}
+
+    equity = res["equity"].copy()
+    trades = res["trades"].copy()
+
+    # reporting / stats
+    equity["trade_month"] = pd.to_datetime(equity["datetime"]).dt.strftime("%Y-%m")
+
     monthly = (
-        eq.groupby("trade_month", as_index=False)
-          .agg(
-              start_equity=("equity", "first"),
-              end_equity=("equity", "last"),
-              n_days=("equity", "size"),
-              max_open_positions=("n_open_positions", "max"),
-          )
+        equity.groupby("trade_month", as_index=False)
+              .agg(
+                  start_equity=("equity", "first"),
+                  end_equity=("equity", "last"),
+                  n_days=("equity", "size"),
+                  max_open_positions=("n_open_positions", "max"),
+              )
     )
     monthly["month_return"] = monthly["end_equity"] / monthly["start_equity"] - 1.0
 
-    if not trades_df.empty:
-        tcount = trades_df.groupby("trade_month").size().rename("n_trades").reset_index()
-        monthly = monthly.merge(tcount, on="trade_month", how="left")
-    else:
-        monthly["n_trades"] = 0
+    returns = equity["equity"].pct_change().dropna()
+    final_eq = float(equity["equity"].iloc[-1])
 
-    # ---- stats
-    rets = eq["equity"].pct_change().dropna()
-    final_eq = float(eq["equity"].iloc[-1]) if not eq.empty else np.nan
-    n = len(eq)
-    cagr = (final_eq ** (252 / n) - 1.0) if (n > 0 and np.isfinite(final_eq) and final_eq > 0) else np.nan
-    std = rets.std(ddof=1)
-    sharpe = (np.sqrt(252) * rets.mean() / std) if (std is not None and np.isfinite(std) and std > 0) else np.nan
-    mdd = (eq["equity"] / eq["equity"].cummax() - 1).min() if n > 0 else np.nan
+    n = len(equity)
+    cagr = (final_eq ** (252 / n) - 1.0) if n > 0 else np.nan
+    vol = float(returns.std(ddof=1)) if len(returns) > 1 else np.nan
+    sharpe = float(np.sqrt(252) * returns.mean() / vol) if (vol is not None and vol > 0) else np.nan
+    mdd = float((equity["equity"] / equity["equity"].cummax() - 1).min())
 
     stats = {
-        "Final Equity": float(round(final_eq, 2)),
-        "CAGR": float(round(cagr, 2)),
-        "Sharpe": float(round(sharpe, 2)),
-        "Max Drawdown": float(round(mdd, 2)),
-        "Nb Trades": int(len(trades_df)) if isinstance(trades_df, pd.DataFrame) else 0,
+        "Final Equity": round(final_eq, 2),
+        "CAGR": round(float(cagr), 3) if not np.isnan(cagr) else np.nan,
+        "Sharpe": round(float(sharpe), 2) if not np.isnan(sharpe) else np.nan,
+        "Max Drawdown": round(mdd, 3),
+        "Nb Trades": int(len(trades)) if isinstance(trades, pd.DataFrame) else 0,
     }
 
-    return {
-        "equity": eq,
-        "stats": stats,
-        "monthly": monthly,
-        "trades": trades_df,
-    }
-
+    return {"equity": equity, "monthly": monthly, "trades": trades, "stats": stats}

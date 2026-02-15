@@ -1,5 +1,8 @@
+# backtesting/helpers.py
+
 from pathlib import Path
 from typing import Tuple
+from functools import lru_cache
 
 import numpy as np
 import pandas as pd
@@ -8,7 +11,10 @@ import pandas as pd
 # Helpers — Market data & statistics (NO trading logic)
 # ============================================================
 
-def _read_price_csv(data_path: Path, asset: str) -> pd.DataFrame:
+@lru_cache(maxsize=512)
+def _read_price_csv_cached(data_path_str: str, asset: str) -> pd.DataFrame:
+    data_path = Path(data_path_str)
+    asset = asset.upper()
     fp = data_path / f"{asset}.csv"
     if not fp.exists():
         raise FileNotFoundError(f"Missing price file: {fp}")
@@ -25,11 +31,18 @@ def _read_price_csv(data_path: Path, asset: str) -> pd.DataFrame:
 
     return df[["datetime", "close", "log_norm"]]
 
+
+def _read_price_csv(data_path: Path, asset: str) -> pd.DataFrame:
+    # IMPORTANT: return a copy to avoid accidental mutation of cached DF
+    return _read_price_csv_cached(str(data_path), asset).copy()
+
+
 def _month_bounds(df_month: pd.DataFrame) -> Tuple[pd.Timestamp, pd.Timestamp]:
     return (
         pd.to_datetime(df_month["trade_start"].iloc[0]).normalize(),
         pd.to_datetime(df_month["trade_end"].iloc[0]).normalize(),
     )
+
 
 def _pair_id(a1: str, a2: str, trade_month: str) -> str:
     return f"{a1}__{a2}__{trade_month}"

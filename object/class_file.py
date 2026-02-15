@@ -4,6 +4,11 @@ from typing import Optional, Any
 
 import pandas as pd
 
+
+# ============================================================
+# POSITION (runtime only)
+# ============================================================
+
 @dataclass
 class Position:
     pair_id: str
@@ -18,46 +23,67 @@ class Position:
     entry_x: float
 
 
+# ============================================================
+# STRATEGY PARAMETERS (MODEL / ENGINE)
+# ============================================================
+
 @dataclass(frozen=True)
 class StrategyParams:
+    # Entry / exit
     z_entry: float = 2.0
     z_exit: float = 0.4
     z_stop: float = 4.0
     z_window: int = 60
 
+    # Beta estimation
     wf_train: int = 120
-    wf_test: int = 30  # utilisé uniquement en beta_mode="wf"
+    beta_mode: str = "static"   # "static" | "wf"
 
+    # Costs
     fees: float = 0.0002
-    beta_mode: str = "monthly"  # "monthly" | "wf"
 
-    top_n_candidates : int = 20
-    max_positions : int = 5
-    rebalance_period: str = "daily"  # "daily" | "weekly" | "monthly"
+    # Portfolio construction
+    top_n_candidates: int = 20
+    max_positions: int = 5
 
-    rebalance_period:str ="monthly"
+    # Time stop (business days)
+    max_holding_days: int = 30
 
+    # Execution lag (pour éviter look-ahead : scan J, trade J+1)
+    exec_lag_days: int = 1
+
+
+# ============================================================
+# BATCH CONFIG (DATA / IO)
+# ============================================================
 
 @dataclass(frozen=True)
 class BatchConfig:
     data_path: Path
-    monthly_universe_path: Path
-    out_dir: Path
+    scanner_path: Optional[Path] = None
+    out_dir: Optional[Path] = None
+
     universe_name: Optional[str] = None
     timeframe: str = "Daily"
+
     warmup_extra: int = 50
     equal_weight: bool = True
+
     start_date: pd.Timestamp = pd.Timestamp(year=2020, month=12, day=1)
     end_date: pd.Timestamp = pd.Timestamp(year=2026, month=1, day=1)
 
 
+# ============================================================
+# PAIR REGISTRY (research / monitoring)
+# ============================================================
+
 @dataclass
 class PairConfig:
-    pair_id: str                 # ex: "AAPL-MSFT"
+    pair_id: str
     asset1: str
     asset2: str
-    timeframe: str               # ex: "1H" (ou ce que tu utilises)
-    params: dict[str, Any]       # z_entry, z_exit, z_window, wf_train, wf_test, fees, z_stop_mult, etc.
-    metrics: dict[str, Any]      # Sharpe_real, Robustness, Sharpe_min, etc.
-    created_at: str              # ISO timestamp
-    notes: str = ""              # optionnel
+    timeframe: str
+    params: dict[str, Any]
+    metrics: dict[str, Any]
+    created_at: str
+    notes: str = ""
