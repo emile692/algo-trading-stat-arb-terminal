@@ -143,6 +143,7 @@ def run_daily_portfolio_engine(
                     "duration_days": int((dt - pos.entry_datetime).days),
                     "capital_at_exit": capital_at_exit_pre_fee,  # pre-fee snapshot
                     "trade_return": (capital_at_exit_pre_fee / trades[idx]["capital_at_entry"]) - 1.0,
+                    "trade_return_isolated": sign * (exit_spread - pos.entry_spread) - 2.0 * params.fees,
                 })
 
                 equity *= (1.0 - params.fees)  # fee at exit
@@ -230,7 +231,8 @@ def run_daily_portfolio_engine(
                     "expiry_dt": expiry,
                     "capital_at_entry": capital_at_entry_pre_fee,  # pre-fee snapshot
                     "capital_at_exit": np.nan,                    # filled at exit
-                    "trade_return": np.nan,                       # filled at exit
+                    "trade_return": np.nan,                       # portfolio-level return snapshot
+                    "trade_return_isolated": np.nan,              # spread-return proxy net round-trip fees
                 })
 
         equity_rows.append({"datetime": dt, "equity": equity, "n_open_positions": len(open_positions)})

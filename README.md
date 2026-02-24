@@ -219,3 +219,51 @@ not from parameter overfitting.
 
 
 
+
+
+
+## Utilisation des composants de robustesse (`utils/robustness.py`)
+
+Tu peux appeler les composants directement dans ton notebook/script:
+
+```python
+from utils.robustness import (
+    build_walk_forward_splits,
+    pair_selection_stability,
+    edge_decomposition,
+)
+```
+
+### 1) Walk-forward splits
+
+```python
+splits = build_walk_forward_splits(
+    start="2016-01-01",
+    end="2025-12-31",
+    train_months=24,
+    test_months=6,
+    step_months=3,
+    anchored=False,   # True => anchored expanding
+)
+```
+
+### 2) Stabilité des paires sélectionnées
+
+```python
+pair_stats, by_date = pair_selection_stability(scans_df, top_n=20)
+```
+
+- `pair_stats`: fréquence de sélection par paire
+- `by_date`: turnover top-N et `topn_jaccard_vs_prev`
+
+### 3) Edge decomposition
+
+```python
+edge = edge_decomposition(trades_df)
+by_pair = edge["by_pair"]
+by_side = edge["by_side"]
+by_ym = edge["by_year_month"]
+```
+
+- utilise `trade_return_isolated` si disponible
+- sinon fallback sur `trade_return`
