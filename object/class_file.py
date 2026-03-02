@@ -52,6 +52,16 @@ class StrategyParams:
     # Execution lag (pour éviter look-ahead : scan J, trade J+1)
     exec_lag_days: int = 1
 
+    # Signal construction space
+    # "raw" keeps current behavior (signals on raw log prices).
+    # "idio_pca" builds signals on PCA de-factorized idiosyncratic series.
+    signal_space: str = "raw"   # "raw" | "idio_pca"
+
+    # PCA signal-space params (used only when signal_space="idio_pca")
+    pca_signal_window: int = 252
+    pca_signal_components: int = 3
+    pca_signal_min_assets: int = 10
+
 
 # ============================================================
 # BATCH CONFIG (DATA / IO)

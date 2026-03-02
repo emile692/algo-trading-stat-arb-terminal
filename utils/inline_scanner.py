@@ -1,4 +1,4 @@
-from __future__ import annotations
+﻿from __future__ import annotations
 
 from dataclasses import dataclass
 from pathlib import Path
@@ -15,28 +15,48 @@ from utils.scanner import scan_universe
 class InlineScannerConfig:
     raw_data_path: Path                 # ex: PROJECT_ROOT / "data/raw/d1"
     asset_registry_path: Path           # ex: PROJECT_ROOT / "data/asset_registry.csv"
-    lookback_days: int = 504            # 2 ans par défaut
+    lookback_days: int = 504            # 2 years by default
     min_obs: int = 100
     liquidity_lookback: int = 20        # rolling window
-    liquidity_min_moves: float = 0.0    # si 0 => filtre "pas totalement flat"
+    liquidity_min_moves: float = 0.0    # if 0 => only rejects fully flat windows
 
 
-@lru_cache(maxsize=256)
+@lru_cache(maxsize=4096)
 def _load_asset_csv(asset: str, raw_data_path_str: str) -> pd.DataFrame:
+    """
+    Cached, minimal schema loader for scanner use.
+    Large cache size avoids repeated CSV disk reads on broad universes.
+    """
     raw_data_path = Path(raw_data_path_str)
-    df = load_price_csv(asset, raw_data_path).copy()
-    df["datetime"] = pd.to_datetime(df["datetime"])
+    raw = load_price_csv(asset, raw_data_path)
+
+    if "datetime" not in raw.columns or "close" not in raw.columns:
+        raise ValueError(f"Missing required columns in {asset}: needs datetime/close")
+
+    df = raw.loc[:, ["datetime", "close"]].copy()
+    df["datetime"] = pd.to_datetime(df["datetime"], errors="coerce")
+    df["close"] = pd.to_numeric(df["close"], errors="coerce").astype(float)
+    df = df.dropna(subset=["datetime", "close"]).sort_values("datetime").reset_index(drop=True)
+
+    # Precompute log once per asset/process instead of once per asof date.
+    df["log_close"] = np.log(df["close"])
     return df
 
 
-def load_universe_assets(asset_registry_path: Path, universe: str) -> list[str]:
-    reg = pd.read_csv(asset_registry_path)
-    return (
+@lru_cache(maxsize=512)
+def _load_universe_assets_cached(asset_registry_path_str: str, universe: str) -> tuple[str, ...]:
+    reg = pd.read_csv(asset_registry_path_str, usecols=["category_id", "asset"])
+    assets = (
         reg.loc[reg["category_id"] == universe, "asset"]
            .astype(str)
            .str.upper()
            .tolist()
     )
+    return tuple(assets)
+
+
+def load_universe_assets(asset_registry_path: Path, universe: str) -> list[str]:
+    return list(_load_universe_assets_cached(str(asset_registry_path), universe))
 
 
 def load_price_asof_norm(
@@ -53,21 +73,32 @@ def load_price_asof_norm(
     asof_date = pd.to_datetime(asof_date).normalize()
     start_date = asof_date - pd.Timedelta(days=cfg.lookback_days)
 
-    dfw = df[(df["datetime"] >= start_date) & (df["datetime"] <= asof_date)].copy()
+    mask = (df["datetime"] >= start_date) & (df["datetime"] <= asof_date)
+    if not bool(mask.any()):
+        return None
+
+    dfw = df.loc[mask, ["datetime", "close", "log_close"]]
     if len(dfw) < cfg.min_obs:
         return None
 
-    dfw["log"] = np.log(dfw["close"])
-
     # liquidity/activity filter
-    price_diff = dfw["close"].diff().abs()
-    if price_diff.rolling(cfg.liquidity_lookback).sum().iloc[-1] <= cfg.liquidity_min_moves:
+    close_vals = dfw["close"].to_numpy(dtype=float, copy=False)
+    lb = int(cfg.liquidity_lookback)
+    if close_vals.size <= lb:
+        return None
+    last_move_sum = float(np.abs(np.diff(close_vals))[-lb:].sum())
+    if last_move_sum <= cfg.liquidity_min_moves:
         return None
 
     # normalized log-price (as-of)
-    dfw["norm"] = dfw["log"] - dfw["log"].iloc[-1]
+    log_vals = dfw["log_close"].to_numpy(dtype=float, copy=False)
+    norm_vals = log_vals - log_vals[-1]
 
-    return dfw.set_index("datetime")["norm"]
+    return pd.Series(
+        norm_vals,
+        index=dfw["datetime"].to_numpy(copy=False),
+        name="norm",
+    )
 
 
 def scan_universe_asof(
@@ -106,7 +137,7 @@ def build_scans_inline(
     end_date: str | pd.Timestamp,
     freq: str,
     cfg: InlineScannerConfig,
-    print_every: int = 10, 
+    print_every: int = 10,
 ) -> pd.DataFrame:
 
     scan_dates = pd.date_range(
@@ -114,6 +145,9 @@ def build_scans_inline(
         end=pd.to_datetime(end_date),
         freq=freq,
     )
+
+    if len(scan_dates) == 0:
+        return pd.DataFrame()
 
     frames = []
     t0 = time.time()
@@ -141,4 +175,3 @@ def build_scans_inline(
         return pd.DataFrame()
 
     return pd.concat(frames, ignore_index=True)
-

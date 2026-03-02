@@ -33,11 +33,29 @@ def _spread_and_z_at_dt(
     Calcule spread(t) et z(t) avec un bêta fourni (typiquement beta d'entrée).
     dfp doit contenir au moins les colonnes y, x et un historique suffisant.
     """
-    s = dfp["y"] - beta * dfp["x"]
-    z = _rolling_zscore(s, z_window)
+    if dt not in dfp.index:
+        return np.nan, np.nan
 
-    spread_dt = float(s.loc[dt]) if dt in s.index and pd.notna(s.loc[dt]) else np.nan
-    z_dt = float(z.loc[dt]) if dt in z.index and pd.notna(z.loc[dt]) else np.nan
+    y_dt = dfp.loc[dt, "y"]
+    x_dt = dfp.loc[dt, "x"]
+    if pd.isna(y_dt) or pd.isna(x_dt):
+        return np.nan, np.nan
+
+    spread_dt = float(float(y_dt) - beta * float(x_dt))
+
+    # Only z(dt) is needed: use the trailing window up to dt, not a full rolling series.
+    hist = dfp.loc[:dt, ["y", "x"]].tail(int(z_window))
+    if len(hist) < int(z_window):
+        return spread_dt, np.nan
+
+    arr = hist.to_numpy(dtype=float)
+    spread_hist = arr[:, 0] - beta * arr[:, 1]
+    mu = float(np.mean(spread_hist))
+    sd = float(np.std(spread_hist, ddof=1))
+    if (not np.isfinite(sd)) or sd <= 0.0:
+        return spread_dt, np.nan
+
+    z_dt = float((spread_dt - mu) / sd)
     return spread_dt, z_dt
 
 

@@ -1,7 +1,7 @@
 # backtesting/functions.py
 
 from pathlib import Path
-from typing import Dict
+from typing import Dict, Optional
 import numpy as np
 import pandas as pd
 
@@ -25,6 +25,7 @@ def precompute_pair_state_for_window(
     candidates: pd.DataFrame,
     start: pd.Timestamp,
     end: pd.Timestamp,
+    price_panel: Optional[pd.DataFrame] = None,
 ) -> Dict[str, pd.DataFrame]:
 
     warmup = int(params.z_window + 10)
@@ -36,15 +37,40 @@ def precompute_pair_state_for_window(
         a1, a2 = r["asset_1"].upper(), r["asset_2"].upper()
         pid = f"{a1}_{a2}"
 
-        try:
-            df1 = _read_price_csv(Path(cfg.data_path), a1)
-            df2 = _read_price_csv(Path(cfg.data_path), a2)
-        except Exception:
-            continue
+        if price_panel is None:
+            try:
+                df1 = _read_price_csv(Path(cfg.data_path), a1)
+                df2 = _read_price_csv(Path(cfg.data_path), a2)
+            except Exception:
+                continue
 
-        df = df1.merge(df2, on="datetime", suffixes=("_1", "_2"))
+            df = df1.merge(df2, on="datetime", suffixes=("_1", "_2"))
+        else:
+            if a1 not in price_panel.columns or a2 not in price_panel.columns:
+                continue
+
+            pair_px = price_panel[[a1, a2]].copy()
+            pair_px = pair_px.replace([np.inf, -np.inf], np.nan).dropna(how="any")
+            if pair_px.empty:
+                continue
+
+            pair_px = pair_px.rename(columns={a1: "close_1", a2: "close_2"})
+            df = pair_px.reset_index()
+            dt_col = df.columns[0]
+            if dt_col != "datetime":
+                df = df.rename(columns={dt_col: "datetime"})
+
+            df["datetime"] = pd.to_datetime(df["datetime"]).dt.normalize()
+            df = df[(df["close_1"] > 0.0) & (df["close_2"] > 0.0)].copy()
+            if df.empty:
+                continue
+
+            # Use log-price coordinates to stay consistent with current spread logic.
+            df["log_norm_1"] = np.log(df["close_1"].astype(float))
+            df["log_norm_2"] = np.log(df["close_2"].astype(float))
+
         df = df[(df["datetime"] >= start_load) & (df["datetime"] <= end)]
-        df = df.sort_values("datetime")
+        df = df.sort_values("datetime").drop_duplicates(subset=["datetime"], keep="last")
 
         if len(df) < params.z_window + 5:
             continue
