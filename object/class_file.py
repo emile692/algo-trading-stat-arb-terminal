@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Optional, Any
+from typing import Optional, Any, Tuple
 
 import pandas as pd
 
@@ -61,6 +61,25 @@ class StrategyParams:
     pca_signal_window: int = 252
     pca_signal_components: int = 3
     pca_signal_min_assets: int = 10
+
+    # Scan-time pair selection controls (applied in global_loop)
+    # "legacy": keep existing behavior (sort by eligibility_score only).
+    # "composite_quality": rank with a blend of scanner features.
+    selection_mode: str = "legacy"  # "legacy" | "composite_quality"
+
+    # Allowed scan labels for candidate pool.
+    eligibility_labels: Tuple[str, ...] = ("ELIGIBLE",)
+
+    # Optional hard filters (disabled when None).
+    min_corr_12m: Optional[float] = None
+    max_half_life_6m: Optional[float] = None
+    max_beta_std: Optional[float] = None
+    min_spread_std_6m: Optional[float] = None
+    min_n_valid_windows: Optional[int] = None
+
+    # Optional diversification: cap selected pairs sharing one asset.
+    # 0 or less => disabled.
+    max_pairs_per_asset: int = 0
 
 
 # ============================================================

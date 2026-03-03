@@ -462,6 +462,105 @@ def _scan_frame_signature(scans: Optional[pd.DataFrame]) -> Tuple:
     return sig
 
 
+def _normalize_eligibility_labels(labels: Tuple[str, ...]) -> Tuple[str, ...]:
+    if not labels:
+        return ("ELIGIBLE",)
+    out = tuple(sorted({str(x).strip().upper() for x in labels if str(x).strip()}))
+    return out if out else ("ELIGIBLE",)
+
+
+def _rank_pct_series(s: pd.Series, ascending: bool) -> pd.Series:
+    x = pd.to_numeric(s, errors="coerce")
+    if int(x.notna().sum()) <= 1:
+        return pd.Series(0.5, index=s.index, dtype=float)
+    return x.rank(pct=True, ascending=ascending, method="average").astype(float)
+
+
+def _compute_selection_score(df: pd.DataFrame, selection_mode: str) -> pd.Series:
+    mode = str(selection_mode).strip().lower()
+    if mode == "legacy":
+        return pd.to_numeric(df.get("eligibility_score"), errors="coerce").fillna(-np.inf)
+    if mode != "composite_quality":
+        raise ValueError(f"Unsupported selection_mode='{selection_mode}'. Use 'legacy' or 'composite_quality'.")
+
+    score = (
+        1.00 * _rank_pct_series(df.get("eligibility_score", pd.Series(index=df.index, dtype=float)), ascending=True)
+        + 0.90 * _rank_pct_series(
+            pd.to_numeric(df.get("12m_corr", pd.Series(index=df.index, dtype=float)), errors="coerce").abs(),
+            ascending=True,
+        )
+        + 0.75 * _rank_pct_series(df.get("n_valid_windows", pd.Series(index=df.index, dtype=float)), ascending=True)
+        + 0.60 * _rank_pct_series(df.get("6m_half_life", pd.Series(index=df.index, dtype=float)), ascending=False)
+        + 0.40 * _rank_pct_series(df.get("beta_std", pd.Series(index=df.index, dtype=float)), ascending=False)
+        + 0.25 * _rank_pct_series(df.get("6m_spread_std", pd.Series(index=df.index, dtype=float)), ascending=True)
+    )
+    return pd.to_numeric(score, errors="coerce").fillna(-np.inf)
+
+
+def _apply_scan_filters(df: pd.DataFrame, params: StrategyParams) -> pd.DataFrame:
+    if df.empty:
+        return df
+
+    m = pd.Series(True, index=df.index, dtype=bool)
+    if params.min_corr_12m is not None:
+        corr = pd.to_numeric(df.get("12m_corr", pd.Series(index=df.index, dtype=float)), errors="coerce").abs()
+        m &= corr >= float(params.min_corr_12m)
+    if params.max_half_life_6m is not None:
+        hl = pd.to_numeric(df.get("6m_half_life", pd.Series(index=df.index, dtype=float)), errors="coerce")
+        m &= hl <= float(params.max_half_life_6m)
+    if params.max_beta_std is not None:
+        bs = pd.to_numeric(df.get("beta_std", pd.Series(index=df.index, dtype=float)), errors="coerce")
+        m &= bs <= float(params.max_beta_std)
+    if params.min_spread_std_6m is not None:
+        sstd = pd.to_numeric(df.get("6m_spread_std", pd.Series(index=df.index, dtype=float)), errors="coerce")
+        m &= sstd >= float(params.min_spread_std_6m)
+    if params.min_n_valid_windows is not None:
+        nvw = pd.to_numeric(df.get("n_valid_windows", pd.Series(index=df.index, dtype=float)), errors="coerce")
+        m &= nvw >= int(params.min_n_valid_windows)
+
+    return df[m].copy()
+
+
+def _select_ranked_pairs_for_scan_day(
+    df_day: pd.DataFrame,
+    params: StrategyParams,
+    top_n: int,
+) -> List[Tuple[str, str]]:
+    if df_day.empty or top_n <= 0:
+        return []
+
+    labels = _normalize_eligibility_labels(tuple(params.eligibility_labels))
+    pool = df_day[df_day["eligibility"].astype(str).str.upper().isin(labels)].copy()
+    if pool.empty:
+        return []
+
+    pool = _apply_scan_filters(pool, params)
+    if pool.empty:
+        return []
+
+    pool["_selection_score"] = _compute_selection_score(pool, params.selection_mode)
+    pool = pool.sort_values("_selection_score", ascending=False)
+
+    max_pairs_per_asset = int(params.max_pairs_per_asset)
+    if max_pairs_per_asset <= 0:
+        picked = pool.head(top_n)
+        return list(zip(picked["asset_1"], picked["asset_2"]))
+
+    out: List[Tuple[str, str]] = []
+    counts: Dict[str, int] = {}
+    for r in pool.itertuples(index=False):
+        a1 = str(r.asset_1).upper()
+        a2 = str(r.asset_2).upper()
+        if counts.get(a1, 0) >= max_pairs_per_asset or counts.get(a2, 0) >= max_pairs_per_asset:
+            continue
+        out.append((a1, a2))
+        counts[a1] = counts.get(a1, 0) + 1
+        counts[a2] = counts.get(a2, 0) + 1
+        if len(out) >= top_n:
+            break
+    return out
+
+
 def _context_cache_key(
     cfg: BatchConfig,
     params: StrategyParams,
@@ -489,6 +588,14 @@ def _context_cache_key(
         tuple(sorted(set(universes))),
         int(params.exec_lag_days),
         int(params.top_n_candidates),
+        str(params.selection_mode).strip().lower(),
+        _normalize_eligibility_labels(tuple(params.eligibility_labels)),
+        None if params.min_corr_12m is None else float(params.min_corr_12m),
+        None if params.max_half_life_6m is None else float(params.max_half_life_6m),
+        None if params.max_beta_std is None else float(params.max_beta_std),
+        None if params.min_spread_std_6m is None else float(params.min_spread_std_6m),
+        None if params.min_n_valid_windows is None else int(params.min_n_valid_windows),
+        int(params.max_pairs_per_asset),
         signal_space,
         int(params.pca_signal_window),
         int(params.pca_signal_components),
@@ -603,11 +710,9 @@ def _build_global_context(
     ranked_pairs_by_scan_date: Dict[pd.Timestamp, List[Tuple[str, str]]] = {}
     top_n = int(params.top_n_candidates)
     for scan_dt, df_day in scans_by_date.items():
-        eligible = df_day[df_day["eligibility"] == "ELIGIBLE"]
-        if eligible.empty:
-            continue
-        ranked = eligible.sort_values("eligibility_score", ascending=False).head(top_n)
-        ranked_pairs_by_scan_date[scan_dt] = list(zip(ranked["asset_1"], ranked["asset_2"]))
+        selected = _select_ranked_pairs_for_scan_day(df_day=df_day, params=params, top_n=top_n)
+        if selected:
+            ranked_pairs_by_scan_date[scan_dt] = selected
 
     ranked_pairs_by_date: Dict[pd.Timestamp, List[Tuple[str, str]]] = {}
     scan_targets = pd.DatetimeIndex(trade_dates - BDay(int(params.exec_lag_days))).normalize()
@@ -828,8 +933,13 @@ def run_global_ranking_daily_portfolio(
     scans: Optional[pd.DataFrame] = None,
 ) -> Dict:
     signal_space = str(params.signal_space).strip().lower()
+    selection_mode = str(params.selection_mode).strip().lower()
     if signal_space not in {"raw", "idio_pca"}:
         raise ValueError(f"Unsupported signal_space='{params.signal_space}'. Use 'raw' or 'idio_pca'.")
+    if selection_mode not in {"legacy", "composite_quality"}:
+        raise ValueError(
+            f"Unsupported selection_mode='{params.selection_mode}'. Use 'legacy' or 'composite_quality'."
+        )
     if signal_space == "idio_pca":
         if int(params.pca_signal_window) < 20:
             raise ValueError("pca_signal_window must be >= 20 for signal_space='idio_pca'.")
@@ -892,7 +1002,7 @@ def run_global_ranking_daily_portfolio(
     final_eq = float(equity["equity"].iloc[-1])
 
     n = len(equity)
-    cagr = (final_eq ** (252 / n) - 1.0) if n > 0 else np.nan
+    cagr = (final_eq ** (252 / n) - 1.0) if (n > 0 and final_eq > 0.0) else np.nan
     vol = float(returns.std(ddof=1)) if len(returns) > 1 else np.nan
     sharpe = float(np.sqrt(252) * returns.mean() / vol) if (vol is not None and vol > 0) else np.nan
     mdd = float((equity["equity"] / equity["equity"].cummax() - 1).min())
@@ -904,6 +1014,9 @@ def run_global_ranking_daily_portfolio(
         "Max Drawdown": round(mdd, 3),
         "Nb Trades": int(len(trades)) if isinstance(trades, pd.DataFrame) else 0,
         "Signal space": ctx.signal_space,
+        "Selection mode": selection_mode,
+        "Selection labels": ",".join(_normalize_eligibility_labels(tuple(params.eligibility_labels))),
+        "Max pairs per asset": int(params.max_pairs_per_asset),
         "PCA window": PCA_WINDOW,
         "PCA q": PCA_Q,
         "PCA min assets": PCA_MIN_ASSETS,
