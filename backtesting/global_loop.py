@@ -103,7 +103,7 @@ class GlobalRankingSweepRunner:
         params = replace(
             self._params_template,
             z_entry=float(z_entry),
-            z_exit=0.25 * float(z_entry),
+            z_exit=float(z_entry) / 3.0,
             z_stop=2.0 * float(z_entry),
             z_window=int(z_window),
         )
@@ -141,7 +141,7 @@ def run_for_params(
     """
     params = StrategyParams(
         z_entry=float(z_entry),
-        z_exit=0.25 * float(z_entry),
+        z_exit=float(z_entry) / 3.0,
         z_stop=2.0 * float(z_entry),
         z_window=int(z_window),
         beta_mode=beta_mode,
@@ -476,24 +476,94 @@ def _rank_pct_series(s: pd.Series, ascending: bool) -> pd.Series:
     return x.rank(pct=True, ascending=ascending, method="average").astype(float)
 
 
-def _compute_selection_score(df: pd.DataFrame, selection_mode: str) -> pd.Series:
-    mode = str(selection_mode).strip().lower()
+def _winsorize_series(s: pd.Series, q: float) -> pd.Series:
+    x = pd.to_numeric(s, errors="coerce")
+    if not np.isfinite(q) or q <= 0.0:
+        return x
+    qq = float(min(0.25, max(0.0, q)))
+    if int(x.notna().sum()) < 5:
+        return x
+    lo = float(x.quantile(qq))
+    hi = float(x.quantile(1.0 - qq))
+    return x.clip(lower=lo, upper=hi)
+
+
+def _robust_z_series(s: pd.Series) -> pd.Series:
+    x = pd.to_numeric(s, errors="coerce")
+    med = float(x.median()) if int(x.notna().sum()) > 0 else np.nan
+    mad = float((x - med).abs().median()) if np.isfinite(med) else np.nan
+    if (not np.isfinite(mad)) or mad <= 1e-12:
+        return pd.Series(0.0, index=s.index, dtype=float)
+    z = 0.6745 * (x - med) / mad
+    return pd.to_numeric(z, errors="coerce").fillna(0.0)
+
+
+def _compute_selection_score(df: pd.DataFrame, params: StrategyParams) -> pd.Series:
+    mode = str(params.selection_mode).strip().lower()
     if mode == "legacy":
         return pd.to_numeric(df.get("eligibility_score"), errors="coerce").fillna(-np.inf)
     if mode != "composite_quality":
-        raise ValueError(f"Unsupported selection_mode='{selection_mode}'. Use 'legacy' or 'composite_quality'.")
+        raise ValueError(f"Unsupported selection_mode='{params.selection_mode}'. Use 'legacy' or 'composite_quality'.")
 
-    score = (
-        1.00 * _rank_pct_series(df.get("eligibility_score", pd.Series(index=df.index, dtype=float)), ascending=True)
-        + 0.90 * _rank_pct_series(
-            pd.to_numeric(df.get("12m_corr", pd.Series(index=df.index, dtype=float)), errors="coerce").abs(),
-            ascending=True,
+    variant = str(params.selection_score_variant).strip().lower()
+    if not variant:
+        variant = "baseline"
+    if variant not in {"baseline", "rank_percentile", "robust_zscore", "rank_stability_penalty"}:
+        raise ValueError(
+            "Unsupported selection_score_variant="
+            f"'{params.selection_score_variant}'. Use baseline/rank_percentile/robust_zscore/rank_stability_penalty."
         )
-        + 0.75 * _rank_pct_series(df.get("n_valid_windows", pd.Series(index=df.index, dtype=float)), ascending=True)
-        + 0.60 * _rank_pct_series(df.get("6m_half_life", pd.Series(index=df.index, dtype=float)), ascending=False)
-        + 0.40 * _rank_pct_series(df.get("beta_std", pd.Series(index=df.index, dtype=float)), ascending=False)
-        + 0.25 * _rank_pct_series(df.get("6m_spread_std", pd.Series(index=df.index, dtype=float)), ascending=True)
+
+    s_elig = pd.to_numeric(df.get("eligibility_score", pd.Series(index=df.index, dtype=float)), errors="coerce")
+    s_corr = pd.to_numeric(df.get("12m_corr", pd.Series(index=df.index, dtype=float)), errors="coerce").abs()
+    s_nvw = pd.to_numeric(df.get("n_valid_windows", pd.Series(index=df.index, dtype=float)), errors="coerce")
+    s_hl = pd.to_numeric(df.get("6m_half_life", pd.Series(index=df.index, dtype=float)), errors="coerce")
+    s_beta = pd.to_numeric(df.get("beta_std", pd.Series(index=df.index, dtype=float)), errors="coerce")
+    s_sstd = pd.to_numeric(df.get("6m_spread_std", pd.Series(index=df.index, dtype=float)), errors="coerce")
+
+    base_score = (
+        1.00 * _rank_pct_series(s_elig, ascending=True)
+        + 0.90 * _rank_pct_series(s_corr, ascending=True)
+        + 0.75 * _rank_pct_series(s_nvw, ascending=True)
+        + 0.60 * _rank_pct_series(s_hl, ascending=False)
+        + 0.40 * _rank_pct_series(s_beta, ascending=False)
+        + 0.25 * _rank_pct_series(s_sstd, ascending=True)
     )
+
+    if variant == "baseline":
+        score = base_score
+    elif variant == "rank_percentile":
+        score = (
+            _rank_pct_series(s_elig, ascending=True)
+            + _rank_pct_series(s_corr, ascending=True)
+            + _rank_pct_series(s_nvw, ascending=True)
+            + _rank_pct_series(s_hl, ascending=False)
+            + _rank_pct_series(s_beta, ascending=False)
+            + _rank_pct_series(s_sstd, ascending=True)
+        ) / 6.0
+    elif variant == "robust_zscore":
+        winsor_q = float(params.selection_winsor_quantile)
+        if winsor_q <= 0.0:
+            winsor_q = 0.05
+        score = (
+            1.00 * _robust_z_series(_winsorize_series(s_elig, winsor_q))
+            + 0.90 * _robust_z_series(_winsorize_series(s_corr, winsor_q))
+            + 0.75 * _robust_z_series(_winsorize_series(s_nvw, winsor_q))
+            - 0.60 * _robust_z_series(_winsorize_series(s_hl, winsor_q))
+            - 0.40 * _robust_z_series(_winsorize_series(s_beta, winsor_q))
+            + 0.25 * _robust_z_series(_winsorize_series(s_sstd, winsor_q))
+        )
+    else:  # rank_stability_penalty
+        lam = float(params.selection_stability_penalty)
+        if lam <= 0.0:
+            lam = 0.35
+        stability_penalty = (
+            0.50 * _rank_pct_series(s_beta, ascending=True)
+            + 0.30 * _rank_pct_series(s_hl, ascending=True)
+            + 0.20 * _rank_pct_series(s_nvw, ascending=False)
+        )
+        score = base_score - lam * stability_penalty
+
     return pd.to_numeric(score, errors="coerce").fillna(-np.inf)
 
 
@@ -538,7 +608,7 @@ def _select_ranked_pairs_for_scan_day(
     if pool.empty:
         return []
 
-    pool["_selection_score"] = _compute_selection_score(pool, params.selection_mode)
+    pool["_selection_score"] = _compute_selection_score(pool, params)
     pool = pool.sort_values("_selection_score", ascending=False)
 
     max_pairs_per_asset = int(params.max_pairs_per_asset)
@@ -589,6 +659,9 @@ def _context_cache_key(
         int(params.exec_lag_days),
         int(params.top_n_candidates),
         str(params.selection_mode).strip().lower(),
+        str(params.selection_score_variant).strip().lower(),
+        round(float(params.selection_winsor_quantile), 6),
+        round(float(params.selection_stability_penalty), 6),
         _normalize_eligibility_labels(tuple(params.eligibility_labels)),
         None if params.min_corr_12m is None else float(params.min_corr_12m),
         None if params.max_half_life_6m is None else float(params.max_half_life_6m),
@@ -934,11 +1007,17 @@ def run_global_ranking_daily_portfolio(
 ) -> Dict:
     signal_space = str(params.signal_space).strip().lower()
     selection_mode = str(params.selection_mode).strip().lower()
+    selection_variant = str(params.selection_score_variant).strip().lower()
     if signal_space not in {"raw", "idio_pca"}:
         raise ValueError(f"Unsupported signal_space='{params.signal_space}'. Use 'raw' or 'idio_pca'.")
     if selection_mode not in {"legacy", "composite_quality"}:
         raise ValueError(
             f"Unsupported selection_mode='{params.selection_mode}'. Use 'legacy' or 'composite_quality'."
+        )
+    if selection_variant not in {"baseline", "rank_percentile", "robust_zscore", "rank_stability_penalty"}:
+        raise ValueError(
+            "Unsupported selection_score_variant="
+            f"'{params.selection_score_variant}'. Use baseline/rank_percentile/robust_zscore/rank_stability_penalty."
         )
     if signal_space == "idio_pca":
         if int(params.pca_signal_window) < 20:
@@ -947,6 +1026,16 @@ def run_global_ranking_daily_portfolio(
             raise ValueError("pca_signal_components must be >= 1 for signal_space='idio_pca'.")
         if int(params.pca_signal_min_assets) < 3:
             raise ValueError("pca_signal_min_assets must be >= 3 for signal_space='idio_pca'.")
+    if params.pair_return_cap is not None and float(params.pair_return_cap) <= 0.0:
+        raise ValueError("pair_return_cap must be > 0 when provided.")
+    if params.trade_return_isolated_cap is not None and float(params.trade_return_isolated_cap) <= 0.0:
+        raise ValueError("trade_return_isolated_cap must be > 0 when provided.")
+    if params.portfolio_vol_target is not None and float(params.portfolio_vol_target) <= 0.0:
+        raise ValueError("portfolio_vol_target must be > 0 when provided.")
+    if int(params.portfolio_vol_lookback) < 5:
+        raise ValueError("portfolio_vol_lookback must be >= 5.")
+    if float(params.portfolio_vol_max_scale) <= 0.0:
+        raise ValueError("portfolio_vol_max_scale must be > 0.")
 
     ctx = _get_or_build_global_context(cfg=cfg, params=params, universes=universes, scans=scans)
     if ctx is None:
@@ -985,6 +1074,8 @@ def run_global_ranking_daily_portfolio(
 
     equity = res["equity"].copy()
     trades = res["trades"].copy()
+    diagnostics = res.get("diagnostics", pd.DataFrame()).copy()
+    anomaly_flags = list(res.get("anomaly_flags", []))
 
     equity["trade_month"] = pd.to_datetime(equity["datetime"]).dt.strftime("%Y-%m")
     monthly = (
@@ -1006,6 +1097,29 @@ def run_global_ranking_daily_portfolio(
     vol = float(returns.std(ddof=1)) if len(returns) > 1 else np.nan
     sharpe = float(np.sqrt(252) * returns.mean() / vol) if (vol is not None and vol > 0) else np.nan
     mdd = float((equity["equity"] / equity["equity"].cummax() - 1).min())
+    max_abs_daily_ret = float(np.abs(returns).max()) if len(returns) > 0 else np.nan
+    p99_abs_daily_ret = float(np.abs(returns).quantile(0.99)) if len(returns) > 0 else np.nan
+
+    max_abs_pair_ret_raw = np.nan
+    max_vol_scale = np.nan
+    if isinstance(diagnostics, pd.DataFrame) and not diagnostics.empty:
+        if "max_abs_pair_ret_raw" in diagnostics.columns:
+            s = pd.to_numeric(diagnostics["max_abs_pair_ret_raw"], errors="coerce")
+            max_abs_pair_ret_raw = float(s.max()) if int(s.notna().sum()) > 0 else np.nan
+        if "vol_scale" in diagnostics.columns:
+            s = pd.to_numeric(diagnostics["vol_scale"], errors="coerce")
+            max_vol_scale = float(s.max()) if int(s.notna().sum()) > 0 else np.nan
+
+    anomaly_reasons = []
+    if any(str(x).strip() for x in anomaly_flags):
+        anomaly_reasons.extend([str(x) for x in anomaly_flags if str(x).strip()])
+    if np.isfinite(mdd) and mdd <= -1.0:
+        anomaly_reasons.append("drawdown_below_-100pct")
+    if np.isfinite(max_abs_daily_ret) and max_abs_daily_ret > 0.35:
+        anomaly_reasons.append("extreme_daily_return_gt_35pct")
+    if np.isfinite(max_abs_pair_ret_raw) and max_abs_pair_ret_raw > 0.20:
+        anomaly_reasons.append("extreme_pair_mtm_raw_gt_20pct")
+    anomaly_reasons = sorted(set(anomaly_reasons))
 
     stats = {
         "Final Equity": round(final_eq, 2),
@@ -1015,8 +1129,17 @@ def run_global_ranking_daily_portfolio(
         "Nb Trades": int(len(trades)) if isinstance(trades, pd.DataFrame) else 0,
         "Signal space": ctx.signal_space,
         "Selection mode": selection_mode,
+        "Selection variant": selection_variant,
         "Selection labels": ",".join(_normalize_eligibility_labels(tuple(params.eligibility_labels))),
         "Max pairs per asset": int(params.max_pairs_per_asset),
+        "Selection winsor q": float(params.selection_winsor_quantile),
+        "Selection stability penalty": float(params.selection_stability_penalty),
+        "Pair return cap": float(params.pair_return_cap) if params.pair_return_cap is not None else np.nan,
+        "Portfolio vol target": (
+            float(params.portfolio_vol_target) if params.portfolio_vol_target is not None else np.nan
+        ),
+        "Portfolio vol lookback": int(params.portfolio_vol_lookback),
+        "Portfolio vol max scale": float(params.portfolio_vol_max_scale),
         "PCA window": PCA_WINDOW,
         "PCA q": PCA_Q,
         "PCA min assets": PCA_MIN_ASSETS,
@@ -1024,10 +1147,23 @@ def run_global_ranking_daily_portfolio(
         "Mkt vol q": MKT_VOL_Q,
         "% days blocked (when active)": round(float(ctx.pct_blocked), 3) if np.isfinite(ctx.pct_blocked) else np.nan,
         "Max scan age (bdays)": MAX_SCAN_AGE_BDAYS,
+        "Max abs daily return": round(max_abs_daily_ret, 4) if np.isfinite(max_abs_daily_ret) else np.nan,
+        "P99 abs daily return": round(p99_abs_daily_ret, 4) if np.isfinite(p99_abs_daily_ret) else np.nan,
+        "Max abs pair mtm raw": round(max_abs_pair_ret_raw, 4) if np.isfinite(max_abs_pair_ret_raw) else np.nan,
+        "Max vol scale": round(max_vol_scale, 3) if np.isfinite(max_vol_scale) else np.nan,
+        "Anomaly flag": bool(anomaly_reasons),
+        "Anomaly reasons": ";".join(anomaly_reasons),
     }
     if signal_space == "idio_pca":
         stats["Signal PCA window"] = int(params.pca_signal_window)
         stats["Signal PCA components"] = int(params.pca_signal_components)
         stats["Signal PCA min assets"] = int(params.pca_signal_min_assets)
 
-    return {"equity": equity, "monthly": monthly, "trades": trades, "stats": stats}
+    return {
+        "equity": equity,
+        "monthly": monthly,
+        "trades": trades,
+        "stats": stats,
+        "diagnostics": diagnostics,
+        "anomaly_flags": anomaly_reasons,
+    }

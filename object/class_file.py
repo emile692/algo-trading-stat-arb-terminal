@@ -81,6 +81,28 @@ class StrategyParams:
     # 0 or less => disabled.
     max_pairs_per_asset: int = 0
 
+    # Composite selection score variants (used when selection_mode="composite_quality")
+    # "baseline": current weighted percentile blend.
+    # "rank_percentile": equal-weight percentile blend.
+    # "robust_zscore": winsorized robust-z aggregation.
+    # "rank_stability_penalty": baseline score minus stability penalty.
+    selection_score_variant: str = "baseline"
+    # 0.0 disables winsorization; e.g. 0.05 clips to [5%, 95%].
+    selection_winsor_quantile: float = 0.0
+    # Stability penalty strength for "rank_stability_penalty" (0.0 disables).
+    selection_stability_penalty: float = 0.0
+
+    # Optional risk guardrails (disabled by default to preserve legacy behavior)
+    # Cap each pair daily MTM contribution |ret| before portfolio aggregation.
+    pair_return_cap: Optional[float] = None
+    # Cap isolated trade return reported in logs (does not affect engine PnL path).
+    trade_return_isolated_cap: Optional[float] = None
+    # Target daily volatility on portfolio MTM returns.
+    portfolio_vol_target: Optional[float] = None
+    portfolio_vol_lookback: int = 20
+    # Maximum scaling applied by vol targeting (>= 1 allows limited leverage-up).
+    portfolio_vol_max_scale: float = 1.0
+
 
 # ============================================================
 # BATCH CONFIG (DATA / IO)
