@@ -36,6 +36,20 @@ _CACHE_LOCK = RLock()
 _GLOBAL_CONTEXT_CACHE: OrderedDict[Tuple, "_GlobalRunContext"] = OrderedDict()
 _PAIR_STATE_CACHE: OrderedDict[Tuple, Dict[str, pd.DataFrame]] = OrderedDict()
 _SCAN_SIG_MEMO: Dict[int, Tuple[int, Tuple[str, ...], Tuple]] = {}
+_VALID_SCAN_WEEKDAYS = {"MON", "TUE", "WED", "THU", "FRI"}
+_LEGACY_SELECTION_SCORE_VARIANTS = {
+    "baseline",
+    "half_life_weighted",
+    "spread_speed_penalized",
+    "distance_to_mean_over_half_life",
+    "low_corr_penalized",
+}
+_COMPOSITE_SELECTION_SCORE_VARIANTS = {
+    "baseline",
+    "rank_percentile",
+    "robust_zscore",
+    "rank_stability_penalty",
+}
 
 
 @dataclass
@@ -45,6 +59,7 @@ class _GlobalRunContext:
     end: pd.Timestamp
     trade_dates: pd.DatetimeIndex
     ranked_pairs_by_date: Dict[pd.Timestamp, List[Tuple[str, str]]]
+    scan_date_by_trade_date: Dict[pd.Timestamp, pd.Timestamp]
     all_ranked_pairs: List[Tuple[str, str]]
     signal_price_panel: pd.DataFrame
     asset_log_offsets: Dict[str, float]
@@ -469,11 +484,83 @@ def _normalize_eligibility_labels(labels: Tuple[str, ...]) -> Tuple[str, ...]:
     return out if out else ("ELIGIBLE",)
 
 
+def _normalize_scan_frequency(freq: str) -> str:
+    f = str(freq).strip().lower()
+    if f in {"", "daily", "day", "d", "b"}:
+        return "daily"
+    if f in {"weekly", "week", "w"}:
+        return "weekly"
+    raise ValueError(f"Unsupported scan_frequency='{freq}'. Use 'daily' or 'weekly'.")
+
+
+def _normalize_scan_weekday(scan_weekday: str) -> str:
+    wd = str(scan_weekday).strip().upper()
+    if wd not in _VALID_SCAN_WEEKDAYS:
+        raise ValueError(f"Unsupported scan_weekday='{scan_weekday}'. Use one of {sorted(_VALID_SCAN_WEEKDAYS)}.")
+    return wd
+
+
+def _apply_scan_schedule(df: pd.DataFrame, params: StrategyParams) -> pd.DataFrame:
+    if df.empty:
+        return df
+
+    freq = _normalize_scan_frequency(params.scan_frequency)
+    if freq == "daily":
+        return df
+
+    wd = _normalize_scan_weekday(params.scan_weekday)
+    out = df.copy()
+    out["scan_date"] = pd.to_datetime(out["scan_date"]).dt.normalize()
+    out = out[out["scan_date"].dt.dayofweek <= 4].copy()
+    if out.empty:
+        return out
+    out["_scan_bucket"] = out["scan_date"].dt.to_period(f"W-{wd}")
+
+    group_cols = ["_scan_bucket"]
+    if "universe" in out.columns:
+        group_cols.insert(0, "universe")
+
+    out["_scan_pick"] = out.groupby(group_cols)["scan_date"].transform("max")
+    out = out[out["scan_date"] == out["_scan_pick"]].copy()
+    out = out.drop(columns=["_scan_bucket", "_scan_pick"])
+    return out.reset_index(drop=True)
+
+
 def _rank_pct_series(s: pd.Series, ascending: bool) -> pd.Series:
     x = pd.to_numeric(s, errors="coerce")
     if int(x.notna().sum()) <= 1:
         return pd.Series(0.5, index=s.index, dtype=float)
     return x.rank(pct=True, ascending=ascending, method="average").astype(float)
+
+
+def _selection_variant_for_mode(params: StrategyParams) -> str:
+    mode = str(params.selection_mode).strip().lower()
+    variant = str(params.selection_score_variant).strip().lower() or "baseline"
+
+    if mode == "legacy":
+        allowed = _LEGACY_SELECTION_SCORE_VARIANTS
+    elif mode == "composite_quality":
+        allowed = _COMPOSITE_SELECTION_SCORE_VARIANTS
+    else:
+        raise ValueError(f"Unsupported selection_mode='{params.selection_mode}'. Use 'legacy' or 'composite_quality'.")
+
+    if variant not in allowed:
+        raise ValueError(
+            "Unsupported selection_score_variant="
+            f"'{params.selection_score_variant}' for selection_mode='{mode}'. "
+            f"Use one of {sorted(allowed)}."
+        )
+    return variant
+
+
+def _positive_strength_or_default(value: float, fallback: float) -> float:
+    try:
+        val = float(value)
+    except Exception:
+        return float(fallback)
+    if (not np.isfinite(val)) or val <= 0.0:
+        return float(fallback)
+    return float(val)
 
 
 def _winsorize_series(s: pd.Series, q: float) -> pd.Series:
@@ -500,24 +587,51 @@ def _robust_z_series(s: pd.Series) -> pd.Series:
 
 def _compute_selection_score(df: pd.DataFrame, params: StrategyParams) -> pd.Series:
     mode = str(params.selection_mode).strip().lower()
-    if mode == "legacy":
-        return pd.to_numeric(df.get("eligibility_score"), errors="coerce").fillna(-np.inf)
-    if mode != "composite_quality":
-        raise ValueError(f"Unsupported selection_mode='{params.selection_mode}'. Use 'legacy' or 'composite_quality'.")
-
-    variant = str(params.selection_score_variant).strip().lower()
-    if not variant:
-        variant = "baseline"
-    if variant not in {"baseline", "rank_percentile", "robust_zscore", "rank_stability_penalty"}:
-        raise ValueError(
-            "Unsupported selection_score_variant="
-            f"'{params.selection_score_variant}'. Use baseline/rank_percentile/robust_zscore/rank_stability_penalty."
-        )
+    variant = _selection_variant_for_mode(params)
 
     s_elig = pd.to_numeric(df.get("eligibility_score", pd.Series(index=df.index, dtype=float)), errors="coerce")
     s_corr = pd.to_numeric(df.get("12m_corr", pd.Series(index=df.index, dtype=float)), errors="coerce").abs()
-    s_nvw = pd.to_numeric(df.get("n_valid_windows", pd.Series(index=df.index, dtype=float)), errors="coerce")
     s_hl = pd.to_numeric(df.get("6m_half_life", pd.Series(index=df.index, dtype=float)), errors="coerce")
+    s_abs_last_z = pd.to_numeric(df.get("6m_abs_last_z", pd.Series(index=df.index, dtype=float)), errors="coerce")
+    s_speed = pd.to_numeric(df.get("6m_mean_abs_delta_z", pd.Series(index=df.index, dtype=float)), errors="coerce")
+    if int(s_speed.notna().sum()) == 0:
+        s_speed = pd.to_numeric(df.get("6m_mean_abs_delta_spread", pd.Series(index=df.index, dtype=float)), errors="coerce")
+    if int(s_speed.notna().sum()) == 0:
+        s_speed = pd.to_numeric(df.get("6m_spread_std", pd.Series(index=df.index, dtype=float)), errors="coerce")
+
+    if mode == "legacy":
+        base_score = s_elig
+        if variant == "baseline":
+            return base_score.fillna(-np.inf)
+
+        if variant == "half_life_weighted":
+            lam = _positive_strength_or_default(params.selection_half_life_penalty, 0.15)
+            score = base_score - lam * _rank_pct_series(s_hl, ascending=True)
+            return pd.to_numeric(score, errors="coerce").fillna(-np.inf)
+
+        if variant == "spread_speed_penalized":
+            lam = _positive_strength_or_default(params.selection_speed_penalty, 0.10)
+            if int(s_speed.notna().sum()) == 0:
+                return base_score.fillna(-np.inf)
+            score = base_score - lam * _rank_pct_series(s_speed, ascending=True)
+            return pd.to_numeric(score, errors="coerce").fillna(-np.inf)
+
+        if variant == "distance_to_mean_over_half_life":
+            lam = _positive_strength_or_default(params.selection_distance_weight, 0.15)
+            hl_safe = s_hl.clip(lower=1.0)
+            signal = (s_abs_last_z / np.sqrt(hl_safe)).replace([np.inf, -np.inf], np.nan)
+            if int(signal.notna().sum()) == 0:
+                return base_score.fillna(-np.inf)
+            score = base_score + lam * _rank_pct_series(signal, ascending=True)
+            return pd.to_numeric(score, errors="coerce").fillna(-np.inf)
+
+        lam = _positive_strength_or_default(params.selection_corr_penalty, 0.10)
+        score = base_score - lam * _rank_pct_series(s_corr, ascending=False)
+        return pd.to_numeric(score, errors="coerce").fillna(-np.inf)
+
+    if mode != "composite_quality":
+        raise ValueError(f"Unsupported selection_mode='{params.selection_mode}'. Use 'legacy' or 'composite_quality'.")
+    s_nvw = pd.to_numeric(df.get("n_valid_windows", pd.Series(index=df.index, dtype=float)), errors="coerce")
     s_beta = pd.to_numeric(df.get("beta_std", pd.Series(index=df.index, dtype=float)), errors="coerce")
     s_sstd = pd.to_numeric(df.get("6m_spread_std", pd.Series(index=df.index, dtype=float)), errors="coerce")
 
@@ -657,11 +771,17 @@ def _context_cache_key(
         str(end.date()),
         tuple(sorted(set(universes))),
         int(params.exec_lag_days),
+        _normalize_scan_frequency(params.scan_frequency),
+        _normalize_scan_weekday(params.scan_weekday),
         int(params.top_n_candidates),
         str(params.selection_mode).strip().lower(),
-        str(params.selection_score_variant).strip().lower(),
+        _selection_variant_for_mode(params),
         round(float(params.selection_winsor_quantile), 6),
         round(float(params.selection_stability_penalty), 6),
+        round(float(params.selection_half_life_penalty), 6),
+        round(float(params.selection_speed_penalty), 6),
+        round(float(params.selection_distance_weight), 6),
+        round(float(params.selection_corr_penalty), 6),
         _normalize_eligibility_labels(tuple(params.eligibility_labels)),
         None if params.min_corr_12m is None else float(params.min_corr_12m),
         None if params.max_half_life_6m is None else float(params.max_half_life_6m),
@@ -708,6 +828,9 @@ def _build_global_context(
     scans_df["scan_date"] = pd.to_datetime(scans_df["scan_date"]).dt.normalize()
     scans_df["asset_1"] = scans_df["asset_1"].astype(str).str.upper()
     scans_df["asset_2"] = scans_df["asset_2"].astype(str).str.upper()
+    scans_df = _apply_scan_schedule(scans_df, params)
+    if scans_df.empty:
+        return None
 
     scans_by_date = {d: g for d, g in scans_df.groupby("scan_date", sort=True)}
     scan_dates_idx = pd.DatetimeIndex(sorted(scans_by_date.keys())).sort_values()
@@ -788,6 +911,7 @@ def _build_global_context(
             ranked_pairs_by_scan_date[scan_dt] = selected
 
     ranked_pairs_by_date: Dict[pd.Timestamp, List[Tuple[str, str]]] = {}
+    scan_date_by_trade_date: Dict[pd.Timestamp, pd.Timestamp] = {}
     scan_targets = pd.DatetimeIndex(trade_dates - BDay(int(params.exec_lag_days))).normalize()
     scan_dates_ns = scan_dates_idx.view("i8")
     target_ns = scan_targets.view("i8")
@@ -796,20 +920,24 @@ def _build_global_context(
     for i, dt in enumerate(trade_dates):
         if blocked[i]:
             ranked_pairs_by_date[dt] = []
+            scan_date_by_trade_date[dt] = pd.NaT
             continue
 
         p = int(pos[i])
         if p < 0:
             ranked_pairs_by_date[dt] = []
+            scan_date_by_trade_date[dt] = pd.NaT
             continue
 
         scan_dt = pd.Timestamp(scan_dates_idx[p]).normalize()
         if MAX_SCAN_AGE_BDAYS is not None:
             if scan_dt < (scan_targets[i] - BDay(int(MAX_SCAN_AGE_BDAYS))).normalize():
                 ranked_pairs_by_date[dt] = []
+                scan_date_by_trade_date[dt] = pd.NaT
                 continue
 
         ranked_pairs_by_date[dt] = ranked_pairs_by_scan_date.get(scan_dt, [])
+        scan_date_by_trade_date[dt] = scan_dt
 
     all_ranked_pairs = sorted(
         {
@@ -856,6 +984,7 @@ def _build_global_context(
         end=end,
         trade_dates=trade_dates,
         ranked_pairs_by_date=ranked_pairs_by_date,
+        scan_date_by_trade_date=scan_date_by_trade_date,
         all_ranked_pairs=all_ranked_pairs,
         signal_price_panel=signal_price_panel,
         asset_log_offsets=asset_log_offsets,
@@ -977,6 +1106,7 @@ def _build_pair_states_for_window(ctx: _GlobalRunContext, z_window: int) -> Dict
                 "x": x.astype(float),
                 "beta": beta.astype(float),
                 "spread": spread.astype(float),
+                "spread_std": spread_std.astype(float),
                 "z": z.astype(float),
                 "state_available": state_available,
             },
@@ -1007,17 +1137,14 @@ def run_global_ranking_daily_portfolio(
 ) -> Dict:
     signal_space = str(params.signal_space).strip().lower()
     selection_mode = str(params.selection_mode).strip().lower()
-    selection_variant = str(params.selection_score_variant).strip().lower()
+    selection_variant = _selection_variant_for_mode(params)
+    scan_frequency = _normalize_scan_frequency(params.scan_frequency)
+    scan_weekday = _normalize_scan_weekday(params.scan_weekday)
     if signal_space not in {"raw", "idio_pca"}:
         raise ValueError(f"Unsupported signal_space='{params.signal_space}'. Use 'raw' or 'idio_pca'.")
     if selection_mode not in {"legacy", "composite_quality"}:
         raise ValueError(
             f"Unsupported selection_mode='{params.selection_mode}'. Use 'legacy' or 'composite_quality'."
-        )
-    if selection_variant not in {"baseline", "rank_percentile", "robust_zscore", "rank_stability_penalty"}:
-        raise ValueError(
-            "Unsupported selection_score_variant="
-            f"'{params.selection_score_variant}'. Use baseline/rank_percentile/robust_zscore/rank_stability_penalty."
         )
     if signal_space == "idio_pca":
         if int(params.pca_signal_window) < 20:
@@ -1075,7 +1202,33 @@ def run_global_ranking_daily_portfolio(
     equity = res["equity"].copy()
     trades = res["trades"].copy()
     diagnostics = res.get("diagnostics", pd.DataFrame()).copy()
+    entry_filter_summary = res.get("entry_filter_summary", pd.DataFrame()).copy()
     anomaly_flags = list(res.get("anomaly_flags", []))
+
+    trade_dates = pd.DatetimeIndex(ctx.trade_dates).normalize()
+    trade_pos = {pd.Timestamp(dt).normalize(): i for i, dt in enumerate(trade_dates)}
+    scan_usage = pd.DataFrame({"trade_date": trade_dates})
+    scan_usage["scan_target_date"] = pd.DatetimeIndex(
+        trade_dates - BDay(int(params.exec_lag_days))
+    ).normalize()
+    scan_usage["applied_scan_date"] = [
+        pd.to_datetime(ctx.scan_date_by_trade_date.get(pd.Timestamp(dt).normalize(), pd.NaT))
+        for dt in trade_dates
+    ]
+    scan_usage["scan_age_bdays"] = [
+        (
+            float(trade_pos[pd.Timestamp(dt).normalize()] - trade_pos[pd.Timestamp(sd).normalize()])
+            if pd.notna(sd) and pd.Timestamp(sd).normalize() in trade_pos
+            else np.nan
+        )
+        for dt, sd in zip(scan_usage["trade_date"], scan_usage["applied_scan_date"])
+    ]
+    scan_usage["lookahead_ok"] = [
+        (pd.isna(sd) or pd.Timestamp(sd).normalize() < pd.Timestamp(dt).normalize())
+        for dt, sd in zip(scan_usage["trade_date"], scan_usage["applied_scan_date"])
+    ]
+    n_lookahead_violations = int((~scan_usage["lookahead_ok"]).sum())
+    avg_scan_age_bdays = float(scan_usage["scan_age_bdays"].mean()) if int(scan_usage["scan_age_bdays"].notna().sum()) > 0 else np.nan
 
     equity["trade_month"] = pd.to_datetime(equity["datetime"]).dt.strftime("%Y-%m")
     monthly = (
@@ -1128,12 +1281,21 @@ def run_global_ranking_daily_portfolio(
         "Max Drawdown": round(mdd, 3),
         "Nb Trades": int(len(trades)) if isinstance(trades, pd.DataFrame) else 0,
         "Signal space": ctx.signal_space,
+        "Entry mode": str(params.entry_mode).strip().lower(),
+        "Scan frequency": scan_frequency,
+        "Scan weekday": scan_weekday,
         "Selection mode": selection_mode,
         "Selection variant": selection_variant,
         "Selection labels": ",".join(_normalize_eligibility_labels(tuple(params.eligibility_labels))),
+        "Avg scan age (bdays)": round(avg_scan_age_bdays, 2) if np.isfinite(avg_scan_age_bdays) else np.nan,
+        "Lookahead violations": n_lookahead_violations,
         "Max pairs per asset": int(params.max_pairs_per_asset),
         "Selection winsor q": float(params.selection_winsor_quantile),
         "Selection stability penalty": float(params.selection_stability_penalty),
+        "Selection half-life penalty": float(params.selection_half_life_penalty),
+        "Selection speed penalty": float(params.selection_speed_penalty),
+        "Selection distance weight": float(params.selection_distance_weight),
+        "Selection corr penalty": float(params.selection_corr_penalty),
         "Pair return cap": float(params.pair_return_cap) if params.pair_return_cap is not None else np.nan,
         "Portfolio vol target": (
             float(params.portfolio_vol_target) if params.portfolio_vol_target is not None else np.nan
@@ -1165,5 +1327,7 @@ def run_global_ranking_daily_portfolio(
         "trades": trades,
         "stats": stats,
         "diagnostics": diagnostics,
+        "entry_filter_summary": entry_filter_summary,
+        "scan_usage": scan_usage,
         "anomaly_flags": anomaly_reasons,
     }

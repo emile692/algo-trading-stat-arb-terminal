@@ -52,6 +52,12 @@ class StrategyParams:
     # Execution lag (pour éviter look-ahead : scan J, trade J+1)
     exec_lag_days: int = 1
 
+    # Scan scheduling controls (used by inline scanner / global_loop)
+    # "daily": keep every available scan date.
+    # "weekly": keep the last available scan date in each week ending on scan_weekday.
+    scan_frequency: str = "daily"   # "daily" | "weekly"
+    scan_weekday: str = "FRI"
+
     # Signal construction space
     # "raw" keeps current behavior (signals on raw log prices).
     # "idio_pca" builds signals on PCA de-factorized idiosyncratic series.
@@ -61,6 +67,21 @@ class StrategyParams:
     pca_signal_window: int = 252
     pca_signal_components: int = 3
     pca_signal_min_assets: int = 10
+
+    # Entry controls (engine only)
+    # "baseline_entry": current |z| threshold entry with no extra filter.
+    # "entry_with_spread_speed_filter": benchmark cap on |delta_spread| / spread_std.
+    # "entry_zspeed_hard_cap": cap on |delta_z|.
+    # "entry_zspeed_ewma_cap": cap on EWMA(|delta_z|).
+    # "entry_zspeed_vol_normalized": cap on |delta_z| / rolling_std(delta_z).
+    # "entry_slowdown_confirmation": require |delta_z_t| < |delta_z_{t-1}|.
+    entry_mode: str = "baseline_entry"
+    spread_speed_cap: Optional[float] = None
+    zspeed_cap: Optional[float] = None
+    zspeed_ewma_span: int = 3
+    zspeed_ewma_cap: Optional[float] = None
+    zspeed_vol_window: int = 10
+    zspeed_vol_cap: Optional[float] = None
 
     # Scan-time pair selection controls (applied in global_loop)
     # "legacy": keep existing behavior (sort by eligibility_score only).
@@ -86,11 +107,18 @@ class StrategyParams:
     # "rank_percentile": equal-weight percentile blend.
     # "robust_zscore": winsorized robust-z aggregation.
     # "rank_stability_penalty": baseline score minus stability penalty.
+    # Legacy ranking research variants (used when selection_mode="legacy")
+    # also reuse selection_score_variant with light scan-time adjustments.
     selection_score_variant: str = "baseline"
     # 0.0 disables winsorization; e.g. 0.05 clips to [5%, 95%].
     selection_winsor_quantile: float = 0.0
     # Stability penalty strength for "rank_stability_penalty" (0.0 disables).
     selection_stability_penalty: float = 0.0
+    # Legacy ranking adjustment strengths (0.0 disables / falls back to default light value).
+    selection_half_life_penalty: float = 0.0
+    selection_speed_penalty: float = 0.0
+    selection_distance_weight: float = 0.0
+    selection_corr_penalty: float = 0.0
 
     # Optional risk guardrails (disabled by default to preserve legacy behavior)
     # Cap each pair daily MTM contribution |ret| before portfolio aggregation.

@@ -11,6 +11,9 @@ from utils.loader import load_price_csv
 from utils.scanner import scan_universe
 
 
+_VALID_SCAN_WEEKDAYS = {"MON", "TUE", "WED", "THU", "FRI"}
+
+
 @dataclass(frozen=True)
 class InlineScannerConfig:
     raw_data_path: Path                 # ex: PROJECT_ROOT / "data/raw/d1"
@@ -57,6 +60,72 @@ def _load_universe_assets_cached(asset_registry_path_str: str, universe: str) ->
 
 def load_universe_assets(asset_registry_path: Path, universe: str) -> list[str]:
     return list(_load_universe_assets_cached(str(asset_registry_path), universe))
+
+
+@lru_cache(maxsize=128)
+def _load_universe_trade_dates_cached(
+    asset_registry_path_str: str,
+    raw_data_path_str: str,
+    universe: str,
+) -> tuple[pd.Timestamp, ...]:
+    assets = _load_universe_assets_cached(asset_registry_path_str, universe)
+    dates: set[pd.Timestamp] = set()
+
+    for asset in assets:
+        try:
+            df = _load_asset_csv(asset.upper(), raw_data_path_str)
+        except Exception:
+            continue
+        if "datetime" not in df.columns or df.empty:
+            continue
+        vals = pd.to_datetime(df["datetime"], errors="coerce").dropna().dt.normalize()
+        dates.update(pd.Timestamp(x) for x in vals.unique().tolist())
+
+    return tuple(sorted(dates))
+
+
+def load_universe_trade_dates(asset_registry_path: Path, raw_data_path: Path, universe: str) -> pd.DatetimeIndex:
+    vals = _load_universe_trade_dates_cached(str(asset_registry_path), str(raw_data_path), universe)
+    return pd.DatetimeIndex(vals)
+
+
+def _normalize_scan_frequency(freq: str) -> str:
+    f = str(freq).strip().upper()
+    if f in {"WEEKLY", "WEEK", "W"}:
+        return "weekly"
+    if f in {"DAILY", "DAY", "D", "B"}:
+        return "daily"
+    return str(freq)
+
+
+def _normalize_scan_weekday(scan_weekday: str) -> str:
+    wd = str(scan_weekday).strip().upper()
+    if wd not in _VALID_SCAN_WEEKDAYS:
+        raise ValueError(f"Unsupported scan_weekday='{scan_weekday}'. Use one of {sorted(_VALID_SCAN_WEEKDAYS)}.")
+    return wd
+
+
+def _build_weekly_scan_dates(
+    trade_dates: pd.DatetimeIndex,
+    start_date: str | pd.Timestamp,
+    end_date: str | pd.Timestamp,
+    scan_weekday: str,
+) -> pd.DatetimeIndex:
+    if len(trade_dates) == 0:
+        return pd.DatetimeIndex([])
+
+    start = pd.to_datetime(start_date).normalize()
+    end = pd.to_datetime(end_date).normalize()
+    wd = _normalize_scan_weekday(scan_weekday)
+
+    dates = pd.DatetimeIndex(trade_dates).normalize()
+    dates = dates[(dates >= start) & (dates <= end)]
+    dates = dates[dates.dayofweek <= 4]
+    if len(dates) == 0:
+        return pd.DatetimeIndex([])
+
+    buckets = dates.to_series(index=dates).groupby(dates.to_period(f"W-{wd}")).max()
+    return pd.DatetimeIndex(buckets.sort_values().tolist()).normalize()
 
 
 def load_price_asof_norm(
@@ -137,22 +206,34 @@ def build_scans_inline(
     end_date: str | pd.Timestamp,
     freq: str,
     cfg: InlineScannerConfig,
+    scan_weekday: str = "FRI",
     print_every: int = 10,
 ) -> pd.DataFrame:
-
-    scan_dates = pd.date_range(
-        start=pd.to_datetime(start_date),
-        end=pd.to_datetime(end_date),
-        freq=freq,
-    )
-
-    if len(scan_dates) == 0:
-        return pd.DataFrame()
+    freq_mode = _normalize_scan_frequency(freq)
+    scan_weekday = _normalize_scan_weekday(scan_weekday)
 
     frames = []
     t0 = time.time()
 
     for u in universes:
+        if freq_mode == "weekly":
+            trade_dates = load_universe_trade_dates(cfg.asset_registry_path, cfg.raw_data_path, u)
+            scan_dates = _build_weekly_scan_dates(
+                trade_dates=trade_dates,
+                start_date=start_date,
+                end_date=end_date,
+                scan_weekday=scan_weekday,
+            )
+        else:
+            scan_dates = pd.date_range(
+                start=pd.to_datetime(start_date),
+                end=pd.to_datetime(end_date),
+                freq=freq,
+            )
+
+        if len(scan_dates) == 0:
+            continue
+
         print(f"\n[SCAN] Universe={u} | dates={len(scan_dates)} | {scan_dates[0].date()} -> {scan_dates[-1].date()}")
         for i, d in enumerate(scan_dates, start=1):
 

@@ -168,6 +168,22 @@ def _scan_pair_window_aligned(
         if hl is None or not np.isfinite(hl):
             raise ValueError("Invalid half-life")
 
+        spread_mean = float(np.nanmean(spread))
+        spread_std = float(np.nanstd(spread))
+        spread_std_z = float(np.nanstd(spread, ddof=1))
+        if np.isfinite(spread_std_z) and spread_std_z > _MIN_STD:
+            z_arr = (spread - spread_mean) / spread_std_z
+            last_z = float(z_arr[-1])
+            abs_last_z = float(abs(last_z))
+            dz = np.diff(z_arr)
+            mean_abs_delta_z = float(np.nanmean(np.abs(dz))) if dz.size > 0 else np.nan
+        else:
+            last_z = np.nan
+            abs_last_z = np.nan
+            mean_abs_delta_z = np.nan
+        ds = np.diff(spread)
+        mean_abs_delta_spread = float(np.nanmean(np.abs(ds))) if ds.size > 0 else np.nan
+
         # Early exits that are logically equivalent for validity:
         # if corr/half-life already fail hard constraints, ADF/EG cannot make this window valid.
         run_stationarity = (
@@ -190,7 +206,11 @@ def _scan_pair_window_aligned(
         "adf_p": float(adf_p),
         "eg_p": float(eg_p),
         "half_life": float(hl),
-        "spread_std": float(np.nanstd(spread)),
+        "spread_std": spread_std,
+        "last_z": last_z,
+        "abs_last_z": abs_last_z,
+        "mean_abs_delta_z": mean_abs_delta_z,
+        "mean_abs_delta_spread": mean_abs_delta_spread,
     }
 
 

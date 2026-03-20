@@ -14,6 +14,27 @@ from object.class_file import StrategyParams, Position
 GetRankedPairsFn = Callable[[pd.Timestamp], List[Tuple[str, str]]]
 GetPairStateFn = Callable[[pd.Timestamp, List[Tuple[str, str]]], Dict[str, pd.DataFrame]]
 
+_ENTRY_MODES = {
+    "baseline_entry",
+    "entry_with_spread_speed_filter",
+    "entry_zspeed_hard_cap",
+    "entry_zspeed_ewma_cap",
+    "entry_zspeed_vol_normalized",
+    "entry_slowdown_confirmation",
+}
+_ENTRY_REASON_COLUMNS = (
+    "entry_ranked_pairs_considered",
+    "entry_below_threshold",
+    "entry_threshold_hits",
+    "entry_accepted",
+    "entry_insufficient_history",
+    "entry_blocked_spread_speed_cap",
+    "entry_blocked_zspeed_cap",
+    "entry_blocked_ewma_speed_cap",
+    "entry_blocked_vol_normalized_cap",
+    "entry_blocked_slowdown",
+)
+
 
 def _pid(a1: str, a2: str) -> str:
     return f"{a1.upper()}_{a2.upper()}"
@@ -57,6 +78,164 @@ def _spread_and_z_at_dt(
 
     z_dt = float((spread_dt - mu) / sd)
     return spread_dt, z_dt
+
+
+def _validate_entry_mode_params(params: StrategyParams) -> str:
+    mode = str(params.entry_mode).strip().lower()
+    if mode not in _ENTRY_MODES:
+        raise ValueError(f"Unsupported entry_mode='{params.entry_mode}'. Use one of {sorted(_ENTRY_MODES)}.")
+
+    if mode == "entry_with_spread_speed_filter":
+        if params.spread_speed_cap is None or float(params.spread_speed_cap) <= 0.0:
+            raise ValueError("spread_speed_cap must be > 0 for entry_with_spread_speed_filter.")
+    elif mode == "entry_zspeed_hard_cap":
+        if params.zspeed_cap is None or float(params.zspeed_cap) <= 0.0:
+            raise ValueError("zspeed_cap must be > 0 for entry_zspeed_hard_cap.")
+    elif mode == "entry_zspeed_ewma_cap":
+        if int(params.zspeed_ewma_span) < 1:
+            raise ValueError("zspeed_ewma_span must be >= 1 for entry_zspeed_ewma_cap.")
+        if params.zspeed_ewma_cap is None or float(params.zspeed_ewma_cap) <= 0.0:
+            raise ValueError("zspeed_ewma_cap must be > 0 for entry_zspeed_ewma_cap.")
+    elif mode == "entry_zspeed_vol_normalized":
+        if int(params.zspeed_vol_window) < 2:
+            raise ValueError("zspeed_vol_window must be >= 2 for entry_zspeed_vol_normalized.")
+        if params.zspeed_vol_cap is None or float(params.zspeed_vol_cap) <= 0.0:
+            raise ValueError("zspeed_vol_cap must be > 0 for entry_zspeed_vol_normalized.")
+
+    return mode
+
+
+def _entry_signal_side(z_sig: float, z_entry: float) -> str | None:
+    if not np.isfinite(z_sig):
+        return None
+    if z_sig <= -float(z_entry):
+        return "LONG_SPREAD"
+    if z_sig >= float(z_entry):
+        return "SHORT_SPREAD"
+    return None
+
+
+def _evaluate_entry_candidate(
+    dfp: pd.DataFrame,
+    dt: pd.Timestamp,
+    params: StrategyParams,
+) -> dict:
+    if dt not in dfp.index:
+        return {"accepted": False, "reason": "entry_insufficient_history"}
+
+    z_val = pd.to_numeric(dfp.at[dt, "z"], errors="coerce")
+    z_sig = float(z_val) if pd.notna(z_val) else np.nan
+    side = _entry_signal_side(z_sig, params.z_entry)
+    if side is None:
+        return {
+            "accepted": False,
+            "reason": "entry_below_threshold",
+            "side": None,
+            "z_sig": z_sig,
+            "metric_name": None,
+            "metric_value": np.nan,
+            "metric_limit": np.nan,
+        }
+
+    mode = str(params.entry_mode).strip().lower()
+    out = {
+        "accepted": True,
+        "reason": "entry_accepted",
+        "side": side,
+        "z_sig": z_sig,
+        "metric_name": None,
+        "metric_value": np.nan,
+        "metric_limit": np.nan,
+    }
+    if mode == "baseline_entry":
+        return out
+
+    z_hist = pd.to_numeric(dfp.loc[:dt, "z"], errors="coerce").dropna()
+    if len(z_hist) < 2:
+        out.update({"accepted": False, "reason": "entry_insufficient_history"})
+        return out
+
+    dz = z_hist.diff().dropna()
+    abs_dz = dz.abs()
+    dz_now = float(abs_dz.iloc[-1])
+
+    if mode == "entry_with_spread_speed_filter":
+        spread_hist = pd.to_numeric(dfp.loc[:dt, "spread"], errors="coerce").dropna()
+        if len(spread_hist) < 2:
+            out.update({"accepted": False, "reason": "entry_insufficient_history"})
+            return out
+        spread_std_t = pd.to_numeric(dfp.at[dt, "spread_std"], errors="coerce") if "spread_std" in dfp.columns else np.nan
+        spread_std_t = float(spread_std_t) if pd.notna(spread_std_t) else np.nan
+        if (not np.isfinite(spread_std_t)) or spread_std_t <= 1e-12:
+            out.update({"accepted": False, "reason": "entry_insufficient_history"})
+            return out
+        metric = float(abs(spread_hist.iloc[-1] - spread_hist.iloc[-2]) / spread_std_t)
+        limit = float(params.spread_speed_cap)
+        out.update(
+            {
+                "metric_name": "normalized_spread_speed",
+                "metric_value": metric,
+                "metric_limit": limit,
+            }
+        )
+        if metric > limit:
+            out.update({"accepted": False, "reason": "entry_blocked_spread_speed_cap"})
+        return out
+
+    if mode == "entry_zspeed_hard_cap":
+        limit = float(params.zspeed_cap)
+        out.update({"metric_name": "abs_delta_z", "metric_value": dz_now, "metric_limit": limit})
+        if dz_now > limit:
+            out.update({"accepted": False, "reason": "entry_blocked_zspeed_cap"})
+        return out
+
+    if mode == "entry_zspeed_ewma_cap":
+        span = max(1, int(params.zspeed_ewma_span))
+        lookback = max(6, 5 * span)
+        smooth = float(abs_dz.tail(lookback).ewm(span=span, adjust=False, min_periods=1).mean().iloc[-1])
+        limit = float(params.zspeed_ewma_cap)
+        out.update({"metric_name": f"ewma_abs_delta_z_span_{span}", "metric_value": smooth, "metric_limit": limit})
+        if smooth > limit:
+            out.update({"accepted": False, "reason": "entry_blocked_ewma_speed_cap"})
+        return out
+
+    if mode == "entry_zspeed_vol_normalized":
+        window = max(2, int(params.zspeed_vol_window))
+        if len(dz) < window:
+            out.update({"accepted": False, "reason": "entry_insufficient_history"})
+            return out
+        vol_ref = float(dz.tail(window).std(ddof=1))
+        if (not np.isfinite(vol_ref)) or vol_ref <= 1e-12:
+            out.update({"accepted": False, "reason": "entry_insufficient_history"})
+            return out
+        metric = float(abs(float(dz.iloc[-1])) / vol_ref)
+        limit = float(params.zspeed_vol_cap)
+        out.update(
+            {
+                "metric_name": f"vol_normalized_delta_z_window_{window}",
+                "metric_value": metric,
+                "metric_limit": limit,
+            }
+        )
+        if metric > limit:
+            out.update({"accepted": False, "reason": "entry_blocked_vol_normalized_cap"})
+        return out
+
+    if len(abs_dz) < 2:
+        out.update({"accepted": False, "reason": "entry_insufficient_history"})
+        return out
+
+    prev_abs_dz = float(abs_dz.iloc[-2])
+    out.update(
+        {
+            "metric_name": "slowdown_abs_delta_z_ratio",
+            "metric_value": (dz_now / prev_abs_dz) if prev_abs_dz > 1e-12 else np.nan,
+            "metric_limit": 1.0,
+        }
+    )
+    if not (dz_now < prev_abs_dz):
+        out.update({"accepted": False, "reason": "entry_blocked_slowdown"})
+    return out
 
 
 def run_daily_portfolio_engine(
@@ -103,6 +282,7 @@ def run_daily_portfolio_engine(
     )
     vol_lookback = max(5, int(params.portfolio_vol_lookback))
     vol_max_scale = max(0.0, float(params.portfolio_vol_max_scale))
+    entry_mode = _validate_entry_mode_params(params)
 
     equity = 1.0
     equity_rows: List[dict] = []
@@ -110,6 +290,7 @@ def run_daily_portfolio_engine(
     diagnostics: List[dict] = []
     anomaly_flags: List[str] = []
     raw_port_ret_hist: List[float] = []
+    entry_reason_totals = {k: 0 for k in _ENTRY_REASON_COLUMNS}
 
     open_positions: Dict[str, Position] = {}
     open_meta: Dict[str, dict] = {}  # pid -> {"expiry": Timestamp, "trade_idx": int}
@@ -133,6 +314,7 @@ def run_daily_portfolio_engine(
         max_abs_pair_ret_raw = np.nan
         mean_abs_pair_ret_raw = np.nan
         n_pairs_mtm = 0
+        day_entry_counts = {k: 0 for k in _ENTRY_REASON_COLUMNS}
 
         if not universe_pairs:
             diagnostics.append(
@@ -144,6 +326,7 @@ def run_daily_portfolio_engine(
                     "vol_scale": 1.0,
                     "max_abs_pair_ret_raw": np.nan,
                     "mean_abs_pair_ret_raw": np.nan,
+                    **day_entry_counts,
                 }
             )
             equity_rows.append({"datetime": dt, "equity": equity, "n_open_positions": 0})
@@ -254,23 +437,41 @@ def run_daily_portfolio_engine(
                 if dfp is None or dt not in dfp.index:
                     continue
 
-                # signal uses z computed in pair_state (beta(t) du jour)
                 z_val = dfp.loc[dt, "z"]
                 if pd.isna(z_val):
                     continue
 
-                z_sig = float(z_val)
-                if z_sig <= -params.z_entry:
-                    side = "LONG_SPREAD"
-                elif z_sig >= params.z_entry:
-                    side = "SHORT_SPREAD"
-                else:
+                day_entry_counts["entry_ranked_pairs_considered"] += 1
+                entry_reason_totals["entry_ranked_pairs_considered"] += 1
+
+                entry_eval = _evaluate_entry_candidate(dfp=dfp, dt=dt, params=params)
+                reason_key = str(entry_eval.get("reason", "")).strip()
+                if reason_key == "entry_below_threshold":
+                    day_entry_counts["entry_below_threshold"] += 1
+                    entry_reason_totals["entry_below_threshold"] += 1
                     continue
 
-                ranked_today.append((abs(z_sig), pid, side))
+                day_entry_counts["entry_threshold_hits"] += 1
+                entry_reason_totals["entry_threshold_hits"] += 1
+
+                if reason_key in day_entry_counts:
+                    day_entry_counts[reason_key] += 1
+                    entry_reason_totals[reason_key] += 1
+
+                if not bool(entry_eval.get("accepted", False)):
+                    continue
+
+                ranked_today.append(
+                    (
+                        abs(float(entry_eval["z_sig"])),
+                        pid,
+                        str(entry_eval["side"]),
+                        entry_eval,
+                    )
+                )
 
             # strongest signals first
-            for _, pid, side in sorted(ranked_today, reverse=True)[:slots]:
+            for _, pid, side, entry_eval in sorted(ranked_today, reverse=True)[:slots]:
                 dfp = pair_state[pid]
 
                 beta_entry = float(dfp.loc[dt, "beta"])
@@ -321,6 +522,10 @@ def run_daily_portfolio_engine(
                         "capital_at_exit": np.nan,  # filled at exit
                         "trade_return": np.nan,  # portfolio-level return snapshot
                         "trade_return_isolated": np.nan,  # spread-return proxy net round-trip fees
+                        "entry_mode": entry_mode,
+                        "entry_filter_metric_name": entry_eval.get("metric_name"),
+                        "entry_filter_metric": entry_eval.get("metric_value"),
+                        "entry_filter_limit": entry_eval.get("metric_limit"),
                     }
                 )
 
@@ -333,6 +538,7 @@ def run_daily_portfolio_engine(
                 "vol_scale": float(vol_scale),
                 "max_abs_pair_ret_raw": max_abs_pair_ret_raw,
                 "mean_abs_pair_ret_raw": mean_abs_pair_ret_raw,
+                **day_entry_counts,
             }
         )
 
@@ -349,6 +555,16 @@ def run_daily_portfolio_engine(
     equity_df = pd.DataFrame(equity_rows)
     trades_df = pd.DataFrame(trades)
     diagnostics_df = pd.DataFrame(diagnostics)
+    entry_filter_summary_df = pd.DataFrame(
+        [
+            {
+                "entry_mode": entry_mode,
+                "metric": k,
+                "count": int(v),
+            }
+            for k, v in entry_reason_totals.items()
+        ]
+    )
 
     # Safety: no duplicated (pair_id, entry_datetime)
     if not trades_df.empty:
@@ -360,5 +576,6 @@ def run_daily_portfolio_engine(
         "equity": equity_df,
         "trades": trades_df,
         "diagnostics": diagnostics_df,
+        "entry_filter_summary": entry_filter_summary_df,
         "anomaly_flags": anomaly_flags,
     }
