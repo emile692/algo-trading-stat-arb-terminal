@@ -1,0 +1,76 @@
+{
+  "portfolio_id": "core_4_country_v1",
+  "name": "Core 4-country stat-arb portfolio",
+  "status": "frozen_reference",
+  "frozen_at": "2026-04-21",
+  "period": {
+    "start": "2018-01-01",
+    "end": "2025-12-31",
+    "frequency": "monthly"
+  },
+  "default_weight_scheme": "inverse_vol",
+  "available_weight_schemes": [
+    "equal_weight",
+    "inverse_vol"
+  ],
+  "books": [
+    {
+      "book": "france",
+      "country": "france",
+      "role": "core_book",
+      "config_name": "reference",
+      "logic": "France local reference baseline",
+      "source_dir": "data/experiments/multibook_portfolio_sweden_germany_france_netherlands_20260421_190655",
+      "source_file": "book_monthly_returns.csv",
+      "source_config_name": "reference",
+      "source_book": "france",
+      "maturity_status": "top_pf_qualified",
+      "notes": "France enters as a simple local baseline book."
+    },
+    {
+      "book": "sweden",
+      "country": "sweden",
+      "role": "core_book",
+      "config_name": "best_plus_regime_filter",
+      "logic": "Sweden local C regime filter",
+      "source_dir": "data/experiments/multibook_portfolio_sweden_germany_france_netherlands_20260421_190655",
+      "source_file": "book_monthly_returns.csv",
+      "source_config_name": "best_plus_regime_filter",
+      "source_book": "sweden",
+      "maturity_status": "advanced_local_validated",
+      "notes": "Sweden uses the locally validated regime-filter version, not the generic country pipeline readout."
+    },
+    {
+      "book": "netherlands",
+      "country": "netherlands",
+      "role": "supporting_book",
+      "config_name": "reference",
+      "logic": "Netherlands local reference baseline",
+      "source_dir": "data/experiments/multibook_portfolio_sweden_germany_france_netherlands_20260421_190655",
+      "source_file": "book_monthly_returns.csv",
+      "source_config_name": "reference",
+      "source_book": "netherlands",
+      "maturity_status": "top_pf_qualified_supporting",
+      "notes": "Netherlands is retained as a simple diversifying baseline book."
+    },
+    {
+      "book": "germany",
+      "country": "germany",
+      "role": "core_book",
+      "config_name": "pair_filter_corr_abs_le_0p75_bypass_scan_stress_trending",
+      "logic": "Germany corr<=0.75 pair filter with scan-time stress_trending bypass",
+      "source_dir": "data/experiments/germany_core_entry_20180101_20251231_20260421_215937",
+      "source_file": "germany_monthly_returns_final.csv",
+      "source_config_name": "pair_filter_corr_abs_le_0p75_bypass_scan_stress_trending",
+      "source_book": "germany",
+      "maturity_status": "shadow_validation_promoted",
+      "notes": "Germany enters after shadow validation; 2025 standalone underperformance remains a monitoring point."
+    }
+  ],
+  "decision_sources": {
+    "multibook_portfolio": "data/experiments/multibook_portfolio_sweden_germany_france_netherlands_20260421_190655",
+    "germany_core_entry": "data/experiments/germany_core_entry_20180101_20251231_20260421_215937",
+    "germany_shadow_validation": "data/experiments/germany_shadow_validation_20260421_222202"
+  },
+  "methodology_note": "Frozen client reference built from fixed local country books. No cross-country universal trading rule, no Markowitz optimization, no retuning in this notebook."
+}
