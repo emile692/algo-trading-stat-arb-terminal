@@ -1,0 +1,99 @@
+{
+  "strategy_id": "core_4_country_v1",
+  "strategy_name": "Core 4-country stat-arb portfolio",
+  "freeze_date": "2026-04-21",
+  "status": "paper_candidate_not_live",
+  "validation_period": {
+    "start": "2018-01-01",
+    "end": "2025-12-31"
+  },
+  "analysis_window": {
+    "start": "2018-01-01",
+    "end": "2025-12-31"
+  },
+  "countries_books": [
+    {
+      "book": "france",
+      "country": "france",
+      "role": "core_book",
+      "config_name": "reference",
+      "logic": "France local reference baseline",
+      "maturity_status": "top_pf_qualified",
+      "source_dir": "D:\\Business\\Trading\\VSCODE\\algo-trading-stat-arb-terminal\\data\\experiments\\multibook_portfolio_sweden_germany_france_netherlands_20260421_190655",
+      "source_file": "D:\\Business\\Trading\\VSCODE\\algo-trading-stat-arb-terminal\\data\\experiments\\multibook_portfolio_sweden_germany_france_netherlands_20260421_190655\\book_monthly_returns.csv",
+      "source_config_name": "reference",
+      "source_book": "france",
+      "notes": "France enters as a simple local baseline book."
+    },
+    {
+      "book": "sweden",
+      "country": "sweden",
+      "role": "core_book",
+      "config_name": "best_plus_regime_filter",
+      "logic": "Sweden local C regime filter",
+      "maturity_status": "advanced_local_validated",
+      "source_dir": "D:\\Business\\Trading\\VSCODE\\algo-trading-stat-arb-terminal\\data\\experiments\\multibook_portfolio_sweden_germany_france_netherlands_20260421_190655",
+      "source_file": "D:\\Business\\Trading\\VSCODE\\algo-trading-stat-arb-terminal\\data\\experiments\\multibook_portfolio_sweden_germany_france_netherlands_20260421_190655\\book_monthly_returns.csv",
+      "source_config_name": "best_plus_regime_filter",
+      "source_book": "sweden",
+      "notes": "Sweden uses the locally validated regime-filter version, not the generic country pipeline readout."
+    },
+    {
+      "book": "netherlands",
+      "country": "netherlands",
+      "role": "supporting_book",
+      "config_name": "reference",
+      "logic": "Netherlands local reference baseline",
+      "maturity_status": "top_pf_qualified_supporting",
+      "source_dir": "D:\\Business\\Trading\\VSCODE\\algo-trading-stat-arb-terminal\\data\\experiments\\multibook_portfolio_sweden_germany_france_netherlands_20260421_190655",
+      "source_file": "D:\\Business\\Trading\\VSCODE\\algo-trading-stat-arb-terminal\\data\\experiments\\multibook_portfolio_sweden_germany_france_netherlands_20260421_190655\\book_monthly_returns.csv",
+      "source_config_name": "reference",
+      "source_book": "netherlands",
+      "notes": "Netherlands is retained as a simple diversifying baseline book."
+    },
+    {
+      "book": "germany",
+      "country": "germany",
+      "role": "core_book",
+      "config_name": "pair_filter_corr_abs_le_0p75_bypass_scan_stress_trending",
+      "logic": "Germany corr<=0.75 pair filter with scan-time stress_trending bypass",
+      "maturity_status": "shadow_validation_promoted",
+      "source_dir": "D:\\Business\\Trading\\VSCODE\\algo-trading-stat-arb-terminal\\data\\experiments\\germany_core_entry_20180101_20251231_20260421_215937",
+      "source_file": "D:\\Business\\Trading\\VSCODE\\algo-trading-stat-arb-terminal\\data\\experiments\\germany_core_entry_20180101_20251231_20260421_215937\\germany_monthly_returns_final.csv",
+      "source_config_name": "pair_filter_corr_abs_le_0p75_bypass_scan_stress_trending",
+      "source_book": "germany",
+      "notes": "Germany enters after shadow validation; 2025 standalone underperformance remains a monitoring point."
+    }
+  ],
+  "reference_allocation": {
+    "allocator_id": "inverse_vol__lb126__weekly__floor_cap",
+    "description": "Frozen Core 4 reference allocator kept as the paper-trading candidate."
+  },
+  "benchmark_allocation": {
+    "allocator_id": "equal_weight__lb126__monthly__unconstrained",
+    "description": "Equal-weight benchmark retained as the control allocator."
+  },
+  "optional_monitor_allocation": {
+    "allocator_id": "risk_parity__lb126__weekly__floor_cap",
+    "description": "Optional comparison allocator preserved for monitoring only."
+  },
+  "source_of_truth": {
+    "config_path": "D:\\Business\\Trading\\VSCODE\\algo-trading-stat-arb-terminal\\config\\core_portfolio_reference.json",
+    "daily_cache_dir": "D:\\Business\\Trading\\VSCODE\\algo-trading-stat-arb-terminal\\data\\experiments\\core_portfolio_reference_daily_cache",
+    "monthly_source_paths": [
+      "D:\\Business\\Trading\\VSCODE\\algo-trading-stat-arb-terminal\\data\\experiments\\multibook_portfolio_sweden_germany_france_netherlands_20260421_190655\\book_monthly_returns.csv",
+      "D:\\Business\\Trading\\VSCODE\\algo-trading-stat-arb-terminal\\data\\experiments\\germany_core_entry_20180101_20251231_20260421_215937\\germany_monthly_returns_final.csv"
+    ],
+    "validation_summary": "D:\\Business\\Trading\\VSCODE\\algo-trading-stat-arb-terminal\\data\\experiments\\core4_validation_pack\\20260514_105610\\validation_summary.md",
+    "daily_reporting_summary": "D:\\Business\\Trading\\VSCODE\\algo-trading-stat-arb-terminal\\data\\reports\\core4_daily_reporting\\conclusion.txt",
+    "multibook_decision_dir": "D:\\Business\\Trading\\VSCODE\\algo-trading-stat-arb-terminal\\data\\experiments\\multibook_portfolio_sweden_germany_france_netherlands_20260421_190655",
+    "germany_shadow_validation_dir": "D:\\Business\\Trading\\VSCODE\\algo-trading-stat-arb-terminal\\data\\experiments\\germany_shadow_validation_20260421_222202"
+  },
+  "known_limitations": [
+    "Daily positions still require reconstruction from frozen caches and available trade ledgers.",
+    "Trade ledger coverage is not exact for every book; Germany relies on a nearby source unless a frozen exact ledger is later exported.",
+    "Borrow costs are not modeled in the historical frozen reference and require explicit stress assumptions.",
+    "Execution-delay stress remains approximation-based because true daily signal state is not persisted in the frozen artifacts."
+  ],
+  "methodology_note": "This manifest freezes the already-approved Core 4 reference only. It does not retune alpha, modify trading rules, or alter the frozen country-book composition."
+}
