@@ -35,12 +35,14 @@ def test_core4_institutional_memo_smoke_generates_balanced_pm_and_explainer_memo
         "5. Z-Score, Spread And Statistical Tests",
         "6. Strategy Construction",
         "7. Country Books And Representative Pairs",
-        "8. Portfolio Construction And Diversification",
-        "9. Historical Performance",
-        "10. Audit Pack And Implementation Readiness",
-        "11. Stress Tests",
-        "12. Verdict And Recommendation",
-        "13. Appendix",
+        "8. Country Sleeve Deep Dive",
+        "9. Portfolio Construction And Diversification",
+        "10. Historical Performance And Country Diagnostics",
+        "11. Audit Pack And Implementation Readiness",
+        "12. Stress Tests",
+        "13. From Paper-Ready To Live-Ready",
+        "14. Verdict And Recommendation",
+        "15. Appendix",
     ]
     for section in required_sections:
         assert section in html
@@ -55,12 +57,12 @@ def test_core4_institutional_memo_smoke_generates_balanced_pm_and_explainer_memo
     assert "Generated figure" not in html
     assert "paper-ready with limitations" in html
 
-    main_body = html.split("<h2>13. Appendix</h2>", 1)[0]
+    main_body = html.split("<h2>15. Appendix</h2>", 1)[0]
     assert 8 <= main_body.count("<figure>") <= 10
-    assert len(re.findall(r"<h2>\d+\.", html)) == 13
+    assert len(re.findall(r"<h2>\d+\.", html)) == 15
 
     manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
-    assert manifest["section_count"] == 13
+    assert manifest["section_count"] == 15
     assert 8 <= manifest["figure_count_in_main_memo"] <= 10
     assert "figure_manifest" in manifest
     assert "kept_in_main_memo" in manifest["figure_manifest"]

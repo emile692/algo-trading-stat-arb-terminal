@@ -1399,17 +1399,34 @@ def _section_4_pair_trading_primer(
         "The simplest mental model is an elastic band. If two stocks usually move in a related way, there is a spread between them that often fluctuates around a local norm. When that spread stretches too far, the trade bets on a snap-back toward normality.",
         "The position is market-neutral in spirit: one leg is long, the other is short. That means the trade is supposed to care more about the relative move between the two names than about the absolute direction of the whole market.",
         "A good pair trade therefore needs three things. First, the pair must have enough statistical structure to be worth trading. Second, the spread must move far enough away from normal to justify an entry. Third, the trade needs a disciplined exit if normalization happens, if it fails, or if it simply takes too long.",
+        "In the actual Core 4 code, the spread is not built on raw price differences. The relationship is estimated in log-price coordinates. Concretely, the engine works with log prices, or with log prices normalized by subtracting the first observation in the loaded window, and then estimates a hedge ratio beta by OLS.",
+        "That distinction matters. A raw price spread between a EUR 20 stock and a EUR 200 stock is hard to interpret and unstable under stock splits or long compounding paths. Log-price coordinates make the relationship scale-aware, closer to relative valuation, and much more natural for statistical arbitrage.",
+        "Strictly speaking, the research object therefore does not trade single-period log returns directly. It estimates the pair relationship on log-price levels, and trade PnL is then driven by changes in those log coordinates between entry and exit. Over a holding period, those changes are cumulative log returns, so discussing log returns in the memo is appropriate, but it is more precise to say that spread construction happens in log-price space.",
+        "The intercept also deserves a note. The code estimates beta from an OLS with intercept, but the traded spread is stored as y minus beta times x. The intercept is effectively absorbed by the spread mean and by the rolling z-score normalization, so it does not need to appear explicitly in the trading signal.",
     ]
-    formula = "spread_t = price_A_t - beta_t * price_B_t"
+    formula = (
+        "log_price_A_t = alpha_t + beta_t * log_price_B_t + epsilon_t\n"
+        "spread_t = log_price_A_t - beta_t * log_price_B_t"
+    )
+    detail_rows = [
+        ("Signal coordinates", "Log-price levels or normalized log-price levels, not raw prices."),
+        ("Beta estimation", "OLS slope of y on x with an intercept on aligned finite observations."),
+        ("Trading spread", "Spread = y - beta*x; the intercept is handled by the spread mean and z-score."),
+        ("Why logs help", "They stabilize scale effects and make the spread easier to interpret as a relative relationship."),
+        ("How PnL is read", "Trade PnL comes from delta log-price on each leg between entry and exit, net of fees."),
+    ]
     if html:
         body = "".join(f"<p>{escape(text)}</p>" for text in paragraphs)
         body += f"<pre><code>{escape(formula)}</code></pre>"
+        body += _table_html(["Concept", "How it is implemented here"], detail_rows)
         body += _figure_html(figure_map, "pair_trading_schematic")
         return f"<section><h2>4. Pair Trading Primer</h2>{body}</section>"
     return (
         "## 4. Pair Trading Primer\n\n"
         + "\n\n".join(paragraphs)
         + f"\n\n```text\n{formula}\n```\n\n"
+        + _table_md(["Concept", "How it is implemented here"], detail_rows)
+        + "\n\n"
         + _figure_md(figure_map, "pair_trading_schematic")
     )
 
@@ -1420,23 +1437,46 @@ def _section_5_zscore_and_tests(
     html: bool = True,
 ) -> str:
     test_rows = [
-        ("Correlation", "Do the two stocks co-move enough to be comparable?", "6m correlation floor around 0.30", "Avoids pairs that are just unrelated noise."),
-        ("Engle-Granger", "Is there evidence of a long-run relationship?", "p-value <= 0.05", "Rejects many pairs that only look close temporarily."),
-        ("ADF on spread", "Does the traded spread look stationary?", "p-value <= 0.05", "Looks for mean reversion rather than persistent drift."),
-        ("Half-life", "If the spread moves, does it tend to come back fast enough?", "<= 100 scan days", "Avoids spreads that revert too slowly for a practical trade."),
-        ("Ranking and eligibility", "Among valid pairs, which ones are good enough to keep?", "Only ELIGIBLE pairs; keep top 20 candidates", "Turns a broad universe into a manageable tradable set."),
-        ("Entry / exit bands", "When do we act on a valid pair?", "Typical frozen logic uses entry 1.8, exit 0.6, stop 3.6", "Requires a real dislocation, not tiny noise."),
+        ("Correlation", "Do the two stocks co-move enough to be comparable before running slower tests?", "Absolute correlation must be above 0.30 on the relevant scan window", "This is a cheap pre-filter. It is not a proof of mean reversion, but it removes obviously unrelated pairs."),
+        ("Engle-Granger", "Is there evidence of a long-run equilibrium relation between the two log-price series?", "p-value <= 0.05", "This rejects many pairs that only look close over a short sample but do not behave like a stable relationship."),
+        ("ADF on spread", "Does the exact traded spread look stationary after hedging with the estimated beta?", "p-value <= 0.05", "This is important because the strategy trades the spread, not the raw pair chart. ADF asks whether the spread tends to revert rather than drift."),
+        ("Half-life", "If the spread deviates, does it revert on a practical horizon?", "<= 100 scan days and phi < 0", "A statistically stationary spread that takes too long to come back can still be a poor trading object."),
+        ("Multi-window validation", "Does the relationship survive more than one lookback?", "Windows are 3m, 6m, and 12m; ELIGIBLE requires at least 2 valid windows", "This reduces dependence on a single lucky sample."),
+        ("Ranking and eligibility", "Among statistically valid pairs, which ones are retained?", "Eligibility score = n_valid + 0.5*corr_12m - 0.01*half_life_6m - 1.0*beta_std; keep only ELIGIBLE pairs and then top 20", "The portfolio keeps pairs with repeatable structure, not just the highest recent z-score."),
+        ("Entry / exit bands", "When do we actually trade an already valid pair?", "Typical frozen logic uses entry 1.8, exit 0.6, stop 3.6", "The tests say a pair is tradable; the z-score bands say whether the current dislocation is large enough to act on."),
     ]
     paragraphs = [
         "The z-score answers a simple question: how unusual is the current spread compared with its own recent history? A z-score of +2 means the spread is roughly two rolling standard deviations above its rolling mean. A z-score of -2 means the opposite.",
         "This matters because a raw move of 1 point means very different things for a quiet pair and a volatile pair. The z-score puts them on a comparable scale.",
         "Core 4 does not trade on z-score alone. The statistical gates sit in front of the trade. They are there to stop the portfolio from treating every temporary gap as a genuine mean-reversion opportunity.",
+        "The sequencing of the tests also matters. In the scanner, correlation and half-life are used as cheap logical screens before slower stationarity tests are run. Engle-Granger only becomes relevant after the ADF gate already looks acceptable on the spread. That ordering is not cosmetic; it reduces computation and avoids pretending that every pair deserves a full econometric treatment.",
+        "For a PM, the clean way to read the stack is this: correlation asks whether the two names travel together at all, Engle-Granger asks whether there is a plausible long-run relation, ADF asks whether the exact traded spread is stationary, and half-life asks whether the speed of that reversion is practical.",
+        "This repo also adds a very important stability angle through beta_std. The scanner computes beta separately on 3m, 6m, and 12m windows and penalizes pairs whose hedge ratio moves too much across those windows. In other words, Core 4 does not only ask whether beta exists. It also asks whether beta is stable enough to trust operationally.",
+        "That beta focus is critical in pair trading because beta is the hedge ratio. If beta is misestimated, the spread is misspecified, the z-score is distorted, and what looks market-neutral on paper can still carry hidden directional or sector exposure.",
+        "In the backtest path, beta is then handled conservatively. It is estimated on a trailing training window, applied to the next test block, and if walk-forward beta is provided it is locked at trade entry until exit. This avoids the unrealistic practice of re-hedging the historical trade with information that was not yet known at entry time.",
     ]
     formula = "z_score_t = (spread_t - rolling_mean_t) / rolling_std_t"
+    beta_rows = [
+        ("What beta means here", "The hedge ratio telling the engine how many units of the second leg offset one unit of the first leg in log-price space."),
+        ("How beta is estimated", "OLS slope of y on x, using aligned finite observations. The scanner uses a fast closed-form OLS equivalent; the broader utilities use statsmodels OLS with an intercept."),
+        ("Where beta is estimated", "The scanner estimates beta separately inside each 3m, 6m, and 12m window. The backtest estimates beta on a trailing training sample before trading the next segment."),
+        ("How beta is used", "Spread = y - beta*x. If a walk-forward beta series is available, the trade locks the entry beta until the position is closed."),
+        ("Why beta stability matters", "A noisy beta creates a noisy spread. That can manufacture fake z-scores and hidden exposure rather than true mean reversion."),
+        ("How stability is monitored", "beta_std measures the dispersion of beta across scan windows and is penalized in the eligibility score."),
+    ]
+    transform_rows = [
+        ("Strict wording", "The strategy is built in log-price space; it is not defined as a simple-price spread strategy."),
+        ("Why that is useful", "Log coordinates reduce scale distortions and make two names with very different nominal prices easier to compare."),
+        ("Where returns enter", "At trade level, dY and dX are changes in the log coordinates between entry and exit. Economically, those are cumulative log returns on each leg over the holding period."),
+        ("Why not raw prices", "A raw price spread is hard to compare across names and can drift mechanically as price levels compound."),
+        ("Why not single-period simple returns for the spread", "The object being tested for stationarity is the level relationship between the two series, not merely one-day return co-movement."),
+    ]
     if html:
         body = "".join(f"<p>{escape(text)}</p>" for text in paragraphs)
         body += f"<pre><code>{escape(formula)}</code></pre>"
         body += _table_html(["Test or concept", "Question answered", "Rule used here", "PM interpretation"], test_rows)
+        body += _table_html(["Beta topic", "Implementation detail"], beta_rows)
+        body += _table_html(["Log-price / return topic", "What happens here"], transform_rows)
         body += _figure_html(figure_map, "zscore_schematic")
         body += _figure_html(figure_map, "statistical_gates_schematic")
         return f"<section><h2>5. Z-Score, Spread And Statistical Tests</h2>{body}</section>"
@@ -1445,6 +1485,10 @@ def _section_5_zscore_and_tests(
         + "\n\n".join(paragraphs)
         + f"\n\n```text\n{formula}\n```\n\n"
         + _table_md(["Test or concept", "Question answered", "Rule used here", "PM interpretation"], test_rows)
+        + "\n\n"
+        + _table_md(["Beta topic", "Implementation detail"], beta_rows)
+        + "\n\n"
+        + _table_md(["Log-price / return topic", "What happens here"], transform_rows)
         + "\n\n"
         + _figure_md(figure_map, "zscore_schematic")
         + "\n\n"
